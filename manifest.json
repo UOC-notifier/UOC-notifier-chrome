@@ -1,0 +1,20 @@
+{
+   "browser_action": {
+      "default_icon": "logo.png",
+      "default_popup": "popup.html"
+   },
+   "background": {
+      "page": "background.html",
+      "persistent": false
+   },
+   "description": "UOC notifier for Chrome",
+   "icons": {
+      "128": "logo128.png"
+   },
+   "manifest_version": 2,
+   "name": "UOC Notifier",
+   "options_page": "options.html",
+   "permissions": [ "http://cv.uoc.edu/", "notifications", "windows", "alarms"],
+   "version": "1.0",
+   "web_accessible_resources": ["*.png"]
+}

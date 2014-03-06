@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href="thirdparty/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="thirdparty/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+<script src="thirdparty/jquery-2.1.0.min.js"></script>
+<script src="thirdparty/bootstrap/js/bootstrap.min.js"></script>
+<script src="uoc.js"></script>
+<script src="classroom.js"></script>
+<script src="storage.js"></script>
+<script src="popup.js"></script>
+<style>
+body {
+  min-width: 320px;
+  overflow: hidden;
+  background-color: #ccc;
+}
+.panel{
+	margin:4px;
+	border: 1px solid #ccc;
+}
+
+#classrooms{
+	max-height: 600px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.loading{
+	font-size:large;
+}
+.foto {
+    height: 39px;
+    width: 25px;
+    margin-right: 10px;
+}
+.resources{
+	clear: both;
+	margin: 2px;
+	padding: 10px 0 0 0;
+	list-style-type: none;
+}
+.badge{
+	min-width: 32px;
+}
+</style>
+</head>
+<body>
+	<div class="panel panel-success">
+		<div class=" container-fluid panel-heading" data-toggle="collapse" data-target="#detail_campus">
+			<div class="row">
+				<div class="col-xs-9"><a class="linkCampus" href="#">Campus</a></div>
+				<div class="col-xs-3">
+					<a href="#" role="button" class="badge btn btn-primary linkCampus" id="total_messages">-</a>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body bg-info text-info collapse" id="detail_campus">
+		</div>
+	</div>
+
+
+	<div id="classrooms"></div>
+</body>
+</html>
