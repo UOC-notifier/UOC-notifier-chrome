@@ -5,7 +5,7 @@ $(document).ready(function(){
 
 	$('#save_btn').on('click',function(){
 		save_options();
-		//return false;
+		return false;
 	});
 
 	$(".alert").hide();

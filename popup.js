@@ -193,7 +193,7 @@ function buildUI(){
 	setTimeout( handleEvents, 100);
 
 	if( !visibles ){
-		$('#classrooms').html("<div class='alert'><h4>Atencion</h4>No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar</div>")
+		$('#classrooms').html("<div class='alert'><h4>Atención</h4>No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar</div>")
 		return;
 	}
 }
