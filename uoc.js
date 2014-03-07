@@ -1,3 +1,39 @@
+function check_messages(async){
+	var old_messages = Classes.notified_messages;
+	retrieve_classrooms(async);
+	var messages = Classes.notified_messages;
+	set_icon(messages);
+
+	console.log(old_messages+" "+messages);
+	if(old_messages < messages){
+		var notitication = get_notification();
+		if( notitication && messages >= get_critical()){
+			notify('Tienes '+messages+' mensajes por leer');
+		}
+	}
+}
+
+function notify(str) {
+	var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo.png", body: str });
+	notification.onshow = function() {setTimeout(function(){
+		notification.close();
+	}, 3000)};
+}
+
+function set_icon(messages){
+	if( messages > 0){
+		chrome.browserAction.setBadgeText({text:""+messages});
+	} else {
+		chrome.browserAction.setBadgeText({text:""});
+	}
+
+	if( messages >= get_critical()){
+		chrome.browserAction.setIcon({path:"logomsg.png"});
+	}else{
+		chrome.browserAction.setIcon({path:"logo.png"});
+	}
+}
+
 function retrieve_classrooms(async){
 	var session = get_session();
 	if(session){

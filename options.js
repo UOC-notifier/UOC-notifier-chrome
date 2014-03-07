@@ -58,8 +58,7 @@ function save_options(){
 	save_notification(notitication);
 
 	reset_session();
-	retrieve_classrooms(true);
-
+	check_messages(true);
 	setup_alarm();
 
 	$("#status").text("Options saved");
