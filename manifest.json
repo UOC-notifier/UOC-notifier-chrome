@@ -7,6 +7,7 @@
       "page": "background.html",
       "persistent": false
    },
+   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
    "description": "UOC notifier for Chrome",
    "icons": {
       "128": "logo128.png"
