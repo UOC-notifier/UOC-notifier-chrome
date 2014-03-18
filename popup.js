@@ -103,15 +103,13 @@ function buildUI_resource(resource, classroom_code){
 }
 
 function buildUI_badge(messages, classes){
-	if(messages != '-') {
-		var badge = get_badge(messages);
-		return '<a href="#" role="button" class="' + classes + ' badge btn '+badge+'">' + messages + '</a>';
-	}
-	return "";
+	var badge = get_badge(messages);
+	return '<a href="#" role="button" class="' + classes + ' badge btn '+badge+'">' + messages + '</a>';
 }
 
 function get_badge(messages){
 	var critical = get_critical();
+	if(isNaN(messages)) return "btn-info";
 	if( messages >= critical ) return "btn-danger";
 	if( messages > 0 ) return "btn-warning";
 	return "btn-success";

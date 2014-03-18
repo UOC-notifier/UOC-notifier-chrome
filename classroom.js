@@ -181,10 +181,10 @@ function Resource(title, code){
 	this.set_messages = function(messages, all_messages){
 		this.messages = parseInt(messages);
 		this.all_messages = parseInt(all_messages);
-		if(isNaN(this.all_messages)){
+		if(isNaN(this.all_messages) || this.all_messages < 0){
 			this.all_messages = '-';
 		}
-		if(isNaN(this.messages)){
+		if(isNaN(this.messages) || this.messages < 0){
 			this.messages = '-';
 			return 0;
 		}
