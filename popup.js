@@ -7,7 +7,7 @@ function buildUI_tools(){
     } else {
         gat = 'EXP';
     }
-    var root_url = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
+    var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
 
 	var urls =  {
         final_exped: '.INFCONSULTA/inici',
@@ -17,6 +17,8 @@ function buildUI_tools(){
         final_papeleta: '.PAPERETES/paperetes.paperetes',
         final_estad: '.ESTADNOTES/estadis.inici',
     };
+
+    http://cv.uoc.edu/webapps/seleccioexpedient/cerca.html?s=
 
     //Titulos para cada url
     var titles =  {
@@ -31,7 +33,7 @@ function buildUI_tools(){
     var text = '<div class="container-fluid resources">';
     var i = -1;
     for (var key in urls) {
-        url_key = root_url + urls[key] + '&s=';
+        url_key = root_url_gate + urls[key] + '&s=';
         if(i == -1){
         	text += '<div class="row">';
         }
@@ -41,6 +43,16 @@ function buildUI_tools(){
 		}
 		i = -i;
     }
+	url_key = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
+    if(i == -1){
+    	text += '<div class="row">';
+    }
+	text += '<div class="col-xs-6 resource" link="'+url_key+'"><a href="#" class="linkResource">Expediente</a></div>';
+	if(i == 1){
+		text += '</div>';
+	}
+	i = -i;
+
     text += '</div>';
     return text;
 }
@@ -67,6 +79,10 @@ function buildUI_classroom(classroom){
 						</ul> \
 				</div> \
 			</div>';
+}
+
+function buildUI_news(){
+	return get_news();
 }
 
 function buildUI_picture(classroom){
@@ -190,6 +206,9 @@ function buildUI(){
 
 	var tools_html = buildUI_tools();
 	$('#detail_campus').html(tools_html);
+
+	var news_html = buildUI_news();
+	$('#detail_news').html(news_html);
 
 	setTimeout( handleEvents, 100);
 

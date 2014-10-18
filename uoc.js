@@ -119,6 +119,42 @@ function retrieve_picture_tutoria(classroom){
 	}
 }
 
+function retrieve_news(){
+	var session = get_session();
+	if(session){
+		var args = {
+			s : session,
+			up_isNoticiesInstitucionals : false,
+			up_title : 'Novetats%2520i%2520noticies',
+			up_maximized: true,
+			up_maxDestacades : 2,
+			up_showImages : 0,
+			up_sortable : true,
+			up_ck : 'nee',
+			up_maxAltres: 5,
+			up_rssUrlServiceProvider : '%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js',
+			up_target : 'noticies.jsp',
+			libs : '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height',
+			fromCampus : true,
+			lang: 'ca',
+			country: 'ES',
+			color: '',
+			userType: 'UOC-ESTUDIANT-gr06-a',
+			hp_theme: 'false'
+		}
+		$.ajaxSetup({async:true});
+		$.get(root_url + '/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet?'+uri_data(args), function(resp) {
+			console.log($(resp));
+			var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
+			if (news != undefined) {
+				save_news(news);
+			} else {
+				save_news(resp);
+			}
+		});
+	}
+}
+
 function retrieve_more_info_classrooms(){
 	var session = get_session();
 	if(session){
@@ -183,12 +219,15 @@ function parse_classroom_more_info(html){
 function retrieve_session(){
 	var user_save = get_user();
 	if(user_save.username && user_save.password){
-		$.ajaxSetup({async:false});
+		$.ajaxSetup({async:true});
 		$.ajax({
 	            type:"POST",
 	            beforeSend: function (request){
 	                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	            },
+	            xhrFields: {
+				    withCredentials: true
+				},
 	            url: root_url + "/cgi-bin/uoc",
 	            data: uri_data({
 					l:user_save.username,
@@ -202,18 +241,14 @@ function retrieve_session(){
 				}),
 	            processData: false,
 	            success: function(resp) {
+	            	console.log(resp);
 	                var iSs = resp.indexOf("?s=");
 					if( iSs != -1 ){
 						var	iSf = resp.indexOf("\";", iSs);
-						save_session(resp.substring(iSs + 3, iSf));
+						ses = resp.substring(iSs + 3, iSf);
+						save_session(ses);
 					}
-					var args = {
-						theme:'widgetUOC'
-					}
-					$.ajaxSetup({async:false});
-					$.get(root_url + '/app/status.net/index.php?=?'+uri_data(args), function(resp) {
-						return;
-					});
+					retrieve_news();
 				}
 	    });
 	}
