@@ -37,6 +37,14 @@ var Classes = new function(){
 		return false;
 	};
 
+	this.get_notify = function (code){
+		var idx = this.get_index(code);
+		if (idx === false) {
+			return true;
+		}
+		return classes[idx].notify;
+	}
+
 	this.search_domain = function(domain){
 		for(i in classes){
 			if(classes[i].domain == domain){
@@ -59,12 +67,14 @@ var Classes = new function(){
 				classr.set_color(classl.color);
 				classr.set_picture(classl.picture);
 				classr.set_notify(classl.notify);
-				for(j in classl.resources){
-					var resourcel = classl.resources[j];
-					var resource = new Resource(resourcel.title, resourcel.code);
-					resource.set_messages(resourcel.messages, resourcel.all_messages);
-					resource.set_link(resourcel.link);
-					classr.add_resource(resource);
+				if(classl.notify) {
+					for(j in classl.resources){
+						var resourcel = classl.resources[j];
+						var resource = new Resource(resourcel.title, resourcel.code);
+						resource.set_messages(resourcel.messages, resourcel.all_messages);
+						resource.set_link(resourcel.link);
+						classr.add_resource(resource);
+					}
 				}
 				this.add(classr);
 			}
@@ -134,8 +144,11 @@ function Classroom(title, code, domain, type, template){
 	};
 
 	this.add_resource = function(resource){
-		var idx = this.get_index(resource.code);
-		if(idx !== false){
+		if(!this.notify) return;
+
+		var idx = this.get_index(resource.code, resource.lcode);
+
+		if(idx >= 0){
 			if(this.resources[idx].messages != '-'){
 				this.messages -= this.resources[idx].messages;
 			}
@@ -148,22 +161,22 @@ function Classroom(title, code, domain, type, template){
 		}
 	};
 
-	this.get_index = function(code){
+	this.get_index = function(code, lcode){
 		for(i in this.resources){
-			if(this.resources[i].code == code){
+			if(this.resources[i].code == code) {
+				return i;
+			}
+			if(this.resources[i].lcode == lcode) {
+				return i;
+			}
+			if(this.resources[i].lcode == code) {
+				return i;
+			}
+			if(this.resources[i].code == lcode) {
 				return i;
 			}
 		}
-		return false;
-	};
-
-	this.search_code = function(code){
-		for(i in this.resources){
-			if(this.resources[i].code == code){
-				return this.resources[i];
-			}
-		}
-		return false;
+		return -1;
 	};
 
 	this.get_resources = function(){
@@ -174,6 +187,7 @@ function Classroom(title, code, domain, type, template){
 function Resource(title, code){
 	this.title = title;
 	this.code = code;
+	this.lcode = code;
 	this.messages =  0;
 	this.all_messages =  0;
 	this.link =  "";
@@ -195,18 +209,17 @@ function Resource(title, code){
 		var url = get_url_attr(link, 'redirectUrl');
 		if(url){
 			link = decodeURIComponent(url);
-			if(link.indexOf('http') == -1){
-				link = 'http://cv.uoc.edu' + link;
-			}
-			code = get_url_attr(link, 'l');
-			if(code){
-				this.code = code;
-			}
 			/*var url = get_url_attr(link, 'url');
 			if(url){
-				link = 'http://cv.uoc.edu'+decodeURIComponent(url);
+				link = root_url + '/' + decodeURIComponent(url);
 			}*/
 		}
+
+		code = get_url_attr(link, 'l');
+		if(code){
+			this.lcode = code;
+		}
+
 		session = get_url_attr(link, 's');
 		if(session){
 			link = get_url_withoutattr(link,'s');
@@ -219,5 +232,5 @@ function Resource(title, code){
 			}
 		}
 		this.link = link;
-	};
+};
 }

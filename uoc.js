@@ -1,3 +1,6 @@
+var root_url = 'http://cv.uoc.edu';
+var root_url_ssl = 'https://cv.uoc.edu';
+
 function check_messages(async){
 	var old_messages = Classes.notified_messages;
 	retrieve_classrooms(async);
@@ -44,7 +47,7 @@ function retrieve_classrooms(async){
 		}
 		console.log(session);
 		$.ajaxSetup({async:async});
-		$.get('http://cv.uoc.edu/UOC2000/b/cgi-bin/hola?'+uri_data(args), function(resp) {
+		$.get(root_url + '/UOC2000/b/cgi-bin/hola?'+uri_data(args), function(resp) {
 			var index = resp.indexOf("aulas = ");
 			if (index != -1) {
 				var lastPage = resp.substring(index + 8);
@@ -72,6 +75,8 @@ function parse_classroom(classr){
 		//console.log(classr);
 		var title = classr.shortname ? classr.shortname : classr.title;
 		var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
+
+		if(!Classes.get_notify(classr.code)) return classroom;
 
 		for(var j in classr.resources){
 			var resourcel = classr.resources[j];
@@ -107,7 +112,7 @@ function retrieve_picture_tutoria(classroom){
 			hp_theme:'false'
 		}
 		$.ajaxSetup({async:false});
-		$.get('http://cv.uoc.edu/webapps/widgetsUOC/widgetsDominisServlet?'+uri_data(args), function(resp) {
+		$.get(root_url + '/webapps/widgetsUOC/widgetsDominisServlet?'+uri_data(args), function(resp) {
 			var picture = $(resp).find('.foto').attr('src');
 			classroom.set_picture(picture);
 		});
@@ -122,7 +127,7 @@ function retrieve_more_info_classrooms(){
 			domainPontCode : 'sem_pont'
 		}
 		$.ajaxSetup({async:false});
-		$.get('http://cv.uoc.edu/webapps/classroom/081_common/jsp/aules_estudiant.jsp?'+uri_data(args), function(resp) {
+		$.get(root_url + '/webapps/classroom/081_common/jsp/aules_estudiant.jsp?'+uri_data(args), function(resp) {
 			var classrooms = Classes.get_all();
 			var resp = $(resp);
 			for(i in classrooms){
@@ -132,7 +137,7 @@ function retrieve_more_info_classrooms(){
 					if(classroom_html){
 						var picture = classroom_html.find('img.fotoconsultor').attr('src');
 						if(picture){
-							picture= 'http://cv.uoc.edu'+picture;
+							picture= root_url +picture;
 							classroom.set_picture(picture);
 						}
 					}
@@ -144,7 +149,7 @@ function retrieve_more_info_classrooms(){
 			s : session,
 			perfil : 'estudiant'
 		}
-		$.get('http://cv.uoc.edu/app/guaita/assignatures?'+uri_data(args), function(resp) {
+		$.get(root_url + '/app/guaita/assignatures?'+uri_data(args), function(resp) {
 			$(resp).find('#sidebar .block').each(function() {
 				parse_classroom_more_info(this);
 			});
@@ -184,14 +189,14 @@ function retrieve_session(){
 	            beforeSend: function (request){
 	                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	            },
-	            url: "http://cv.uoc.edu/cgi-bin/uoc",
+	            url: root_url + "/cgi-bin/uoc",
 	            data: uri_data({
 					l:user_save.username,
 					p:user_save.password,
 					appid:"WUOC",
 					nil:"XXXXXX",
 					lb:"a",
-					url:"http://cv.uoc.edu",
+					url:root_url,
 					x:"13",
 					y:"2"
 				}),
@@ -202,6 +207,13 @@ function retrieve_session(){
 						var	iSf = resp.indexOf("\";", iSs);
 						save_session(resp.substring(iSs + 3, iSf));
 					}
+					var args = {
+						theme:'widgetUOC'
+					}
+					$.ajaxSetup({async:false});
+					$.get(root_url + '/app/status.net/index.php?=?'+uri_data(args), function(resp) {
+						return;
+					});
 				}
 	    });
 	}
@@ -223,6 +235,7 @@ function get_url_attr(url, attr){
 
 function get_url_withoutattr(url, parameter) {
     //prefer to use l.search if you have a location/link object
+    url = get_real_url(url);
     var urlparts= url.split('?');
     if (urlparts.length >= 2) {
         var prefix =  encodeURIComponent(parameter)+'=';
@@ -254,4 +267,13 @@ function uri_data(map){
 		str += v+"="+map[v]+"&";
 	}
 	return str.slice(0,-1);
+}
+
+function get_real_url(url){
+	if(url.indexOf('/') == 0){
+		return root_url + url;
+	} else if(url.indexOf('http://') == -1 || url.indexOf('https://') == -1){
+		return root_url + '/' + url;
+	}
+	return url;
 }

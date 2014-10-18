@@ -7,7 +7,7 @@ function buildUI_tools(){
     } else {
         gat = 'EXP';
     }
-    var root_url = 'https://cv.uoc.edu/tren/trenacc?modul=GAT_'+gat;
+    var root_url = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
 
 	var urls =  {
         final_exped: '.INFCONSULTA/inici',
@@ -123,7 +123,7 @@ function show_total_messages(){
 function handleEvents(){
 
 	$('.linkCampus').on('click',function(){
-		var url = 'http://cv.uoc.edu/cgi-bin/uocapp';
+		var url = root_url + '/cgi-bin/uocapp';
 		open_tab(url);
 	});
 
@@ -131,7 +131,7 @@ function handleEvents(){
 		var classroom_code = $(this).parents('.classroom').attr('classroom');
 		var classroom = Classes.search_code(classroom_code);
 
-		var url = 'http://cv.uoc.edu/webapps/classroom/'+classroom.template+'/frameset.jsp';
+		var url = root_url + '/webapps/classroom/'+classroom.template+'/frameset.jsp';
 		var data = {domainCode: classroom.code};
 		open_tab(url, data);
 	});
@@ -140,7 +140,7 @@ function handleEvents(){
 		var classroom_code = $(this).parents('.classroom').attr('classroom');
 		var classroom = Classes.search_code(classroom_code);
 
-		var url = 'http://cv.uoc.edu/webapps/rac/listEstudiant.action';
+		var url = root_url + '/webapps/rac/listEstudiant.action';
 		var data = {domainId: classroom.domain};
 		open_tab(url, data);
 	});
@@ -152,7 +152,7 @@ function handleEvents(){
 			var data = {};
 		} else {
 			var resource_code = $(this).parents('.resource').attr('resource');
-			var url = 'http://cv.uoc.edu/cgi-bin/ma_mainMailFS';
+			var url = root_url + '/cgi-bin/ma_mainMailFS';
 			var data = {l: resource_code};
 		}
 		open_tab(url, data);
@@ -174,6 +174,9 @@ function open_tab(url, data){
 }
 
 function buildUI(){
+	//DEBUG
+	//check_messages(false);
+
 	var classrooms = Classes.get_notified();
 	show_total_messages();
 
