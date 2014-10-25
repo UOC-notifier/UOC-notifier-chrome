@@ -54,6 +54,15 @@ var Classes = new function(){
 		return false;
 	};
 
+	this.search_domainassig = function(domain){
+		for(i in classes){
+			if(classes[i].domainassig == domain){
+				return classes[i];
+			}
+		}
+		return false;
+	};
+
 	this.load = function (){
 		var classroom = localStorage.getItem("classes");
 		if(classroom){
@@ -64,6 +73,7 @@ var Classes = new function(){
 			for(i in classesl){
 				var classl = classesl[i];
 				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type, classl.template);
+				classr.domainassig = classl.domainassig;
 				classr.set_color(classl.color);
 				classr.set_picture(classl.picture);
 				classr.set_notify(classl.notify);
@@ -115,6 +125,7 @@ function Classroom(title, code, domain, type, template){
 	this.title = title;
 	this.code = code;
 	this.domain = domain;
+	this.domainassig = domain;
 	this.type = type;
 	this.template = template;
 	this.color = false;
@@ -147,17 +158,13 @@ function Classroom(title, code, domain, type, template){
 		if(!this.notify) return;
 
 		var idx = this.get_index(resource.code, resource.lcode);
-
 		if(idx >= 0){
-			if(this.resources[idx].messages != '-'){
-				this.messages -= this.resources[idx].messages;
-			}
-			this.resources[idx] = resource;
+			this.resource_merge(idx, resource);
 		} else {
 			this.resources.push(resource);
-		}
-		if(resource.messages != '-'){
-			this.messages += resource.messages;
+			if(resource.messages != '-'){
+				this.messages += resource.messages;
+			}
 		}
 	};
 
@@ -182,24 +189,46 @@ function Classroom(title, code, domain, type, template){
 	this.get_resources = function(){
 		return resources;
 	};
+
+	this.resource_merge = function(idx, resource) {
+		if(this.resources[idx].messages != '-'){
+			this.messages -= this.resources[idx].messages;
+		}
+		this.resources[idx].set_messages(resource.messages, resource.all_messages);
+		this.resources[idx].link = resource.link;
+		this.resources[idx].code = resource.code;
+		this.resources[idx].lcode = resource.lcode;
+		this.resources[idx].title = resource.title;
+		if(this.resources[idx].messages != '-'){
+			this.messages += this.resources[idx].messages;
+		}
+	};
 }
 
 function Resource(title, code){
 	this.title = title;
 	this.code = code;
 	this.lcode = code;
-	this.messages =  0;
-	this.all_messages =  0;
+	this.messages =  '-';
+	this.all_messages =  '-';
 	this.link =  "";
 
 	this.set_messages = function(messages, all_messages){
-		this.messages = parseInt(messages);
-		this.all_messages = parseInt(all_messages);
-		if(isNaN(this.all_messages) || this.all_messages < 0){
-			this.all_messages = '-';
+		messages = parseInt(messages);
+		all_messages = parseInt(all_messages);
+
+		if (!isNaN(all_messages) && all_messages >= 0) {
+			this.all_messages = all_messages;
 		}
-		if(isNaN(this.messages) || this.messages < 0){
-			this.messages = '-';
+		if (!isNaN(messages) &&  messages >= 0) {
+			this.messages = messages;
+		}
+
+		if(!isNaN(this.messages) && isNaN(this.all_messages)){
+			this.messages = 0;
+		}
+
+		if(this.messages == '-') {
 			return 0;
 		}
 		return this.messages;

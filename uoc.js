@@ -71,12 +71,34 @@ function retrieve_classrooms(async){
 }
 
 function parse_classroom(classr){
-	if(classr.title && (classr.domaintypeid=='AULA'|| classr.domaintypeid=='TUTORIA')){
-		//console.log(classr);
+	if(classr.title) {
 		var title = classr.shortname ? classr.shortname : classr.title;
-		var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
 
-		if(!Classes.get_notify(classr.code)) return classroom;
+		switch (classr.domaintypeid) {
+			case 'AULA':
+				var classroom = Classes.search_domainassig(classr.domainfatherid);
+				if (classroom) {
+					classroom.title = title;
+					classroom.code = classr.code;
+					classroom.domain = classr.domainid;
+					classroom.domainassig = classr.domainfatherid;
+					this.type = classr.domaintypeid;
+					this.template = classr.pt_template;
+				}
+				break;
+			case 'ASSIGNATURA':
+				var classroom = Classes.search_domainassig(classr.domainid);
+				break;
+		}
+
+		if (!classroom) {
+			var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
+			if(classroom.type == 'AULA') {
+				classroom.domainassig = classr.domainfatherid;
+			}
+		}
+
+		if(!Classes.get_notify(classroom.code)) return classroom;
 
 		for(var j in classr.resources){
 			var resourcel = classr.resources[j];
@@ -89,7 +111,7 @@ function parse_classroom(classr){
 			}
 		}
 
-		if(classroom.notify && classroom.type == 'TUTORIA' && !classroom.picture){
+		if (classroom.notify && classroom.type == 'TUTORIA' && !classroom.picture ){
 			retrieve_picture_tutoria(classroom);
 		}
 		return classroom;
@@ -181,6 +203,7 @@ function retrieve_more_info_classrooms(){
 			}
 		}, "html");
 
+		// I don't know if this is good for something...
 		var args = {
 			s : session,
 			perfil : 'estudiant'
@@ -203,7 +226,6 @@ function parse_classroom_more_info(html){
 				var title = label.html();
 				var code  = label.attr('data-bocamoll-object-resourceid');
 				var resource = new Resource(title, code);
-
 				var link = label.attr('href');
 				resource.set_link(link);
 
