@@ -191,7 +191,7 @@ function open_tab(url, data){
 
 function buildUI(){
 	//DEBUG
-	check_messages(false);
+	//check_messages(false);
 
 	var classrooms = Classes.get_notified();
 	show_total_messages();
