@@ -49,32 +49,49 @@ body {
 #detail_news h3{
 	font-size: 14px;
 }
+#detail_agenda iframe {
+	width: 100%;
+	height: 310px;
+	border: 0;
+}
+#detail_agenda {
+	padding: 0;
+	background-color: white;
+}
+a.white{
+	color: white;
+}
 </style>
 </head>
 <body>
 	<div class="panel panel-success">
-		<div class=" container-fluid panel-heading" data-toggle="collapse" data-target="#detail_campus">
+		<div class="container-fluid panel-heading">
 			<div class="row">
-				<div class="col-xs-9"><a class="linkCampus" href="#">Campus</a></div>
+				<div class="col-xs-3"><a class="linkCampus" href="#">Campus</a></div>
+				<div class="col-xs-6">
+					<div class="btn-group btn-group-sm" role="group">
+						<button type="button" class="btn btn-danger button_details" id="button_news" value="news" aria-label="News" data-toggle="button" aria-pressed="false">
+					    	<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+					  	</button>
+					  	<button type="button" class="btn btn-primary button_details"  id="button_agenda" value="agenda" aria-label="Agenda" data-toggle="button" aria-pressed="false">
+					    	<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+					  	</button>
+					  	<button type="button" class="btn btn-warning button_details"  id="button_campus" value="campus" aria-label="Campus" data-toggle="button" aria-pressed="false">
+					    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+					  	</button>
+					</div>
+				</div>
 				<div class="col-xs-3">
 					<a href="#" role="button" class="badge btn btn-primary linkCampus" id="total_messages">-</a>
 				</div>
 			</div>
 		</div>
-		<div class="panel-body bg-info text-info collapse" id="detail_campus">
+		<div>
+			<div class="panel-body bg-info text-info details collapse" id="detail_news"></div>
+			<div class="panel-body bg-default text-default details collapse" id="detail_agenda"></div>
+			<div class="panel-body bg-info text-info details collapse" id="detail_campus"></div>
 		</div>
 	</div>
-	<div class="panel panel-info">
-		<div class=" container-fluid panel-heading" data-toggle="collapse" data-target="#detail_news">
-			<div class="row">
-				<div class="col-xs-9"><a class="linkCampus" href="#">Noticias</a></div>
-			</div>
-		</div>
-		<div class="panel-body bg-info text-info collapse" id="detail_news">
-		</div>
-	</div>
-
-
 	<div id="classrooms"></div>
 </body>
 </html>

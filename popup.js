@@ -63,7 +63,6 @@ function buildUI_classroom(classroom){
 	for(var j in classroom.resources){
 		resources_html += buildUI_resource(classroom.resources[j], classroom.code);
 	}
-
 	return '<div class="classroom panel panel-warning" classroom="'+classroom.code+'">  \
 				<div class="panel-heading container-fluid" '+buildUI_color(classroom)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+classroom.code+'">	\
 					<div class="row">	\
@@ -83,6 +82,17 @@ function buildUI_classroom(classroom){
 
 function buildUI_news(){
 	return get_news();
+}
+
+function buildUI_agenda(){
+	session = get_session();
+	if(!session) return "";
+
+	var api = 'http%253A%252F%252Fcv.uoc.edu%252Fwebapps%252FAgenda%252FAgendaServlet%253Foperacion%253Dical';
+	var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944745.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height';
+	var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsIcalServlet?up_items=7&up_icalUrlServiceAPI='+api+'&up_targetMonth=agMonthlyView.jsp&up_target=agDailyView.jsp&libs='+libs+'&s='+session;
+	var text = '<iframe src="'+src+'"></iframe>';
+	return text;
 }
 
 function buildUI_picture(classroom){
@@ -210,12 +220,28 @@ function buildUI(){
 	var news_html = buildUI_news();
 	$('#detail_news').html(news_html);
 
+	var agenda_html = buildUI_agenda();
+	$('#detail_agenda').html(agenda_html);
+
 	setTimeout( handleEvents, 100);
 
 	if( !visibles ){
 		$('#classrooms').html("<div class='alert'><h4>Atención</h4>No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar</div>")
 		return;
 	}
+
+	$('.details').collapse({toggle: false});
+	$('.button_details').on('click', function () {
+		var val = this.value;
+		$('.button_details:not(#button_'+val+')').removeClass('active');
+		if ( $(this).hasClass('active') ){
+			// Does not have active class yet
+			$('.details').collapse('hide');
+	   	} else {
+			$('.details:not(#detail_'+val+')').collapse('hide');
+	   		$('#detail_'+val).collapse('show');
+	   	}
+	});
 }
 
 $(document).ready(function(){
