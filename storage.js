@@ -79,6 +79,12 @@ function save_notify_classroom(code, notify){
 	}
 }
 
+function purge_classroom(code){
+	if (Classes.delete_code(code)) {
+		Classes.save();
+	}
+}
+
 function get_uni(){
 	var uni = localStorage.getItem("uni") || 'UOCc';
 	return uni;

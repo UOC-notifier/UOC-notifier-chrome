@@ -40,8 +40,8 @@ body {
 	padding: 10px 0 0 0;
 	list-style-type: none;
 }
-.badge{
-	min-width: 32px;
+.resource{
+	margin-bottom: 2px;
 }
 #detail_news{
 	font-size: 12px;
@@ -58,16 +58,14 @@ body {
 	padding: 0;
 	background-color: white;
 }
-a.white{
-	color: white;
-}
 </style>
 </head>
 <body>
 	<div class="panel panel-success">
 		<div class="container-fluid panel-heading">
 			<div class="row">
-				<div class="col-xs-3"><a class="linkCampus" href="#">Campus</a></div>
+				<div class="col-xs-3">
+					<button type="button" class="btn btn-sm btn-default linkCampus" aria-label="Campus"><img src="logo128.png" width="16px"></button></div>
 				<div class="col-xs-6">
 					<div class="btn-group btn-group-sm" role="group">
 						<button type="button" class="btn btn-danger button_details" id="button_news" value="news" aria-label="News" data-toggle="button" aria-pressed="false">
@@ -82,7 +80,7 @@ a.white{
 					</div>
 				</div>
 				<div class="col-xs-3">
-					<a href="#" role="button" class="badge btn btn-primary linkCampus" id="total_messages">-</a>
+					<button type="button" class="btn btn-primary linkCampus btn-group-justified btn-xs" id="total_messages" style="margin-top: 5px;">-</button>
 				</div>
 			</div>
 		</div>

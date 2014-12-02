@@ -28,6 +28,16 @@ var Classes = new function(){
 		return false;
 	};
 
+	this.delete_code = function(code){
+		for(i in classes){
+			if(classes[i].code == code){
+				classes.splice(i, 1);
+				return true;
+			}
+		}
+		return false;
+	};
+
 	this.get_index = function(code){
 		for(i in classes){
 			if(classes[i].code == code){
@@ -40,7 +50,8 @@ var Classes = new function(){
 	this.get_notify = function (code){
 		var idx = this.get_index(code);
 		if (idx === false) {
-			return true;
+			// New Classrooms won\'t be notified
+			return false;
 		}
 		return classes[idx].notify;
 	}
@@ -115,6 +126,7 @@ var Classes = new function(){
 				this.notified_messages += classrooms[i].messages;
 			}
 			this.messages += classrooms[i].messages;
+			this.all_messages += classrooms[i].all_messages;
 		}
 	};
 
@@ -226,6 +238,7 @@ function Resource(title, code){
 
 		if(!isNaN(this.messages) && isNaN(this.all_messages)){
 			this.messages = 0;
+			this.all_messages = 0;
 		}
 
 		if(this.messages == '-') {
@@ -261,5 +274,5 @@ function Resource(title, code){
 			}
 		}
 		this.link = link;
-};
+	};
 }

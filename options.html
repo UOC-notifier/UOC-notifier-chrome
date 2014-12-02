@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es">
 <head>
 <title>UOC Notifier</title>
@@ -12,60 +12,85 @@
 <script src="classroom.js"></script>
 <script src="options.js"></script>
 <script src="storage.js"></script>
+<style>
+#tclassrooms {
+  margin-bottom: 20px;
+}
+.not_classroom {
+  margin-bottom: 5px;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
-    <h2 class="form-signin-heading">UOC Notifier</h2>
-      <form class="form-signin" role="form">
-        <div class="form-group ">
-          <label for="username">Usuario</label>
-          <input id="username" type="text" class="form-control" placeholder="Usuario">
-        </div>
-        <div class="form-group">
-          <label for="pwd">Password</label>
-          <input id="pwd" type="password" class="form-control" placeholder="Password">
-        </div>
-        <div class="form-group ">
-          <label for="uni">Universidad</label>
-          <select id="uni" class="form-control">
-            <option value="UOCc">UOC en català</option>
-            <option value="UOCi">UOC en castellano</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="check_interval">Intervalo de comprovación</label>
-          <div class="input-group">
-            <input id="check_interval" type="number" class="form-control" placeholder="Intervalo de comprovación">
-            <span class="input-group-addon">minutos</span>
+    <h2 class="form-signin-heading"><img src="logo128.png" width="30px"> UOC Notifier</h2>
+      <form class="form-signin container-fluid" role="form">
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="username">Usuario</label>
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                <input id="username" type="text" class="form-control" placeholder="Usuario">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pwd">Password</label>
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input id="pwd" type="password" class="form-control" placeholder="Password">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="uni">Universidad</label>
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
+                <select id="uni" class="form-control">
+                  <option value="UOCc">UOC en català</option>
+                  <option value="UOCi">UOC en castellano</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="check_interval">Intervalo de comprovación</label>
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+                <input id="check_interval" type="number" class="form-control" placeholder="Intervalo de comprovación">
+                <span class="input-group-addon">minutos</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="critical">Mínimo de mensajes para considerar crítico</label>
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-warning-sign"></span></span>
+                <input id="critical" type="number" class="form-control" placeholder="Mensajes">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input id="notification"type="checkbox">
+                </span>
+                <label for="notification" class="form-control">Mensajes emergentes</label>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="form-group">
-          <label for="critical">Mínimo de mensajes para considerar crítico</label>
-          <input id="critical" type="number" class="form-control" placeholder="Mensajes">
-        </div>
-        <div class="form-group input-group">
-          <span class="input-group-addon">
-            <input id="notification"type="checkbox">
-          </span>
-          <label for="notification" class="form-control">Mensajes emergentes</label>
-        </div>
-        <button id="save_btn" class="btn btn-large btn-primary">Guardar</button>
+        <button id="save_btn" class="btn btn-large btn-primary"><span class="glyphicon glyphicon-save"></span> Guardar</button>
       </form>
 	  <div class="alert alert-warning alert-dismissable">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <strong>Warning!</strong> <span id="status"></span>
 	  </div>
 
-    <table class="table table-striped table-bordered table-hover">
-    <caption>Aulas Disponibles</caption>
-      <thead>
-        <tr><th>Notificar</th><th>Aula</th>
-      </thead>
-      <tbody id="tclassrooms">
-      </tbody>
-    </table>
+    <h3>Notificar aulas</h3>
+    <div id="tclassrooms"></div>
+    <button id="purge_btn" class="btn btn-large btn-danger"><span class="glyphicon glyphicon-trash"></span> Eliminar aulas antiguas</button>
 </div>
 </body>
 </html>

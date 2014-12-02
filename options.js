@@ -8,6 +8,11 @@ $(document).ready(function(){
 		return false;
 	});
 
+	$('#purge_btn').on('click',function(){
+		purge_classrooms();
+		return false;
+	});
+
 	$(".alert").hide();
 });
 
@@ -19,7 +24,7 @@ function populate_classrooms(){
 	}
 	$("#tclassrooms").html(content);
 	$(".notify_classroom").on('click',function(){
-		var classroom_code = $(this).attr('classroom');
+		var classroom_code = $(this).attr('value');
 		var notify = $(this).prop('checked');
 		save_notify_classroom(classroom_code, notify);
 	});
@@ -27,10 +32,9 @@ function populate_classrooms(){
 
 function populate_classroom(classroom){
 	var checked = classroom.notify ? "checked" : "";
-	return '<tr> \
-				<td><input class="notify_classroom" type="checkbox" classroom="'+classroom.code+'" '+checked+'/></td>  \
-				<td>'+classroom.title+'</td> \
-			</tr>';
+	return '<div class="input-group not_classroom"><span class="input-group-addon" style="background-color:#'+classroom.color+';"> \
+			<input class="notify_classroom" type="checkbox" id="'+classroom.code+'" value="'+classroom.code+'" '+checked+'> \
+			</span><label for="'+classroom.code+'" class="form-control">'+classroom.title+'</label></div>';
 }
 
 function populate_options(){
@@ -63,4 +67,17 @@ function save_options(){
 
 	$("#status").text("Options saved");
 	$(".alert").show();
+
+	populate_classrooms();
+}
+
+function purge_classrooms(){
+	$(".notify_classroom").each(function(){
+		var classroom_code = $(this).attr('value');
+		var notify = $(this).prop('checked');
+		if(!notify) {
+			purge_classroom(classroom_code);
+		}
+	});
+	populate_classrooms();
 }

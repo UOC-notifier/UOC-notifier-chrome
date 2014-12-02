@@ -123,14 +123,21 @@ function buildUI_resource(resource, classroom_code){
 		var link = 'link="'+resource.link+'"';
 	}
 	return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
-				<div class="col-xs-2">'+buildUI_badge(resource.messages, 'linkResource') + '</div> \
-				<div class="col-xs-10"><a href="#" class="linkResource">'+resource.title+'</a></div> \
+				<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
+				<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages) + '</div> \
 			</li>';
 }
 
-function buildUI_badge(messages, classes){
+function buildUI_badge(messages, classes, allmessages){
 	var badge = get_badge(messages);
-	return '<a href="#" role="button" class="' + classes + ' badge btn '+badge+'">' + messages + '</a>';
+	if (!isNaN(allmessages)) {
+		return '<div class="btn-group btn-group-justified btn-group-xs ' + classes + '" role="group"> \
+					<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details">' + messages + '</button></div> \
+		  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details">' + allmessages + '</button></div> \
+				</div>';
+	} else {
+		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' button_details btn-group-justified">' + messages + '</button>';
+	}
 }
 
 function get_badge(messages){
