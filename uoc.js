@@ -267,6 +267,10 @@ function retrieve_session(){
 	                var iSs = resp.indexOf("?s=");
 					if( iSs != -1 ){
 						var	iSf = resp.indexOf("\";", iSs);
+						var	iSf2 = resp.indexOf("&", iSs);
+						if (iSf2 < iSf && iSf2 > 0) {
+							iSf = iSf2;
+						}
 						ses = resp.substring(iSs + 3, iSf);
 						save_session(ses);
 					}
