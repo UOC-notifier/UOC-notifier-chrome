@@ -10,8 +10,8 @@ function buildUI_tools(){
     var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
 
     var urls = new Array();
-    urls.push({url: '.INFCONSULTA/inici', title: 'Expediente antiguo (no funciona)'});
-    urls.push({url: '.NOTESAVAL/rac.rac&tipus=1', title: 'REC antiguo (no funciona)'});
+    //urls.push({url: '.INFCONSULTA/inici', title: 'Expediente antiguo (no funciona)'});
+    //urls.push({url: '.NOTESAVAL/rac.rac&tipus=1', title: 'REC antiguo (no funciona)'});
     urls.push({url: '.NOTESAVAL/NotesEstudiant.inici', title: 'Resumen de notas'});
     urls.push({url: '.EXASOLREVISION/consrevision.consrevision', title: 'Revisión de exámen'});
     urls.push({url: '.PAPERETES/paperetes.paperetes', title: 'Notas finales'});
