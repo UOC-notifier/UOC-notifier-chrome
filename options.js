@@ -65,7 +65,7 @@ function save_options(){
 	check_messages(true);
 	setup_alarm();
 
-	$("#status").text("Options saved");
+	$("#status").text("Opciones guardadas. Espera a que se actualizen las aulas...");
 	$(".alert").show();
 
 	populate_classrooms();
