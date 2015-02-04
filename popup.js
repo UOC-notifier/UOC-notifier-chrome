@@ -9,52 +9,41 @@ function buildUI_tools(){
     }
     var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
 
-	var urls =  {
-        final_exped: '.INFCONSULTA/inici',
-        final_notas_ec: '.NOTESAVAL/NotesEstudiant.inici',
-        final_revision: '.EXASOLREVISION/consrevision.consrevision',
-        final_resumen_ec: '.NOTESAVAL/rac.rac&tipus=1',
-        final_papeleta: '.PAPERETES/paperetes.paperetes',
-        final_estad: '.ESTADNOTES/estadis.inici',
-    };
-
-    http://cv.uoc.edu/webapps/seleccioexpedient/cerca.html?s=
-
-    //Titulos para cada url
-    var titles =  {
-    	final_exped: 'Expediente antiguo',
-        final_notas_ec: 'Resumen de notas',
-        final_revision: 'Revisión de exámen',
-        final_resumen_ec: 'REC antiguo',
-        final_papeleta: 'Notas finales',
-        final_estad: 'Estadísticas',
-    };
+    var urls = new Array();
+    urls.push({url: '.INFCONSULTA/inici', title: 'Expediente antiguo (no funciona)'});
+    urls.push({url: '.NOTESAVAL/rac.rac&tipus=1', title: 'REC antiguo (no funciona)'});
+    urls.push({url: '.NOTESAVAL/NotesEstudiant.inici', title: 'Resumen de notas'});
+    urls.push({url: '.EXASOLREVISION/consrevision.consrevision', title: 'Revisión de exámen'});
+    urls.push({url: '.PAPERETES/paperetes.paperetes', title: 'Notas finales'});
+    urls.push({url: '.ESTADNOTES/estadis.inici', title: 'Estadísticas'});
 
     var text = '<div class="container-fluid resources">';
-    var i = -1;
-    for (var key in urls) {
-        url_key = root_url_gate + urls[key] + '&s=';
-        if(i == -1){
-        	text += '<div class="row">';
-        }
-		text += '<div class="col-xs-6 resource" link="'+url_key+'"><a href="#" class="linkResource">'+titles[key]+'</a></div>';
-		if(i == 1){
-			text += '</div>';
-		}
-		i = -i;
+    var par = -1;
+    var link;
+    for (var x in urls) {
+        link = root_url_gate + urls[x].url + '&s=';
+		text += get_general_link(link, urls[x].title, par);
+		par = -par;
     }
-	url_key = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
-    if(i == -1){
-    	text += '<div class="row">';
-    }
-	text += '<div class="col-xs-6 resource" link="'+url_key+'"><a href="#" class="linkResource">Expediente</a></div>';
-	if(i == 1){
-		text += '</div>';
-	}
-	i = -i;
+    // New expedient
+	link = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
+	text += get_general_link(link, 'Expediente', par);
+	par = -par;
 
     text += '</div>';
     return text;
+}
+
+function get_general_link(link, title, par){
+	var ret = "";
+	if(par == -1){
+    	ret += '<div class="row">';
+    }
+	ret += '<div class="col-xs-6 resource" link="'+link+'"><a href="#" class="linkResource">'+title+'</a></div>';
+	if(par == 1){
+		ret += '</div>';
+	}
+	return ret;
 }
 
 
