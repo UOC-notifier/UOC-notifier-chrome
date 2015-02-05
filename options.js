@@ -12,8 +12,6 @@ $(document).ready(function(){
 		purge_classrooms();
 		return false;
 	});
-
-	$(".alert").hide();
 });
 
 function populate_classrooms(){
@@ -28,6 +26,7 @@ function populate_classrooms(){
 		var notify = $(this).prop('checked');
 		save_notify_classroom(classroom_code, notify);
 	});
+	$(".alert").hide();
 }
 
 function populate_classroom(classroom){
@@ -61,14 +60,22 @@ function save_options(){
 	var notitication = $("#notification").is(':checked');
 	save_notification(notitication);
 
-	reset_session();
-	check_messages(true);
+	populate_classrooms();
+	reset_session(after_save_options);
 	setup_alarm();
 
 	$("#status").text("Opciones guardadas. Espera a que se actualizen las aulas...");
 	$(".alert").show();
+}
 
+function after_save_options() {
+	check_messages(true, after_check_messages);
+}
+
+function after_check_messages() {
+	$(".alert").hide();
 	populate_classrooms();
+	refresh_alarm();
 }
 
 function purge_classrooms(){

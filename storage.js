@@ -53,19 +53,19 @@ function setup_alarm(alarm) {
 	chrome.alarms.create('refresh', {periodInMinutes: delay});
 }
 
-function reset_session(){
+function reset_session(handler){
 	localStorage.removeItem("session");
-	get_session();
+	get_session(handler);
 }
 
 function save_session(session){
 	localStorage.setItem("session",session);
 }
 
-function get_session(){
+function get_session(handler){
 	var session = localStorage.getItem("session") || false;
 	if(!session){
-		retrieve_session();
+		retrieve_session(handler);
 		return "";
 	}
 	return session;

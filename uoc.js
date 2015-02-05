@@ -1,9 +1,9 @@
 var root_url = 'http://cv.uoc.edu';
 var root_url_ssl = 'https://cv.uoc.edu';
 
-function check_messages(async){
+function check_messages(async, handler){
 	var old_messages = Classes.notified_messages;
-	retrieve_classrooms(async);
+	retrieve_classrooms(async, handler);
 	var messages = Classes.notified_messages;
 	set_icon(messages);
 
@@ -37,7 +37,7 @@ function set_icon(messages){
 	}
 }
 
-function retrieve_classrooms(async){
+function retrieve_classrooms(async, handler){
 	var session = get_session();
 	if(session){
 		var args = {
@@ -61,7 +61,7 @@ function retrieve_classrooms(async){
 						Classes.add(classroom);
 					}
 				}
-				retrieve_more_info_classrooms();
+				retrieve_more_info_classrooms(handler);
 				Classes.save();
 			} else {
 				reset_session();
@@ -177,7 +177,7 @@ function retrieve_news(){
 	}
 }
 
-function retrieve_more_info_classrooms(){
+function retrieve_more_info_classrooms(handler){
 	var session = get_session();
 	if(session){
 		var args = {
@@ -211,6 +211,9 @@ function retrieve_more_info_classrooms(){
 		$.get(root_url + '/app/guaita/assignatures?'+uri_data(args), function(resp) {
 			$(resp).find('#sidebar .block').each(function() {
 				parse_classroom_more_info(this);
+				if (handler) {
+					handler();
+				}
 			});
 		});
 	}
@@ -238,7 +241,7 @@ function parse_classroom_more_info(html){
 	}
 }
 
-function retrieve_session(){
+function retrieve_session(handler){
 	var user_save = get_user();
 	if(user_save.username && user_save.password){
 		$.ajaxSetup({async:true});
@@ -275,6 +278,9 @@ function retrieve_session(){
 						save_session(ses);
 					}
 					retrieve_news();
+					if (handler) {
+						handler();
+					}
 				}
 	    });
 	}
