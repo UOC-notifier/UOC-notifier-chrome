@@ -339,7 +339,7 @@ function uri_data(map){
 function get_real_url(url){
 	if(url.indexOf('/') == 0){
 		return root_url + url;
-	} else if(url.indexOf('http://') == -1 || url.indexOf('https://') == -1){
+	} else if(url.indexOf('http://') == -1 && url.indexOf('https://') == -1){
 		return root_url + '/' + url;
 	}
 	return url;
