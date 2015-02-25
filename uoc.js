@@ -29,12 +29,7 @@ function set_icon(messages){
 	} else {
 		chrome.browserAction.setBadgeText({text:""});
 	}
-
-	if( messages >= get_critical()){
-		chrome.browserAction.setIcon({path:"logomsg.png"});
-	}else{
-		chrome.browserAction.setIcon({path:"logo.png"});
-	}
+	//chrome.browserAction.setIcon({path:"logo.png"});
 }
 
 function retrieve_classrooms(async, handler){
@@ -47,6 +42,7 @@ function retrieve_classrooms(async, handler){
 		}
 		console.log(session);
 		$.ajaxSetup({async:async});
+		// Get some JS to parse
 		$.get(root_url + '/UOC2000/b/cgi-bin/hola?'+uri_data(args), function(resp) {
 			var index = resp.indexOf("aulas = ");
 			if (index != -1) {
@@ -134,6 +130,7 @@ function retrieve_picture_tutoria(classroom){
 			hp_theme:'false'
 		}
 		$.ajaxSetup({async:false});
+		// Get the tutoria aula just to get the photo...
 		$.get(root_url + '/webapps/widgetsUOC/widgetsDominisServlet?'+uri_data(args), function(resp) {
 			var picture = $(resp).find('.foto').attr('src');
 			classroom.set_picture(picture);
@@ -166,12 +163,9 @@ function retrieve_news(){
 		}
 		$.ajaxSetup({async:true});
 		$.get(root_url + '/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet?'+uri_data(args), function(resp) {
-			console.log($(resp));
 			var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
 			if (news != undefined) {
-				save_news(news);
-			} else {
-				save_news(resp);
+				$('#detail_news').html(news);
 			}
 		});
 	}
@@ -185,6 +179,7 @@ function retrieve_more_info_classrooms(handler){
 			domainPontCode : 'sem_pont'
 		}
 		$.ajaxSetup({async:false});
+		// Old aulas page to get the picture
 		$.get(root_url + '/webapps/classroom/081_common/jsp/aules_estudiant.jsp?'+uri_data(args), function(resp) {
 			var classrooms = Classes.get_all();
 			var resp = $(resp);
@@ -203,12 +198,13 @@ function retrieve_more_info_classrooms(handler){
 			}
 		}, "html");
 
-		// I don't know if this is good for something...
+		// Get the new aulas
 		var args = {
 			s : session,
-			perfil : 'estudiant'
+			perfil : 'estudiant',
+			setLng : 'ca'
 		}
-		$.get(root_url + '/app/guaita/assignatures?'+uri_data(args), function(resp) {
+		$.get(root_url_ssl + '/app/guaita/assignatures?'+uri_data(args), function(resp) {
 			$(resp).find('#sidebar .block').each(function() {
 				parse_classroom_more_info(this);
 				if (handler) {
@@ -219,27 +215,56 @@ function retrieve_more_info_classrooms(handler){
 	}
 }
 function parse_classroom_more_info(html){
-	var domainid = get_url_attr($(html).find('.LaunchesOWin').attr('href'),'domainId');
+	var domainid = get_url_attr($(html).find('.LaunchesOWin').attr('href'),'classroomId');
 	if(domainid){
 		var classroom = Classes.search_domain(domainid);
 		if(classroom){
 			classroom.set_color($(html).find('.block-color').attr('data-color'));
-			$(html).find('.block-content .list>li').each(function(){
-				var label = $(this).find('.lbl');
-				var title = label.html();
-				var code  = label.attr('data-bocamoll-object-resourceid');
-				var resource = new Resource(title, code);
-				var link = label.attr('href');
-				resource.set_link(link);
+			$(html).find("a[data-bocamoll-object-resourceid]").each(function() {
+	        	var element = $(this);
 
-				var res_messages = $(this).find('.new').html();
-				var all_messages = $(this).find('.all').html();
-				resource.set_messages(res_messages, all_messages);
-				classroom.add_resource(resource);
+				var title = element.html();
+				var code  = element.attr('data-bocamoll-object-resourceid');
+				var resource = new Resource(title, code);
+				var link = element.attr('href');
+				resource.set_link(link);
+				retrieve_resource(classroom, resource, element);
+
 			});
 		}
 	}
 }
+
+
+function retrieve_resource(classroom, resource, element){
+    var subjectid = $(element).data('bocamoll-subject-id');
+    var classroomid= $(element).data('bocamoll-classroom-id');
+    var resourceid = $(element).data('bocamoll-object-resourceid');
+    var session = get_session();
+    // Get some info from the API! YAY!
+    $.ajax({
+        url: root_url+'/webapps/aulaca/classroom/LoadResource.action?sectionId=-1&pageSize=0&pageCount=0'
+                + '&s=' + session
+                + '&classroomId=' + classroomid
+                + '&subjectId=' + subjectid
+                + '&resourceId=' + resourceid,
+
+        success: function(data) {
+            var num_msg_pendents = Math.max(data.resource.newItems, 0);
+            var num_msg_totals = data.resource.totalItems;
+
+			resource.set_messages(num_msg_pendents, num_msg_totals);
+			classroom.add_resource(resource);
+        },
+        error: function(data) {
+        	resource.set_messages(0, 0);
+        	classroom.add_resource(resource);
+        }
+
+    });
+}
+
+
 
 function retrieve_session(handler){
 	var user_save = get_user();
@@ -266,7 +291,6 @@ function retrieve_session(handler){
 				}),
 	            processData: false,
 	            success: function(resp) {
-	            	console.log(resp);
 	                var iSs = resp.indexOf("?s=");
 					if( iSs != -1 ){
 						var	iSf = resp.indexOf("\";", iSs);
@@ -277,7 +301,6 @@ function retrieve_session(handler){
 						ses = resp.substring(iSs + 3, iSf);
 						save_session(ses);
 					}
-					retrieve_news();
 					if (handler) {
 						handler();
 					}

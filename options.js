@@ -60,7 +60,7 @@ function save_options(){
 	var notitication = $("#notification").is(':checked');
 	save_notification(notitication);
 
-	populate_classrooms();
+	//populate_classrooms();
 	reset_session(after_save_options);
 	setup_alarm();
 
@@ -75,7 +75,7 @@ function after_save_options() {
 function after_check_messages() {
 	$(".alert").hide();
 	populate_classrooms();
-	refresh_alarm();
+	refresh_alarm(false);
 }
 
 function purge_classrooms(){

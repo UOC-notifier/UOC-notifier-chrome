@@ -19,7 +19,7 @@ function buildUI_tools(){
     urls.push({url: '.MATPREMATRICULA/inici', title: 'Prop. Matric'});
     urls.push({url: '.MATMATRICULA/inici', title: 'Matrícula'});
     urls.push({url: '.NOTAS_SMS', title: 'Notas por SMS'});
-            
+
     var text = '<div class="container-fluid resources">';
     var par = -1;
     var link;
@@ -31,6 +31,10 @@ function buildUI_tools(){
     // New expedient
 	link = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
 	text += get_general_link(link, 'Expediente', par);
+	par = -par;
+
+	link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont&s='
+	text += get_general_link(link, 'Agenda', par);
 	par = -par;
 
     text += '</div>';
@@ -73,18 +77,28 @@ function buildUI_classroom(classroom){
 }
 
 function buildUI_news(){
-	return get_news();
+	if($('#detail_news').html() == "") {
+		/*session = get_session();
+		if(!session) return "";
+
+		var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js';
+		var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsGetURLNovetatsExternesWithProviderServlet??up_isNoticiesInstitucionals=false&up_title=Novetats%2520i%2520noticies&up_maximized=true&up_maxDestacades=2&up_showImages=true&up_slide=false&up_sortable=true&up_ck=nee&up_rssUrlServiceProviderHTML=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant_widget_nou.js&up_maxAltres=5&up_rssUrlServiceProvider=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js&up_fxml=html&up_target=noticies.jsp&libs='+libs+'&fromCampus=true&lang=ca&country=ES&color=&userType=UOC-ESTUDIANT-gr06-a&hp_theme=false&s='+session;
+		var text = '<iframe src="'+src+'"></iframe>';*/
+		var text = retrieve_news();
+	}
 }
 
 function buildUI_agenda(){
-	session = get_session();
-	if(!session) return "";
+	if($('#detail_agenda iframe').length == 0) {
+		session = get_session();
+		if(!session) return "";
 
-	var api = 'http%253A%252F%252Fcv.uoc.edu%252Fwebapps%252FAgenda%252FAgendaServlet%253Foperacion%253Dical';
-	var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944745.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height';
-	var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsIcalServlet?up_items=7&up_icalUrlServiceAPI='+api+'&up_targetMonth=agMonthlyView.jsp&up_target=agDailyView.jsp&libs='+libs+'&s='+session;
-	var text = '<iframe src="'+src+'"></iframe>';
-	return text;
+		var api = 'http%253A%252F%252Fcv.uoc.edu%252Fwebapps%252FAgenda%252FAgendaServlet%253Foperacion%253Dical';
+		var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944745.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height';
+		var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsIcalServlet?up_items=7&up_icalUrlServiceAPI='+api+'&up_targetMonth=agMonthlyView.jsp&up_target=agDailyView.jsp&libs='+libs+'&s='+session;
+		var text = '<iframe src="'+src+'"></iframe>';
+		$('#detail_agenda').html(text);
+	}
 }
 
 function buildUI_picture(classroom){
@@ -128,7 +142,7 @@ function buildUI_badge(messages, classes, allmessages){
 		  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details">' + allmessages + '</button></div> \
 				</div>';
 	} else {
-		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' button_details btn-group-justified">' + messages + '</button>';
+		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' button_details btn-group-justified">'+messages+'</button>';
 	}
 }
 
@@ -216,11 +230,8 @@ function buildUI(){
 	var tools_html = buildUI_tools();
 	$('#detail_campus').html(tools_html);
 
-	var news_html = buildUI_news();
-	$('#detail_news').html(news_html);
-
-	var agenda_html = buildUI_agenda();
-	$('#detail_agenda').html(agenda_html);
+	$('#button_news').click(buildUI_news);
+	$('#button_agenda').click(buildUI_agenda);
 
 	setTimeout( handleEvents, 100);
 
@@ -244,11 +255,21 @@ function buildUI(){
 }
 
 $(document).ready(function(){
-	session = get_session();
-	if(!session){
-		$("#classrooms").html("Waiting to log in...");
+	var user_save = get_user();
+	if(user_save.username && user_save.password){
+		session = get_session();
+		if(!session){
+			$("#classrooms").html("Waiting to log in...");
+			chrome.tabs.create({ url: "options.html" });
+			return;
+		}
+		buildUI();
 		return;
+	} else {
+		chrome.tabs.create({ url: "options.html" });
 	}
-	buildUI();
-	return;
 });
+
+
+// Disable alerts
+window.alert = function ( text ) { console.log( 'ALERT: ' + text ); return true; };

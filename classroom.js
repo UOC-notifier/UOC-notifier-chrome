@@ -235,11 +235,17 @@ function Resource(title, code){
 		if (!isNaN(messages) &&  messages >= 0) {
 			this.messages = messages;
 		}
+		if (this.all_messages == 0) {
+			this.messages = '-';
+			this.all_messages = '-';
+			return 0;
+		}
 
 		if(!isNaN(this.messages) && isNaN(this.all_messages)){
 			this.messages = 0;
 			this.all_messages = 0;
 		}
+
 
 		if(this.messages == '-') {
 			return 0;

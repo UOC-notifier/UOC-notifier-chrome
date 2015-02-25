@@ -19,16 +19,6 @@ function save_interval(minutes){
 	localStorage.setItem("check_interval", minutes);
 }
 
-function get_news(){
-	var news = localStorage.getItem("news") || "";
-	return news;
-}
-
-function save_news(news){
-	localStorage.setItem("news", news);
-}
-
-
 function get_notification(){
 	var notify = localStorage.getItem("notification");
 	if(notify == "undefined") return true;
