@@ -204,7 +204,7 @@ function retrieve_more_info_classrooms(handler){
 			perfil : 'estudiant',
 			setLng : 'ca'
 		}
-		$.get(root_url_ssl + '/app/guaita/assignatures?'+uri_data(args), function(resp) {
+		$.get(root_url + '/app/guaita/assignatures?'+uri_data(args), function(resp) {
 			$(resp).find('#sidebar .block').each(function() {
 				parse_classroom_more_info(this);
 				if (handler) {
