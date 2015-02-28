@@ -160,13 +160,14 @@ function show_total_messages(){
 }
 
 function handleEvents(){
-
-	$('.linkCampus').on('click',function(){
+	$('.linkCampus').unbind( "click" );
+	$('.linkCampus').click(function(){
 		var url = root_url + '/cgi-bin/uocapp';
 		open_tab(url);
 	});
 
-	$('.linkAula').on('click',function(){
+	$('.linkAula').unbind( "click" );
+	$('.linkAula').click(function(){
 		var classroom_code = $(this).parents('.classroom').attr('classroom');
 		var classroom = Classes.search_code(classroom_code);
 
@@ -175,7 +176,8 @@ function handleEvents(){
 		open_tab(url, data);
 	});
 
-	$('.linkNotas').on('click',function(){
+	$('.linkNotas').unbind( "click" );
+	$('.linkNotas').click(function(){
 		var classroom_code = $(this).parents('.classroom').attr('classroom');
 		var classroom = Classes.search_code(classroom_code);
 
@@ -184,7 +186,8 @@ function handleEvents(){
 		open_tab(url, data);
 	});
 
-	$('.linkResource').on('click',function(){
+	$('.linkResource').unbind( "click" );
+	$('.linkResource').click(function(){
 		var resource_link = $(this).parents('.resource').attr('link');
 		if(resource_link && resource_link != 'undefined'){
 			var url = resource_link;
@@ -246,7 +249,7 @@ function buildUI(){
 	}
 
 	$('.details').collapse({toggle: false});
-	$('.button_details').on('click', function () {
+	$('.button_details').click( function () {
 		var val = this.value;
 		$('.button_details:not(#button_'+val+')').removeClass('active');
 		if ( $(this).hasClass('active') ){
