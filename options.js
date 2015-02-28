@@ -62,7 +62,6 @@ function save_options(){
 
 	//populate_classrooms();
 	reset_session(after_save_options);
-	setup_alarm();
 
 	$("#status").text("Opciones guardadas. Espera a que se actualizen las aulas...");
 	$(".alert").show();
@@ -75,7 +74,6 @@ function after_save_options() {
 function after_check_messages() {
 	$(".alert").hide();
 	populate_classrooms();
-	refresh_alarm(false);
 }
 
 function purge_classrooms(){

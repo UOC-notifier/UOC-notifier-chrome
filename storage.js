@@ -17,6 +17,7 @@ function get_interval(){
 
 function save_interval(minutes){
 	localStorage.setItem("check_interval", minutes);
+	reset_alarm();
 }
 
 function get_notification(){
@@ -36,11 +37,6 @@ function get_critical(){
 
 function save_critical(messages){
 	localStorage.setItem("critical", messages);
-}
-
-function setup_alarm(alarm) {
-	var delay = get_interval();
-	chrome.alarms.create('refresh', {periodInMinutes: delay});
 }
 
 function reset_session(handler){
