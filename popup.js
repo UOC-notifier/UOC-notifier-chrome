@@ -64,7 +64,7 @@ function buildUI_classroom(classroom){
 					<div class="row">	\
 						<div class="col-xs-2">' + buildUI_picture(classroom) + '</div> \
 						<div class="col-xs-7">' + classroom.title + '</div> \
-						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula') + '</div> \
+						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', 'Ir al aula') + '</div> \
 					</div> \
 				</div> \
 				<div class="panel-body bg-info text-info collapse" id="detail_'+classroom.code+'">  \
@@ -130,19 +130,19 @@ function buildUI_resource(resource, classroom_code){
 	}
 	return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
 				<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
-				<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages) + '</div> \
+				<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages, 'Ir al recurso') + '</div> \
 			</li>';
 }
 
-function buildUI_badge(messages, classes, allmessages){
+function buildUI_badge(messages, classes, allmessages, title){
 	var badge = get_badge(messages);
 	if (!isNaN(allmessages)) {
 		return '<div class="btn-group btn-group-justified btn-group-xs ' + classes + '" role="group"> \
-					<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details">' + messages + '</button></div> \
-		  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details">' + allmessages + '</button></div> \
+					<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details" title="'+title+'">' + messages + '</button></div> \
+		  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details" title="'+title+'">' + allmessages + '</button></div> \
 				</div>';
 	} else {
-		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' button_details btn-group-justified">'+messages+'</button>';
+		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' button_details btn-group-justified" title="'+title+'">'+messages+'</button>';
 	}
 }
 
@@ -155,7 +155,7 @@ function get_badge(messages){
 }
 
 function show_total_messages(){
-	$('#total_messages').addClass(get_badge(Classes.notified_messages))
+	$('#total_messages_button').addClass(get_badge(Classes.notified_messages))
 	$('#total_messages').html(""+Classes.notified_messages)
 }
 
@@ -234,6 +234,11 @@ function buildUI(){
 	$('#button_agenda').click(buildUI_agenda);
 
 	setTimeout( handleEvents, 100);
+
+	$('.update').click( function() {
+		check_messages(false, buildUI);
+	});
+
 
 	if( !visibles ){
 		$('#classrooms').html("<div class='alert'><h4>Atención</h4>No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar</div>")

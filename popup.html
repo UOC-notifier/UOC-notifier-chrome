@@ -59,6 +59,12 @@ body {
 	padding: 0;
 	background-color: white;
 }
+.logo {
+	background-color: #FFF;
+	padding: 3px 4px 4px 3px;
+	margin-right: 3px;
+	border-radius: 3px;
+}
 </style>
 </head>
 <body>
@@ -66,22 +72,26 @@ body {
 		<div class="container-fluid panel-heading">
 			<div class="row">
 				<div class="col-xs-3">
-					<button type="button" class="btn btn-sm btn-default linkCampus" aria-label="Campus"><img src="logo128.png" width="16px"></button></div>
+						<button type="button" class="btn btn-primary linkCampus btn-sm" id="total_messages_button" title="Ir al campus" style="padding: 5px;">
+							<span class="logo"><img src="logo128.png" width="16px" height="16px"/></span>
+							<span id="total_messages">-</span>
+						</button>
+				</div>
 				<div class="col-xs-6">
 					<div class="btn-group btn-group-sm" role="group">
-						<button type="button" class="btn btn-danger button_details" id="button_news" value="news" aria-label="News" data-toggle="button" aria-pressed="false">
+						<button type="button" class="btn btn-danger button_details" id="button_news" value="news" aria-label="Noticias" title="Noticias" data-toggle="button" aria-pressed="false">
 					    	<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
 					  	</button>
-					  	<button type="button" class="btn btn-primary button_details"  id="button_agenda" value="agenda" aria-label="Agenda" data-toggle="button" aria-pressed="false">
+					  	<button type="button" class="btn btn-primary button_details"  id="button_agenda" value="agenda" aria-label="Agenda" title="Agenda" data-toggle="button" aria-pressed="false">
 					    	<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
 					  	</button>
-					  	<button type="button" class="btn btn-warning button_details"  id="button_campus" value="campus" aria-label="Campus" data-toggle="button" aria-pressed="false">
+					  	<button type="button" class="btn btn-warning button_details"  id="button_campus" value="campus" aria-label="Enlaces del Campus" title="Enlaces del campus" data-toggle="button" aria-pressed="false">
 					    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 					  	</button>
 					</div>
 				</div>
 				<div class="col-xs-3">
-					<button type="button" class="btn btn-primary linkCampus btn-group-justified btn-xs" id="total_messages" style="margin-top: 5px;">-</button>
+					<button type="button" class="btn btn-default btn-xs btn-group-justified update"  title="Actualizar" style="padding: 5px;"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
 				</div>
 			</div>
 		</div>
