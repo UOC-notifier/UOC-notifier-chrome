@@ -152,6 +152,23 @@ function Classroom(title, code, domain, type, template){
 		}
 	};
 
+	this.get_subject_code = function(){
+		if(this.type != 'TUTORIA'){
+			var temp = code.split("_");
+			return temp[1]+'.'+temp[2];
+			this.classcode = parseInt(temp[3]);
+		}
+		return false;
+	}
+
+	this.get_class_code = function(){
+		if(this.type != 'TUTORIA'){
+			var temp = code.split("_");
+			return parseInt(temp[3]);
+		}
+		return false;
+	}
+
 	this.set_picture = function(picture){
 		if(picture && picture != 'undefined' && picture != 'false'){
 			this.picture = picture;

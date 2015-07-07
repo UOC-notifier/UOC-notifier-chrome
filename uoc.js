@@ -1,5 +1,23 @@
 var root_url = 'http://cv.uoc.edu';
 var root_url_ssl = 'https://cv.uoc.edu';
+var anyAcad = calc_any();
+
+function calc_any() {
+	var d = new Date();
+	var year = d.getFullYear();
+	var month = d.getMonth();
+
+	if (month <= 7) {
+		// Previous year
+		year--;
+	}
+
+	if (month >= 2 && month <= 7) {
+		// March to August
+		return year+"2";
+	}
+	return year+"1";
+}
 
 function check_messages(async, handler){
 	var old_messages = Classes.notified_messages;
@@ -74,7 +92,7 @@ function parse_classroom(classr){
 			case 'AULA':
 				var classroom = Classes.search_domainassig(classr.domainfatherid);
 				if (classroom) {
-					classroom.title = title;
+					//classroom.title = title;
 					classroom.code = classr.code;
 					classroom.domain = classr.domainid;
 					classroom.domainassig = classr.domainfatherid;
@@ -84,6 +102,7 @@ function parse_classroom(classr){
 				break;
 			case 'ASSIGNATURA':
 				var classroom = Classes.search_domainassig(classr.domainid);
+				classroom.title = title;
 				break;
 		}
 
@@ -106,8 +125,8 @@ function parse_classroom(classr){
 				}
 			}
 		}
-
-		if (classroom.notify && classroom.type == 'TUTORIA' && !classroom.picture ){
+		var show_pictures = get_show_pictures();
+		if (show_pictures && classroom.notify && classroom.type == 'TUTORIA' && !classroom.picture ){
 			retrieve_picture_tutoria(classroom);
 		}
 		return classroom;
@@ -174,29 +193,32 @@ function retrieve_news(){
 function retrieve_more_info_classrooms(handler){
 	var session = get_session();
 	if(session){
-		var args = {
-			s : session,
-			domainPontCode : 'sem_pont'
-		}
-		$.ajaxSetup({async:false});
-		// Old aulas page to get the picture
-		$.get(root_url + '/webapps/classroom/081_common/jsp/aules_estudiant.jsp?'+uri_data(args), function(resp) {
-			var classrooms = Classes.get_all();
-			var resp = $(resp);
-			for(i in classrooms){
-				var classroom = classrooms[i];
-				if(!classroom.picture){
-					var classroom_html = resp.find('#cap'+classroom.domain);
-					if(classroom_html){
-						var picture = classroom_html.find('img.fotoconsultor').attr('src');
-						if(picture){
-							picture= root_url +picture;
-							classroom.set_picture(picture);
+		var show_pictures = get_show_pictures();
+		if (show_pictures) {
+			var args = {
+				s : session,
+				domainPontCode : 'sem_pont'
+			}
+			$.ajaxSetup({async:false});
+			// Old aulas page to get the picture
+			$.get(root_url + '/webapps/classroom/081_common/jsp/aules_estudiant.jsp?'+uri_data(args), function(resp) {
+				var classrooms = Classes.get_all();
+				var resp = $(resp);
+				for(i in classrooms){
+					var classroom = classrooms[i];
+					if(!classroom.picture){
+						var classroom_html = resp.find('#cap'+classroom.domain);
+						if(classroom_html){
+							var picture = classroom_html.find('img.fotoconsultor').attr('src');
+							if(picture){
+								picture= root_url +picture;
+								classroom.set_picture(picture);
+							}
 						}
 					}
 				}
-			}
-		}, "html");
+			}, "html");
+		}
 
 		// Get the new aulas
 		var args = {

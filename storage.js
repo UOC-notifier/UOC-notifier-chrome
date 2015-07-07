@@ -30,6 +30,17 @@ function save_notification(notify){
 	localStorage.setItem("notification", notify);
 }
 
+function get_show_pictures(){
+	var show_pictures = localStorage.getItem("pictures");
+	if(show_pictures == "undefined") return true;
+	return show_pictures == "true";
+}
+
+function save_show_pictures(show_pictures){
+	localStorage.setItem("pictures", show_pictures);
+}
+
+
 function get_critical(){
 	var critical = localStorage.getItem("critical") || 10;
 	return parseInt(critical);

@@ -34,7 +34,11 @@ function buildUI_tools(){
 	par = -par;
 
 	link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont&s='
-	text += get_general_link(link, 'Agenda', par);
+	text += get_general_link(link, 'Agenda antigua', par);
+	par = -par;
+
+	link = root_url + '/app/guaita/calendari?perfil=estudiant&s='
+	text += get_general_link(link, 'Agenda nueva', par);
 	par = -par;
 
     text += '</div>';
@@ -59,11 +63,22 @@ function buildUI_classroom(classroom){
 	for(var j in classroom.resources){
 		resources_html += buildUI_resource(classroom.resources[j], classroom.code);
 	}
-	return '<div class="classroom panel panel-warning" classroom="'+classroom.code+'">  \
+	var show_pictures = get_show_pictures();
+	var width = 9;
+	var content = '<div class="classroom panel panel-warning" classroom="'+classroom.code+'">  \
 				<div class="panel-heading container-fluid" '+buildUI_color(classroom)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+classroom.code+'">	\
-					<div class="row">	\
-						<div class="col-xs-2">' + buildUI_picture(classroom) + '</div> \
-						<div class="col-xs-7">' + classroom.title + '</div> \
+					<div class="row">';
+	if (show_pictures) {
+		content += '<div class="col-xs-2">' + buildUI_picture(classroom) + '</div>';
+		width = 7;
+	}
+
+	var title = classroom.title;
+	var classcode = classroom.get_class_code();
+	if (classcode) {
+		title += ' ('+classroom.get_class_code()+')';
+	}
+	content += '<div class="col-xs-'+width+'">' + title + '</div> \
 						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', 'Ir al aula') + '</div> \
 					</div> \
 				</div> \
@@ -74,6 +89,7 @@ function buildUI_classroom(classroom){
 						</ul> \
 				</div> \
 			</div>';
+	return content;
 }
 
 function buildUI_news(){
@@ -102,7 +118,8 @@ function buildUI_agenda(){
 }
 
 function buildUI_picture(classroom){
-	if(classroom.picture){
+	var show_pictures = get_show_pictures();
+	if(show_pictures && classroom.picture){
 		return '<img class="foto img-rounded" src="'+classroom.picture+'"/>';
 	}
 	return "";
@@ -110,7 +127,20 @@ function buildUI_picture(classroom){
 
 function buildUI_rac(classroom){
 	if(classroom.type != 'TUTORIA'){
-		return '<a href="#" class="linkNotas pull-right">Notas</a>';
+		return '<div class="btn-group btn-group-sm pull-left" role="group">\
+			<button type="button" class="linkEstads btn btn-warning" aria-label="Estadísticas" title="Estadísticas">\
+		    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>\
+		  	</button>\
+		  	<button type="button" class="linkMaterials btn btn-info" aria-label="Materiales" title="Materiales">\
+		    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
+		  	</button>\
+		  	<button type="button" class="linkDocent btn btn-primary" aria-label="Plan Docente" title="Plan Docente">\
+		    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
+		  	</button>\
+		</div>\
+		<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
+	    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Notas\
+	  	</button></div>';
 	}
 	return "";
 }
@@ -183,6 +213,42 @@ function handleEvents(){
 
 		var url = root_url + '/webapps/rac/listEstudiant.action';
 		var data = {domainId: classroom.domain};
+		open_tab(url, data);
+	});
+
+	$('.linkEstads').unbind( "click" );
+	$('.linkEstads').click(function(){
+		var classroom_code = $(this).parents('.classroom').attr('classroom');
+		var classroom = Classes.search_code(classroom_code);
+		var url = root_url + '/tren/trenacc';
+		var data = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
+					assig: classroom.get_subject_code(),
+					pAnyAcademic: anyAcad};
+		open_tab(url, data);
+	});
+
+	$('.linkDocent').unbind( "click" );
+	$('.linkDocent').click(function(){
+		var classroom_code = $(this).parents('.classroom').attr('classroom');
+		var classroom = Classes.search_code(classroom_code);
+		var url = root_url + '/webapps/classroom/download.do';
+		var data = {nav: 'pladocent',
+					domainId: classroom.domain,
+					format: 'html',
+					app: 'aulaca',
+					precarrega: false
+				};
+		open_tab(url, data);
+	});
+
+	$('.linkMaterials').unbind( "click" );
+	$('.linkMaterials').click(function(){
+		var classroom_code = $(this).parents('.classroom').attr('classroom');
+		var classroom = Classes.search_code(classroom_code);
+		var url = root_url + '/webapps/classroom/student.do';
+		var data = {nav: 'recursos-estudiant',
+					domainId: classroom.domain,
+					domainCode: classroom.code};
 		open_tab(url, data);
 	});
 

@@ -42,6 +42,7 @@ function populate_options(){
 	var interval = get_interval();
 	var critical = get_critical();
 	var notitication = get_notification();
+	var show_pictures = get_show_pictures();
 	$('#username').val(user_save.username);
 	$('#pwd').val(user_save.password);
 	$('#uni').val(uni);
@@ -49,6 +50,9 @@ function populate_options(){
 	$('#critical').val(critical);
 	if(notification){
 		$('#notification').attr('checked','checked');
+	}
+	if(show_pictures){
+		$('#pictures').attr('checked','checked');
 	}
 }
 
@@ -59,6 +63,8 @@ function save_options(){
 	save_critical($("#critical").val());
 	var notitication = $("#notification").is(':checked');
 	save_notification(notitication);
+	var show_pictures = $("#pictures").is(':checked');
+	save_show_pictures(show_pictures);
 
 	//populate_classrooms();
 	reset_session(after_save_options);
