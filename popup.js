@@ -283,7 +283,7 @@ function open_tab(url, data){
 
 function buildUI(){
 	//DEBUG
-	//check_messages(false);
+	//check_messages();
 
 	var classrooms = Classes.get_notified();
 	show_total_messages();
@@ -305,7 +305,7 @@ function buildUI(){
 	setTimeout( handleEvents, 100);
 
 	$('.update').click( function() {
-		check_messages(false, buildUI);
+		check_messages(buildUI);
 	});
 
 

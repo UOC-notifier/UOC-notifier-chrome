@@ -74,7 +74,7 @@ function save_options(){
 }
 
 function after_save_options() {
-	check_messages(true, after_check_messages);
+	check_messages(after_check_messages);
 }
 
 function after_check_messages() {

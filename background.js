@@ -14,7 +14,7 @@ function reset_alarm() {
 
 function onAlarm(alarm) {
 	if (alarm && alarm.name == 'refresh') {
-		check_messages(false);
+		check_messages();
 	}
 }
 
@@ -23,7 +23,7 @@ function onStartup(alarm){
 	if(user_save.username && user_save.password){
 		reset_session();
 		setup_alarm();
-		check_messages(false);
+		check_messages();
 	}
 }
 
@@ -32,7 +32,7 @@ function onInstall(alarm){
 	if(user_save.username && user_save.password){
 		reset_session();
 		setup_alarm();
-		check_messages(false);
+		check_messages();
 	} else {
 		chrome.tabs.create({ url: "options.html" });
 	}
