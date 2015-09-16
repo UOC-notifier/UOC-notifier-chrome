@@ -13,7 +13,7 @@
 <script src="popup.js"></script>
 <style>
 body {
-  min-width: 320px;
+  min-width: 380px;
   overflow: hidden;
   background-color: #ccc;
 }
@@ -65,6 +65,22 @@ body {
 	padding: 3px 4px 4px 3px;
 	margin-right: 3px;
 	border-radius: 3px;
+}
+
+.event.warning .name, .event.warning .end {
+	color: #a94442;
+	font-weight: bold;
+}
+
+.events td, .events th{
+	text-align: center;
+}
+.events td.name {
+	text-align: left;
+}
+.event .today {
+	font-weight: bold;
+	color: #31708f;
 }
 </style>
 </head>

@@ -59,10 +59,7 @@ function get_general_link(link, title, par){
 
 
 function buildUI_classroom(classroom){
-	var resources_html = '';
-	for(var j in classroom.resources){
-		resources_html += buildUI_resource(classroom.resources[j], classroom.code);
-	}
+
 	var show_pictures = get_show_pictures();
 	var width = 9;
 	var content = '<div class="classroom panel panel-warning" classroom="'+classroom.code+'">  \
@@ -81,16 +78,74 @@ function buildUI_classroom(classroom){
 	content += '<div class="col-xs-'+width+'">' + title + '</div> \
 						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', 'Ir al aula') + '</div> \
 					</div> \
-				</div> \
-				<div class="panel-body bg-info text-info collapse" id="detail_'+classroom.code+'">  \
-						' + buildUI_rac(classroom) + ' \
-						<ul class="container-fluid resources"> \
-							' + resources_html + ' \
-						</ul> \
-				</div> \
+				</div>'+ buildUI_classroom_resources(classroom) +' \
 			</div>';
 	return content;
 }
+
+function buildUI_classroom_resources(classroom) {
+	var resources_html = '';
+	for(var j in classroom.resources){
+		resources_html += buildUI_resource(classroom.resources[j], classroom.code);
+	}
+	return '<div class="panel-body bg-info text-info collapse" id="detail_'+classroom.code+'">  \
+				' + buildUI_rac(classroom) + ' \
+				<ul class="container-fluid resources"> \
+					' + resources_html + ' \
+				</ul> \
+				'+ buildUI_classroom_events(classroom) +' \
+		</div>';
+}
+
+function buildUI_classroom_events(classroom) {
+	if (classroom.events.length == 0) {
+		return "";
+	}
+	console.log(classroom.events);
+	var events_html = '';
+	for(var j in classroom.events){
+		events_html += buildUI_event(classroom.events[j], classroom.code);
+	}
+	return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
+			<thead><tr><th></th><th>Inicio</th><th>Fin</th><th>Qualificación</th><th>Solución</th></tr></thead>\
+			<tbody>' + events_html + ' </tbody>\
+		</table>';
+}
+
+function buildUI_event(ev, classroom_code){
+	if(ev.link != 'undefined'){
+		var link = 'link="'+ev.link+'"';
+	}
+
+	var eventstate = "";
+	var start = new Date(ev.start);
+	var end = new Date(ev.end);
+	if (today > start) {
+		if (today > end) {
+			eventstate = 'success';
+		} else {
+			eventstate = 'warning';
+		}
+	}
+	return '<tr class="event '+eventstate+'" '+link+'"> \
+				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td> \
+				'+buildUI_eventdate(ev.start, "")+buildUI_eventdate(ev.end, 'end')+buildUI_eventdate(ev.grade, "")+buildUI_eventdate(ev.solution, "")
+			+'</tr>';
+}
+
+function buildUI_eventdate(d, clas) {
+	if (d) {
+		var date = new Date(d);
+		if (date < today) {
+			clas += " text-success";
+		} else if (formatDate(d) == formatDate(today)) {
+			clas += " today";
+		}
+	}
+	return '<td><a href="#" class="linkEvent '+clas+'">'+formatDate(d)+'</a></td>';
+}
+
+
 
 function buildUI_news(){
 	if($('#detail_news').html() == "") {
@@ -254,16 +309,26 @@ function handleEvents(){
 
 	$('.linkResource').unbind( "click" );
 	$('.linkResource').click(function(){
-		var resource_link = $(this).parents('.resource').attr('link');
-		if(resource_link && resource_link != 'undefined'){
-			var url = resource_link;
+		var link = $(this).parents('.resource').attr('link');
+		if(link && link != 'undefined'){
+			var url = link;
 			var data = {};
 		} else {
-			var resource_code = $(this).parents('.resource').attr('resource');
+			var code = $(this).parents('.resource').attr('resource');
 			var url = root_url + '/cgi-bin/ma_mainMailFS';
-			var data = {l: resource_code};
+			var data = {l: code};
 		}
 		open_tab(url, data);
+	});
+
+	$('.linkEvent').unbind( "click" );
+	$('.linkEvent').click(function(){
+		var link = $(this).parents('.event').attr('link');
+		if(link && link != 'undefined'){
+			var url = link;
+			var data = {};
+			open_tab(url, data);
+		}
 	});
 }
 

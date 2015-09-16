@@ -81,7 +81,6 @@ function retrieve_classrooms(handler){
 function parse_classroom(classr){
 	if(classr.title) {
 		var title = classr.shortname ? classr.shortname : classr.title;
-
 		switch (classr.domaintypeid) {
 			case 'AULA':
 				var classroom = Classes.search_domainassig(classr.domainfatherid);
@@ -283,14 +282,14 @@ function retrieve_events() {
 			format: 'json'
 		}
 		ajax_uoc('/app/guaita/calendari', args, 'GET', function(data) {
+			console.log(data);
 			for (x in data.events) {
-				console.log(data);
 				var ev = data.events[x];
 				if(ev.activitat.domainId){
 					var classroom = Classes.search_domain(ev.activitat.domainId);
 					if(classroom){
 						var evnt = new Event(ev.activitat.name);
-						evnt.link = ev.activitat.link;
+						evnt.set_link(ev.activitat.link);
 						var dsplit = ev.data.split("-");
 						var d = new Date(dsplit[0], dsplit[1]-1, dsplit[2], 0, 0, 0, 0);
 						switch (ev.tipus) {

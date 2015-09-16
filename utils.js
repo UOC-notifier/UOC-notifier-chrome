@@ -1,3 +1,23 @@
+var today = getToday();
+
+function getToday() {
+    var q = new Date();
+    var m = q.getMonth();
+    var d = q.getDay();
+    var y = q.getFullYear();
+    return new Date(y, m, d);
+}
+function formatDate(date) {
+    if (!date) {
+        return "";
+    }
+    var d = new Date(date);
+    var month = d.getMonth()+1;
+    if (month <= 9) {
+        month = '0'+month;
+    }
+    return d.getDate() + '/' + month;
+}
 
 function get_url_attr(url, attr){
     if(url.indexOf(attr) == -1){

@@ -96,6 +96,16 @@ var Classes = new function(){
 						resource.set_link(resourcel.link);
 						classr.add_resource(resource);
 					}
+					for(j in classl.events){
+						var evl = classl.events[j];
+						var ev = new Event(evl.name);
+						ev.start = evl.start;
+						ev.end = evl.end;
+						ev.grade = evl.grade;
+						ev.solution = evl.solution;
+						ev.link = evl.link;
+						classr.add_event(ev);
+					}
 				}
 				this.add(classr);
 			}
@@ -336,4 +346,24 @@ function Event(name) {
 	this.grade = false;
 	this.solution = false;
 	this.link = "";
+
+	this.set_link = function(url){
+		if (!url) {
+			return;
+		}
+		link = decodeURIComponent(url);
+
+		session = get_url_attr(link, 's');
+		if(session){
+			link = get_url_withoutattr(link,'s');
+			link += '&s=';
+		} else {
+			session = get_url_attr(link, 'sessionId');
+			if(session){
+				link = get_url_withoutattr(link,'sessionId');
+				link += '&sessionId=';
+			}
+		}
+		this.link = link;
+	};
 }
