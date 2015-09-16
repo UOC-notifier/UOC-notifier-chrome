@@ -238,6 +238,9 @@ function retrieve_more_info_classrooms(handler){
 }
 function parse_classroom_more_info(html){
 	var domainid = get_url_attr($(html).find('.LaunchesOWin').attr('href'),'classroomId');
+	if(!domainid){
+		var domainid = get_url_attr($(html).find('.LaunchesOWin').attr('href'),'domainId');
+	}
 	if(domainid){
 		var classroom = Classes.search_domain(domainid);
 		if(classroom){
