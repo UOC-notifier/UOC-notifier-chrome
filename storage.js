@@ -3,10 +3,15 @@ function save_user(username, password){
 	localStorage.setItem("user_password",password);
 }
 
+function save_usernumber(number){
+	localStorage.setItem("user_usernumber",number);
+}
+
 function get_user(){
 	var user_save = {};
 	user_save.username = localStorage.getItem("user_username") || "";
 	user_save.password = localStorage.getItem("user_password") || "";
+	user_save.usernumber = localStorage.getItem("user_usernumber") || "";
 	return user_save;
 }
 
@@ -85,6 +90,14 @@ function purge_classroom(code){
 function get_uni(){
 	var uni = localStorage.getItem("uni") || 'UOCc';
 	return uni;
+}
+
+function get_lang() {
+	var uni =  get_uni();
+    if(uni == 'UOCi'){
+        return 'es';
+    }
+    return 'ca';
 }
 
 function save_uni(uni){

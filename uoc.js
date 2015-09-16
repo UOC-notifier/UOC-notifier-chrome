@@ -70,6 +70,7 @@ function retrieve_classrooms(handler){
 				}
 			}
 			retrieve_more_info_classrooms(handler);
+			retrieve_events();
 			Classes.save();
 		} else {
 			reset_session();
@@ -134,7 +135,7 @@ function retrieve_picture_tutoria(classroom){
 		up_target:'aula.jsp',
 		up_dCode: 'aula.code',
 		fromCampus:'true',
-		lang:'es',
+		lang: get_lang(),
 		country:'ES',
 		hp_theme:'false'
 	}
@@ -159,7 +160,7 @@ function retrieve_news(){
 		up_target : 'noticies.jsp',
 		libs : '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height',
 		fromCampus : true,
-		lang: 'ca',
+		lang: get_lang(),
 		country: 'ES',
 		color: '',
 		userType: 'UOC-ESTUDIANT-gr06-a',
@@ -197,13 +198,14 @@ function retrieve_more_info_classrooms(handler){
 					}
 				}
 			}
+			Classes.save();
 		}, "html");
 	}
 
 	// Get the new aulas
 	var args = {
 		perfil : 'estudiant',
-		setLng : 'ca'
+		setLng : get_lang()
 	}
 	ajax_uoc('/app/guaita/assignatures', args, "GET", function(resp) {
 		$(resp).find('#sidebar .block').each(function() {
@@ -212,6 +214,7 @@ function retrieve_more_info_classrooms(handler){
 				handler();
 			}
 		});
+		Classes.save();
 	});
 }
 function parse_classroom_more_info(html){
@@ -232,7 +235,6 @@ function parse_classroom_more_info(html){
 				var link = element.attr('href');
 				resource.set_link(link);
 				retrieve_resource(classroom, resource, element);
-
 			});
 		}
 	}
@@ -254,16 +256,68 @@ function retrieve_resource(classroom, resource, element){
 	ajax_uoc('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
         var num_msg_pendents = Math.max(data.resource.newItems, 0);
         var num_msg_totals = data.resource.totalItems;
+        var usernumber = data.currentUser.userNumber;
+        var user_save = get_user();
+        if (usernumber && user_save.usernumber != usernumber) {
+        	save_usernumber(usernumber);
+        }
 
 		resource.set_messages(num_msg_pendents, num_msg_totals);
 		classroom.add_resource(resource);
+		Classes.save();
     },
-     function(data) {
+    function(data) {
      	//On Error
     	resource.set_messages(0, 0);
     	classroom.add_resource(resource);
+    	Classes.save();
     });
 }
+
+function retrieve_events() {
+	var user_save = get_user();
+    if (user_save.usernumber) {
+		var args = {
+			idp: user_save.usernumber,
+			perfil: 'estudiant',
+			format: 'json'
+		}
+		ajax_uoc('/app/guaita/calendari', args, 'GET', function(data) {
+			for (x in data.events) {
+				console.log(data);
+				var ev = data.events[x];
+				if(ev.activitat.domainId){
+					var classroom = Classes.search_domain(ev.activitat.domainId);
+					if(classroom){
+						var evnt = new Event(ev.activitat.name);
+						evnt.link = ev.activitat.link;
+						var dsplit = ev.data.split("-");
+						var d = new Date(dsplit[0], dsplit[1]-1, dsplit[2], 0, 0, 0, 0);
+						switch (ev.tipus) {
+							case 'I':
+								evnt.start = d;
+								break;
+							case 'LL':
+								evnt.end = d;
+								break;
+							case 'S':
+								evnt.solution = d;
+								break;
+							case 'Q':
+								evnt.grade = d;
+								break;
+							default:
+								console.log('Not recognized event type '+ev.tipus);
+						}
+						classroom.add_event(evnt);
+					}
+				}
+			}
+			Classes.save();
+	    });
+	}
+}
+
 
 function retrieve_session(handler){
 	var user_save = get_user();

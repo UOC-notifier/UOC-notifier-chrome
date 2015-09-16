@@ -145,6 +145,7 @@ function Classroom(title, code, domain, type, template){
 	this.notify = true;
 	this.messages = 0;
 	this.resources = [];
+	this.events = [];
 
 	this.set_color = function(color){
 		if(color && color != 'undefined' && color != 'false'){
@@ -232,6 +233,34 @@ function Classroom(title, code, domain, type, template){
 			this.messages += this.resources[idx].messages;
 		}
 	};
+
+
+	this.add_event = function(ev){
+		var idx = this.get_event(ev.name);
+		if(idx >= 0){
+			this.event_merge(idx, ev);
+		} else {
+			this.events.push(ev);
+		}
+	};
+
+	this.get_event = function(name){
+		for(i in this.events){
+			if(this.events[i].name == name) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
+	this.event_merge = function(idx, ev) {
+		this.events[idx].name = ev.name;
+		if (ev.link) this.events[idx].link = ev.link;
+		if (ev.start) this.events[idx].start = ev.start;
+		if (ev.end) this.events[idx].end = ev.end;
+		if (ev.grade) this.events[idx].grade = ev.grade;
+		if (ev.solution) this.events[idx].solution = ev.solution;
+	};
 }
 
 function Resource(title, code){
@@ -298,4 +327,13 @@ function Resource(title, code){
 		}
 		this.link = link;
 	};
+}
+
+function Event(name) {
+	this.name = name;
+	this.start = false;
+	this.end = false;
+	this.grade = false;
+	this.solution = false;
+	this.link = "";
 }

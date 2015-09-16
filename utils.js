@@ -72,23 +72,21 @@ function ajax_uoc(url, data, type, handler_succ, handler_err){
     } else {
         data = uri_data(data);
     }
-    console.log(url);
 
-    $.ajaxSetup({async:true});
     $.ajax({
         type: type,
         url: url,
         data: data,
         processData: false,
-        success: function(data) {
+        success: function(resp) {
             if (handler_succ) {
-                handler_succ(data);
+                handler_succ(resp);
             }
         },
-        error: function(data) {
+        error: function(resp) {
             console.log('ERROR: Cannot fetch '+url);
             if (handler_err) {
-                handler_err(data);
+                handler_err(resp);
             }
         }
     });
@@ -96,7 +94,6 @@ function ajax_uoc(url, data, type, handler_succ, handler_err){
 
 function ajax_uoc_login(url, data, type, handler_succ){
     url = root_url + url;
-    $.ajaxSetup({async:true});
     $.ajax({
         type: type,
         beforeSend: function (request){
