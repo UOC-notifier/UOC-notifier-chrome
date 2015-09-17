@@ -283,31 +283,18 @@ function retrieve_events() {
 		}
 		ajax_uoc('/app/guaita/calendari', args, 'GET', function(data) {
 			console.log(data);
-			for (x in data.events) {
-				var ev = data.events[x];
-				if(ev.activitat.domainId){
-					var classroom = Classes.search_domain(ev.activitat.domainId);
-					if(classroom){
-						var evnt = new Event(ev.activitat.name);
-						evnt.set_link(ev.activitat.link);
-						var dsplit = ev.data.split("-");
-						var d = new Date(dsplit[0], dsplit[1]-1, dsplit[2], 0, 0, 0, 0);
-						switch (ev.tipus) {
-							case 'I':
-								evnt.start = d;
-								break;
-							case 'LL':
-								evnt.end = d;
-								break;
-							case 'S':
-								evnt.solution = d;
-								break;
-							case 'Q':
-								evnt.grade = d;
-								break;
-							default:
-								console.log('Not recognized event type '+ev.tipus);
-						}
+			for (x in data.classrooms) {
+				var c = data.classrooms[x];
+				if (c.activitats.length > 0) {
+					var classroom = Classes.search_domain(c.domainId);
+					for (y in c.activitats) {
+						var act = c.activitats[y]
+						var evnt = new Event(act.name);
+						evnt.set_link(act.link);
+						evnt.start = parseDate(act.startDateStr);
+						evnt.end = parseDate(act.deliveryDateStr);
+						evnt.solution = parseDate(act.solutionDateStr);
+						evnt.grade = parseDate(act.qualificationDateStr);
 						classroom.add_event(evnt);
 					}
 				}

@@ -7,6 +7,12 @@ function getToday() {
     var y = q.getFullYear();
     return new Date(y, m, d);
 }
+
+function parseDate(date) {
+    var dsplit = date.split("/");
+    return new Date("20"+dsplit[2], dsplit[1]-1, dsplit[0], 0, 0, 0, 0);
+}
+
 function formatDate(date) {
     if (!date) {
         return "";
