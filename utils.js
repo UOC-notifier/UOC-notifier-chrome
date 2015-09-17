@@ -3,7 +3,7 @@ var today = getToday();
 function getToday() {
     var q = new Date();
     var m = q.getMonth();
-    var d = q.getDay();
+    var d = q.getDate();
     var y = q.getFullYear();
     return new Date(y, m, d);
 }

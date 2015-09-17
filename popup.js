@@ -120,14 +120,14 @@ function buildUI_event(ev, classroom_code){
 	var eventstate = "";
 	var start = new Date(ev.start);
 	var end = new Date(ev.end);
-	if (today > start) {
+	if (today > start || formatDate(ev.start) == formatDate(today)) {
 		if (today > end) {
-			eventstate = 'success';
+			eventstate = ' success';
 		} else {
-			eventstate = 'warning';
+			eventstate = ' warning';
 		}
 	}
-	return '<tr class="event '+eventstate+'" '+link+'"> \
+	return '<tr class="event'+eventstate+'" '+link+'"> \
 				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td> \
 				'+buildUI_eventdate(ev.start, "")+buildUI_eventdate(ev.end, 'end')+buildUI_eventdate(ev.grade, "")+buildUI_eventdate(ev.solution, "")
 			+'</tr>';
