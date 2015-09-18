@@ -7,6 +7,14 @@ function set_retrieving(enabled) {
 	retrieving = enabled;
 }
 
+function get_icon(){
+	return localStorage.getItem("messages_icon") || 0;
+}
+
+function save_icon(number){
+	localStorage.setItem("messages_icon",number);
+}
+
 function save_user(username, password){
 	localStorage.setItem("user_username",username);
 	localStorage.setItem("user_password",password);

@@ -15,6 +15,7 @@ var Classes = new function(){
 
 	this.save = function(){
 		this.count_messages();
+		set_messages();
 		console.log(classes);
 		localStorage.setItem("classes", JSON.stringify(classes));
 	};

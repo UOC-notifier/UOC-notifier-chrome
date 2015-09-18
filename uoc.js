@@ -21,37 +21,7 @@ function calc_any() {
 
 function check_messages(after_check_fnc){
 	set_after_queue_function(after_check_fnc);
-	var old_messages = Classes.notified_messages;
-	retrieve_classrooms();
-	var messages = Classes.notified_messages;
-	set_icon(messages);
 
-	console.log("Check messages: Old "+old_messages+" New "+messages);
-	if(old_messages < messages){
-		var notitication = get_notification();
-		if( notitication && messages >= get_critical()){
-			notify('Tienes '+messages+' mensajes por leer');
-		}
-	}
-}
-
-function notify(str) {
-	var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo.png", body: str });
-	notification.onshow = function() {setTimeout(function(){
-		notification.close();
-	}, 3000)};
-}
-
-function set_icon(messages){
-	if( messages > 0){
-		chrome.browserAction.setBadgeText({text:""+messages});
-	} else {
-		chrome.browserAction.setBadgeText({text:""});
-	}
-	//chrome.browserAction.setIcon({path:"logo.png"});
-}
-
-function retrieve_classrooms(){
 	var args = {
 		newStartingPage:0,
 		language:"b"
@@ -75,6 +45,35 @@ function retrieve_classrooms(){
 			reset_session();
 		}
 	});
+}
+
+function set_messages() {
+	var old_messages = get_icon();
+	var messages = Classes.notified_messages;
+	save_icon(messages);
+
+	// Set icon
+	if( messages > 0){
+		chrome.browserAction.setBadgeText({text:""+messages});
+	} else {
+		chrome.browserAction.setBadgeText({text:""});
+	}
+	//chrome.browserAction.setIcon({path:"logo.png"});
+
+	console.log("Check messages: Old "+old_messages+" New "+messages);
+	if(old_messages < messages){
+		var notitication = get_notification();
+		if( notitication && messages >= get_critical()){
+			notify('Tienes '+messages+' mensajes por leer');
+		}
+	}
+}
+
+function notify(str) {
+	var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo.png", body: str });
+	notification.onshow = function() {setTimeout(function(){
+		notification.close();
+	}, 3000)};
 }
 
 function parse_classroom(classr){
