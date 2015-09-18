@@ -1,3 +1,12 @@
+var retrieving = false;
+function is_retrieving() {
+	return retrieving;
+}
+
+function set_retrieving(enabled) {
+	retrieving = enabled;
+}
+
 function save_user(username, password){
 	localStorage.setItem("user_username",username);
 	localStorage.setItem("user_password",password);
@@ -57,18 +66,20 @@ function save_critical(messages){
 
 function reset_session(handler){
 	localStorage.removeItem("session");
-	get_session(handler);
+	retrieve_session();
+	if (handler) {
+		handler();
+	}
 }
 
 function save_session(session){
 	localStorage.setItem("session",session);
 }
 
-function get_session(handler){
+function get_session() {
 	var session = localStorage.getItem("session") || false;
 	if(!session){
-		retrieve_session(handler);
-		return "";
+		return false;
 	}
 	return session;
 }

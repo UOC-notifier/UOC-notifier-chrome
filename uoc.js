@@ -25,7 +25,7 @@ function check_messages(handler){
 	var messages = Classes.notified_messages;
 	set_icon(messages);
 
-	console.log(old_messages+" "+messages);
+	console.log("Check messages: Old "+old_messages+" New "+messages);
 	if(old_messages < messages){
 		var notitication = get_notification();
 		if( notitication && messages >= get_critical()){
@@ -282,7 +282,7 @@ function retrieve_events() {
 			format: 'json'
 		}
 		ajax_uoc('/app/guaita/calendari', args, 'GET', function(data) {
-			console.log(data);
+			//console.log(data);
 			for (x in data.classrooms) {
 				var c = data.classrooms[x];
 				if (c.activitats.length > 0) {
@@ -305,33 +305,39 @@ function retrieve_events() {
 }
 
 
-function retrieve_session(handler){
+function retrieve_session(url, data, type, handler_succ, handler_err){
 	var user_save = get_user();
-	if(user_save.username && user_save.password){
-		var data = {
-			l:user_save.username,
-			p:user_save.password,
-			appid:"WUOC",
-			nil:"XXXXXX",
-			lb:"a",
-			url:root_url,
-			x:"13",
-			y:"2"
-		};
-		ajax_uoc_login("/cgi-bin/uoc", data, "POST", function(resp) {
-			var iSs = resp.indexOf("?s=");
-			if( iSs != -1 ){
-				var	iSf = resp.indexOf("\";", iSs);
-				var	iSf2 = resp.indexOf("&", iSs);
-				if (iSf2 < iSf && iSf2 > 0) {
-					iSf = iSf2;
+	if(user_save.username && user_save.password) {
+		enqueue_petition(url, data, type, handler_succ, handler_err);
+		if (!is_retrieving()) {
+			set_retrieving(true);
+			console.log('Retrieving session...');
+			var data = {
+				l:user_save.username,
+				p:user_save.password,
+				appid:"WUOC",
+				nil:"XXXXXX",
+				lb:"a",
+				url:root_url,
+				x:"13",
+				y:"2"
+			};
+			ajax_uoc_login("/cgi-bin/uoc", data, "POST", function(resp) {
+				var iSs = resp.indexOf("?s=");
+				if( iSs != -1 ){
+					var	iSf = resp.indexOf("\";", iSs);
+					var	iSf2 = resp.indexOf("&", iSs);
+					if (iSf2 < iSf && iSf2 > 0) {
+						iSf = iSf2;
+					}
+					ses = resp.substring(iSs + 3, iSf);
+					save_session(ses);
+					console.log('Session! '+ses);
+					run_petitions();
+				} else {
+					console.error('ERROR: Cannot fetch session');
 				}
-				ses = resp.substring(iSs + 3, iSf);
-				save_session(ses);
-			}
-			if (handler) {
-				handler();
-			}
-		});
+			});
+		}
 	}
 }

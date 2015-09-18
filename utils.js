@@ -84,13 +84,11 @@ function get_real_url(url){
     return url;
 }
 
-function ajax_uoc(url, data, type, handler_succ, handler_err){
-    data.s = get_session();
-    if(!data) data = {};
-    if (!data.s) {
-        handler_err(false);
-        return;
+function ajax_do(session, url, data, type, handler_succ, handler_err){
+    if(!data) {
+        data = {};
     }
+    data.s = session;
     url = root_url + url;
     if (type == 'GET') {
         url += '?'+uri_data(data);
@@ -110,11 +108,14 @@ function ajax_uoc(url, data, type, handler_succ, handler_err){
             }
         },
         error: function(resp) {
-            console.log('ERROR: Cannot fetch '+url);
+            console.error('ERROR: Cannot fetch '+url);
             if (handler_err) {
                 handler_err(resp);
             }
-        }
+        },
+        complete: function(resp) {
+            run_petitions();
+        },
     });
 }
 
@@ -131,10 +132,45 @@ function ajax_uoc_login(url, data, type, handler_succ){
         url: url,
         data: uri_data(data),
         processData: false,
-        success: function(resp) {
-            if (handler_succ) {
-                handler_succ(resp);
-            }
-        }
+        success: handler_succ,
+        error: function(resp) {
+            console.error('ERROR: Cannot fetch '+url);
+        },
+        complete: function(resp) {
+            set_retrieving(false);
+        },
     });
+}
+
+function ajax_uoc(url, data, type, handler_succ, handler_err){
+    var session = get_session();
+    if (session) {
+        ajax_do(session, url, data, type, handler_succ, handler_err);
+    } else {
+        retrieve_session(url, data, type, handler_succ, handler_err);
+    }
+
+}
+
+var queue = Array();
+function enqueue_petition(url, data, type, handler_succ, handler_err) {
+    if (url) {
+        var pet = {
+            url: url,
+            data: data,
+            type: type,
+            success: handler_succ,
+            error: handler_err
+        };
+        queue.push(pet);
+        console.log('Queued ' + url);
+    }
+}
+
+function run_petitions() {
+    if (queue.length > 0) {
+        var pet = queue.pop();
+        console.log('Run ' + pet.url);
+        ajax_uoc(pet.url, pet.data, pet.type, pet.success, pet.error);
+    }
 }

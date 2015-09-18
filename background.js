@@ -20,7 +20,7 @@ function onAlarm(alarm) {
 
 function onStartup(alarm){
 	var user_save = get_user();
-	if(user_save.username && user_save.password){
+	if (user_save.username && user_save.password) {
 		reset_session();
 		setup_alarm();
 		check_messages();
@@ -29,7 +29,7 @@ function onStartup(alarm){
 
 function onInstall(alarm){
 	var user_save = get_user();
-	if(user_save.username && user_save.password){
+	if (user_save.username && user_save.password) {
 		reset_session();
 		setup_alarm();
 		check_messages();

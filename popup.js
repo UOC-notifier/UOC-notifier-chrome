@@ -398,13 +398,14 @@ $(document).ready(function(){
 	if(user_save.username && user_save.password){
 		session = get_session();
 		if(!session){
-			$("#classrooms").html("Waiting to log in...");
+			$("#classrooms").html("Esperando a entrar, recarga!");
 			chrome.tabs.create({ url: "options.html" });
 			return;
 		}
 		buildUI();
 		return;
 	} else {
+		$("#classrooms").html("No hay usuari y password...");
 		chrome.tabs.create({ url: "options.html" });
 	}
 });
