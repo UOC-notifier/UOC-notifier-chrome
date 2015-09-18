@@ -118,31 +118,9 @@ function parse_classroom(classr){
 				}
 			}
 		}
-		var show_pictures = get_show_pictures();
-		if (show_pictures && classroom.notify && classroom.type == 'TUTORIA' && !classroom.picture ){
-			retrieve_picture_tutoria(classroom);
-		}
 		return classroom;
 	}
 	return false;
-}
-
-function retrieve_picture_tutoria(classroom){
-	var args = {
-		param : 'dCode%3D'+classroom.code,
-		up_xmlUrlServiceAPI : 'http%253A%252F%252Fcv.uoc.edu%252Fwebapps%252Fclassroom%252Fservlet%252FGroupServlet%253FdtId%253DDOMAIN',
-		up_target:'aula.jsp',
-		up_dCode: 'aula.code',
-		fromCampus:'true',
-		lang: get_lang(),
-		country:'ES',
-		hp_theme:'false'
-	}
-	// Get the tutoria aula just to get the photo...
-	ajax_uoc('/webapps/widgetsUOC/widgetsDominisServlet', args, 'GET', function(resp) {
-		var picture = $(resp).find('.foto').attr('src');
-		classroom.set_picture(picture);
-	});
 }
 
 function retrieve_news(){
@@ -175,32 +153,6 @@ function retrieve_news(){
 }
 
 function retrieve_more_info_classrooms(handler){
-	var show_pictures = get_show_pictures();
-	if (show_pictures) {
-		var args = {
-			domainPontCode : 'sem_pont'
-		}
-		// Old aulas page to get the picture
-		ajax_uoc('/webapps/classroom/081_common/jsp/aules_estudiant.jsp', args, 'GET', function(resp) {
-			var classrooms = Classes.get_all();
-			var resp = $(resp);
-			for(i in classrooms){
-				var classroom = classrooms[i];
-				if(!classroom.picture){
-					var classroom_html = resp.find('#cap'+classroom.domain);
-					if(classroom_html){
-						var picture = classroom_html.find('img.fotoconsultor').attr('src');
-						if(picture){
-							picture= root_url +picture;
-							classroom.set_picture(picture);
-						}
-					}
-				}
-			}
-			Classes.save();
-		}, "html");
-	}
-
 	// Get the new aulas
 	var args = {
 		perfil : 'estudiant',

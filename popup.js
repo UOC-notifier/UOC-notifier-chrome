@@ -59,23 +59,16 @@ function get_general_link(link, title, par){
 
 
 function buildUI_classroom(classroom){
-
-	var show_pictures = get_show_pictures();
-	var width = 9;
 	var content = '<div class="classroom panel panel-warning" classroom="'+classroom.code+'">  \
 				<div class="panel-heading container-fluid" '+buildUI_color(classroom)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+classroom.code+'">	\
 					<div class="row">';
-	if (show_pictures) {
-		content += '<div class="col-xs-2">' + buildUI_picture(classroom) + '</div>';
-		width = 7;
-	}
 
 	var title = classroom.title;
 	var classcode = classroom.get_class_code();
 	if (classcode) {
 		title += ' ('+classroom.get_class_code()+')';
 	}
-	content += '<div class="col-xs-'+width+'">' + title + '</div> \
+	content += '<div class="col-xs-9">' + title + '</div> \
 						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', 'Ir al aula') + '</div> \
 					</div> \
 				</div>'+ buildUI_classroom_resources(classroom) +' \
@@ -101,7 +94,6 @@ function buildUI_classroom_events(classroom) {
 	if (classroom.events.length == 0) {
 		return "";
 	}
-	console.log(classroom.events);
 	var events_html = '';
 	for(var j in classroom.events){
 		events_html += buildUI_event(classroom.events[j], classroom.code);
@@ -170,14 +162,6 @@ function buildUI_agenda(){
 		var text = '<iframe src="'+src+'"></iframe>';
 		$('#detail_agenda').html(text);
 	}
-}
-
-function buildUI_picture(classroom){
-	var show_pictures = get_show_pictures();
-	if(show_pictures && classroom.picture){
-		return '<img class="foto img-rounded" src="'+classroom.picture+'"/>';
-	}
-	return "";
 }
 
 function buildUI_rac(classroom){
