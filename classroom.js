@@ -87,7 +87,6 @@ var Classes = new function(){
 				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type, classl.template);
 				classr.domainassig = classl.domainassig;
 				classr.set_color(classl.color);
-				classr.set_picture(classl.picture);
 				classr.set_notify(classl.notify);
 				if(classl.notify) {
 					for(j in classl.resources){
@@ -152,7 +151,6 @@ function Classroom(title, code, domain, type, template){
 	this.type = type;
 	this.template = template;
 	this.color = false;
-	this.picture = false;
 	this.notify = true;
 	this.messages = 0;
 	this.resources = [];
@@ -180,12 +178,6 @@ function Classroom(title, code, domain, type, template){
 		}
 		return false;
 	}
-
-	this.set_picture = function(picture){
-		if(picture && picture != 'undefined' && picture != 'false'){
-			this.picture = picture;
-		}
-	};
 
 	this.set_notify = function(notify){
 		this.notify = notify;
