@@ -280,6 +280,8 @@ function retrieve_session() {
 					run_petitions();
 				} else {
 					console.error('ERROR: Cannot fetch session');
+					$("#status").text("El usuario/password no es correcto");
+					$(".alert").show();
 				}
 			});
 		}

@@ -382,8 +382,8 @@ $(document).ready(function(){
 	if(user_save.username && user_save.password){
 		session = get_session();
 		if(!session){
-			$("#classrooms").html("Esperando a entrar, recarga!");
-			chrome.tabs.create({ url: "options.html" });
+			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">Esperando a entrar... Si el mensaje no desaparece puede que el usuari y password sean incorrectos.</div></div>');
+			check_messages(buildUI);
 			return;
 		}
 		buildUI();
