@@ -143,16 +143,18 @@ function ajax_uoc_login(url, data, type, handler_succ){
 }
 
 function ajax_uoc(url, data, type, handler_succ, handler_err){
+    enqueue_petition(url, data, type, handler_succ, handler_err);
     var session = get_session();
     if (session) {
-        ajax_do(session, url, data, type, handler_succ, handler_err);
+        run_petitions();
     } else {
-        retrieve_session(url, data, type, handler_succ, handler_err);
+        retrieve_session();
     }
 
 }
 
 var queue = Array();
+var after_queue_function = false;
 function enqueue_petition(url, data, type, handler_succ, handler_err) {
     if (url) {
         var pet = {
@@ -167,10 +169,24 @@ function enqueue_petition(url, data, type, handler_succ, handler_err) {
     }
 }
 
+function set_after_queue_function(fnc){
+    after_queue_function = fnc;
+}
+
 function run_petitions() {
-    if (queue.length > 0) {
-        var pet = queue.pop();
-        console.log('Run ' + pet.url);
-        ajax_uoc(pet.url, pet.data, pet.type, pet.success, pet.error);
+    var session = get_session();
+    if (session) {
+        if (queue.length > 0) {
+            var pet = queue.shift();
+            console.log('Run ' + pet.url);
+            ajax_do(session, pet.url, pet.data, pet.type, pet.success, pet.error);
+        } else {
+            Classes.save();
+            if (after_queue_function) {
+                after_queue_function();
+            }
+        }
+    } else {
+        retrieve_session();
     }
 }

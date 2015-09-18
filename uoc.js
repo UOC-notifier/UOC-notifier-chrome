@@ -19,9 +19,10 @@ function calc_any() {
 	return year+"1";
 }
 
-function check_messages(handler){
+function check_messages(after_check_fnc){
+	set_after_queue_function(after_check_fnc);
 	var old_messages = Classes.notified_messages;
-	retrieve_classrooms(handler);
+	retrieve_classrooms();
 	var messages = Classes.notified_messages;
 	set_icon(messages);
 
@@ -50,7 +51,7 @@ function set_icon(messages){
 	//chrome.browserAction.setIcon({path:"logo.png"});
 }
 
-function retrieve_classrooms(handler){
+function retrieve_classrooms(){
 	var args = {
 		newStartingPage:0,
 		language:"b"
@@ -69,9 +70,7 @@ function retrieve_classrooms(handler){
 					Classes.add(classroom);
 				}
 			}
-			retrieve_more_info_classrooms(handler);
-			retrieve_events();
-			Classes.save();
+			retrieve_more_info_classrooms();
 		} else {
 			reset_session();
 		}
@@ -152,20 +151,17 @@ function retrieve_news(){
 	});
 }
 
-function retrieve_more_info_classrooms(handler){
+function retrieve_more_info_classrooms(){
 	// Get the new aulas
 	var args = {
 		perfil : 'estudiant',
 		setLng : get_lang()
 	}
-	ajax_uoc('/app/guaita/assignatures', args, "GET", function(resp) {
+	enqueue_petition('/app/guaita/assignatures', args, "GET", function(resp) {
 		$(resp).find('#sidebar .block').each(function() {
 			parse_classroom_more_info(this);
-			if (handler) {
-				handler();
-			}
 		});
-		Classes.save();
+		retrieve_events();
 	});
 }
 function parse_classroom_more_info(html){
@@ -204,7 +200,7 @@ function retrieve_resource(classroom, resource, element){
 		subjectId: subjectid,
 		resourceId: resourceid
 	};
-	ajax_uoc('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
+	enqueue_petition('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
         var num_msg_pendents = Math.max(data.resource.newItems, 0);
         var num_msg_totals = data.resource.totalItems;
         var usernumber = data.currentUser.userNumber;
@@ -215,13 +211,11 @@ function retrieve_resource(classroom, resource, element){
 
 		resource.set_messages(num_msg_pendents, num_msg_totals);
 		classroom.add_resource(resource);
-		Classes.save();
     },
     function(data) {
      	//On Error
     	resource.set_messages(0, 0);
     	classroom.add_resource(resource);
-    	Classes.save();
     });
 }
 
@@ -233,7 +227,7 @@ function retrieve_events() {
 			perfil: 'estudiant',
 			format: 'json'
 		}
-		ajax_uoc('/app/guaita/calendari', args, 'GET', function(data) {
+		enqueue_petition('/app/guaita/calendari', args, 'GET', function(data) {
 			//console.log(data);
 			for (x in data.classrooms) {
 				var c = data.classrooms[x];
@@ -251,16 +245,14 @@ function retrieve_events() {
 					}
 				}
 			}
-			Classes.save();
 	    });
 	}
 }
 
 
-function retrieve_session(url, data, type, handler_succ, handler_err){
+function retrieve_session() {
 	var user_save = get_user();
 	if(user_save.username && user_save.password) {
-		enqueue_petition(url, data, type, handler_succ, handler_err);
 		if (!is_retrieving()) {
 			set_retrieving(true);
 			console.log('Retrieving session...');
