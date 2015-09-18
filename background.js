@@ -23,7 +23,7 @@ function onStartup(alarm){
 	if (user_save.username && user_save.password) {
 		reset_session();
 		setup_alarm();
-		check_messages();
+		check_messages(show_PAC_notifications);
 	}
 }
 

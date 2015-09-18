@@ -69,6 +69,24 @@ function set_messages() {
 	}
 }
 
+function show_PAC_notifications() {
+	var text = "";
+	var classrooms = Classes.get_notified();
+	for(var i in classrooms) {
+		for(var x in classrooms[i].events) {
+			var ev = classrooms[i].events[x];
+			var start = new Date(ev.start);
+			var end = new Date(ev.end);
+			if (formatDate(ev.end) == formatDate(today)) {
+				text += "Hoy acaba la "+ev.name+" de "+classrooms[i].title+"\n";
+			} else if (formatDate(ev.start) == formatDate(today)) {
+				text += "Hoy empieza la "+ev.name+" de "+classrooms[i].title+"\n";
+			}
+		}
+	}
+	notify(text);
+}
+
 function notify(str) {
 	var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo.png", body: str });
 	notification.onshow = function() {setTimeout(function(){
