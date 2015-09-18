@@ -339,24 +339,4 @@ function Event(name) {
 	this.grade = false;
 	this.solution = false;
 	this.link = "";
-
-	this.set_link = function(url){
-		if (!url) {
-			return;
-		}
-		link = decodeURIComponent(url);
-
-		session = get_url_attr(link, 's');
-		if(session){
-			link = get_url_withoutattr(link,'s');
-			link += '&s=';
-		} else {
-			session = get_url_attr(link, 'sessionId');
-			if(session){
-				link = get_url_withoutattr(link,'sessionId');
-				link += '&sessionId=';
-			}
-		}
-		this.link = link;
-	};
 }

@@ -245,15 +245,36 @@ function retrieve_events() {
 			format: 'json'
 		}
 		enqueue_petition('/app/guaita/calendari', args, 'GET', function(data) {
-			//console.log(data);
+			//console.log(data.classrooms);
 			for (x in data.classrooms) {
 				var c = data.classrooms[x];
 				if (c.activitats.length > 0) {
 					var classroom = Classes.search_domain(c.domainId);
 					for (y in c.activitats) {
-						var act = c.activitats[y]
+						var act = c.activitats[y];
 						var evnt = new Event(act.name);
-						evnt.set_link(act.link);
+
+						var args = {};
+						if (c.presentation == "AULACA") {
+							var urlbase = '/webapps/aulaca/classroom/Classroom.action';
+							args.classroomId = act.classroomId;
+							args.subjectId = act.subjectId;
+							args.activityId = act.eventId;
+							args.javascriptDisabled = false;
+						} else {
+							var urlbase = '/webapps/classroom/081_common/jsp/eventFS.jsp';
+							args.domainId = act.domainId;
+							var aux = c.domainCode.split('_');
+							args.domainTemplate = 'uoc_'+aux[0]+'_'+c.codi;
+							args.idLang = 'a';
+							args.eventsId = act.eventId;
+							args.opId = 'view';
+							args.userTypeId = 'ESTUDIANT';
+							args.canCreateEvent = false;
+						}
+
+						evnt.link = root_url + urlbase+'?'+uri_data(args)+'&s=';
+						console.log(evnt.link);
 						evnt.start = parseDate(act.startDateStr);
 						evnt.end = parseDate(act.deliveryDateStr);
 						evnt.solution = parseDate(act.solutionDateStr);
