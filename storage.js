@@ -38,6 +38,10 @@ function get_interval(){
 }
 
 function save_interval(minutes){
+	// Do not allow < 5 intervals to not saturate
+	if (minutes < 5 && minutes != 0) {
+		minutes = 5;
+	}
 	localStorage.setItem("check_interval", minutes);
 	reset_alarm();
 }
@@ -58,6 +62,10 @@ function get_critical(){
 }
 
 function save_critical(messages){
+	// Do not allow < 0 messages
+	if (messages < 0) {
+		minutes = 0;
+	}
 	localStorage.setItem("critical", messages);
 }
 

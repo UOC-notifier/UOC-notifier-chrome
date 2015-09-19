@@ -126,7 +126,7 @@ function ajax_do(session, url, data, type, handler_succ, handler_err){
             }
         },
         complete: function(resp) {
-            run_petitions();
+            run_requests();
         },
     });
 }
@@ -155,10 +155,10 @@ function ajax_uoc_login(url, data, type, handler_succ){
 }
 
 function ajax_uoc(url, data, type, handler_succ, handler_err){
-    enqueue_petition(url, data, type, handler_succ, handler_err);
+    enqueue_request(url, data, type, handler_succ, handler_err);
     var session = get_session();
     if (session) {
-        run_petitions();
+        run_requests();
     } else {
         retrieve_session();
     }
@@ -167,7 +167,7 @@ function ajax_uoc(url, data, type, handler_succ, handler_err){
 
 var queue = Array();
 var after_queue_function = false;
-function enqueue_petition(url, data, type, handler_succ, handler_err) {
+function enqueue_request(url, data, type, handler_succ, handler_err) {
     if (url) {
         var pet = {
             url: url,
@@ -185,7 +185,7 @@ function set_after_queue_function(fnc){
     after_queue_function = fnc;
 }
 
-function run_petitions() {
+function run_requests() {
     var session = get_session();
     if (session) {
         if (queue.length > 0) {

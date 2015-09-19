@@ -174,7 +174,8 @@ function retrieve_more_info_classrooms(){
 		perfil : 'estudiant',
 		setLng : get_lang()
 	}
-	enqueue_petition('/app/guaita/assignatures', args, "GET", function(resp) {
+	enqueue_request('/app/guaita/assignatures', args, "GET", function(resp) {
+		resp = resp.replace(/<img/gi, '<noload');
 		$(resp).find('#sidebar .block').each(function() {
 			parse_classroom_more_info(this);
 		});
@@ -217,7 +218,7 @@ function retrieve_resource(classroom, resource, element){
 		subjectId: subjectid,
 		resourceId: resourceid
 	};
-	enqueue_petition('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
+	enqueue_request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
         var num_msg_pendents = Math.max(data.resource.newItems, 0);
         var num_msg_totals = data.resource.totalItems;
         var usernumber = data.currentUser.userNumber;
@@ -244,7 +245,7 @@ function retrieve_events() {
 			perfil: 'estudiant',
 			format: 'json'
 		}
-		enqueue_petition('/app/guaita/calendari', args, 'GET', function(data) {
+		enqueue_request('/app/guaita/calendari', args, 'GET', function(data) {
 			//console.log(data.classrooms);
 			for (x in data.classrooms) {
 				var c = data.classrooms[x];
@@ -274,13 +275,40 @@ function retrieve_events() {
 						}
 
 						evnt.link = root_url + urlbase+'?'+uri_data(args)+'&s=';
-						console.log(evnt.link);
 						evnt.start = parseDate(act.startDateStr);
 						evnt.end = parseDate(act.deliveryDateStr);
 						evnt.solution = parseDate(act.solutionDateStr);
-						evnt.grade = parseDate(act.qualificationDateStr);
+						evnt.grading = parseDate(act.qualificationDateStr);
 						classroom.add_event(evnt);
 					}
+				}
+			}
+			var classrooms = Classes.get_notified();
+			for(var i in classrooms) {
+				if (classrooms[i].events.length > 0) {
+					var classroom = Classes.search_domain(classrooms[i].domain);
+					var args = {
+						domainId: classrooms[i].domain
+					}
+					enqueue_request('/webapps/rac/listEstudiant.action', args, 'GET', function(data) {
+						data = data.replace(/<img/gi, '<noload');
+						data = $(data).filter('.TablaNotas');
+						$(data).find('.Nota').each(function() {
+							var nota = $(this).text().trim();
+							if (nota.length > 0 && nota != '-') {
+								var name = $(this).siblings('.PacEstudiant').text().trim();
+								for(var x in classroom.events) {
+									var s = name.search(classroom.events[x].name);
+									if (s > 0 && s < 6) {
+										var evnt = new Event(classroom.events[x].name);
+										evnt.grade = nota;
+										classroom.add_event(evnt);
+										break;
+									}
+								}
+							}
+						});
+					});
 				}
 			}
 	    });
@@ -315,7 +343,7 @@ function retrieve_session() {
 					ses = resp.substring(iSs + 3, iSf);
 					save_session(ses);
 					console.log('Session! '+ses);
-					run_petitions();
+					run_requests();
 				} else {
 					console.error('ERROR: Cannot fetch session');
 					$("#status").text("El usuario/password no es correcto");

@@ -14,7 +14,8 @@
 <style>
 body {
   min-width: 380px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: #ccc;
 }
 .panel{
@@ -23,18 +24,13 @@ body {
 }
 
 #classrooms{
-	max-height: 600px;
+	/*max-height: 600px;*/
 	overflow-x: hidden;
 	overflow-y: auto;
 }
 
 .loading{
 	font-size:large;
-}
-.foto {
-    height: 39px;
-    width: 25px;
-    margin-right: 10px;
 }
 .resources{
 	clear: both;
@@ -79,6 +75,10 @@ body {
 	text-align: left;
 }
 .event .today {
+	font-weight: bold;
+	color: #31708f;
+}
+.event .graded {
 	font-weight: bold;
 	color: #31708f;
 }

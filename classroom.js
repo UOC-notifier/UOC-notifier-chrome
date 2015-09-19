@@ -101,9 +101,11 @@ var Classes = new function(){
 						var ev = new Event(evl.name);
 						ev.start = evl.start;
 						ev.end = evl.end;
-						ev.grade = evl.grade;
+						ev.grading = evl.grading;
 						ev.solution = evl.solution;
 						ev.link = evl.link;
+						ev.grade = evl.grade;
+						ev.committed = evl.committed;
 						classr.add_event(ev);
 					}
 				}
@@ -261,8 +263,13 @@ function Classroom(title, code, domain, type, template){
 		if (ev.link) this.events[idx].link = ev.link;
 		if (ev.start) this.events[idx].start = ev.start;
 		if (ev.end) this.events[idx].end = ev.end;
-		if (ev.grade) this.events[idx].grade = ev.grade;
+		if (ev.grading) this.events[idx].grading = ev.grading;
 		if (ev.solution) this.events[idx].solution = ev.solution;
+		if (ev.grade) this.events[idx].grade = ev.grade;
+		if (ev.committed) this.events[idx].committed = ev.committed;
+		if (this.events[idx].grade == this.events[idx].grading) {
+			this.events[idx].grade = false;
+		}
 	};
 }
 
@@ -336,7 +343,9 @@ function Event(name) {
 	this.name = name;
 	this.start = false;
 	this.end = false;
-	this.grade = false;
+	this.grading = false;
 	this.solution = false;
+	this.grade = false;
+	this.committed = false;
 	this.link = "";
 }

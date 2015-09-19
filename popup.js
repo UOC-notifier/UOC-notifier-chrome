@@ -119,24 +119,33 @@ function buildUI_event(ev, classroom_code){
 			eventstate = ' warning';
 		}
 	}
+	var dstart = buildUI_eventdate(ev.start, "");
+	var dend = buildUI_eventdate(ev.end, "end");
+	var dgrade = ev.grade != false ? buildUI_eventtext(ev.grade, "graded"): buildUI_eventdate(ev.grading, "");
+	var dsol = buildUI_eventdate(ev.solution, "");
 	return '<tr class="event'+eventstate+'" '+link+'"> \
 				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td> \
-				'+buildUI_eventdate(ev.start, "")+buildUI_eventdate(ev.end, 'end')+buildUI_eventdate(ev.grade, "")+buildUI_eventdate(ev.solution, "")
-			+'</tr>';
+				'+dstart+dend+dgrade+dsol+'</tr>';
 }
 
 function buildUI_eventdate(d, clas) {
+	var fdate = "-";
 	if (d) {
+		fdate = formatDate(d);
 		var date = new Date(d);
 		if (date < today) {
 			clas += " text-success";
+			fdate = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
 		} else if (formatDate(d) == formatDate(today)) {
 			clas += " today";
 		}
 	}
-	return '<td><a href="#" class="linkEvent '+clas+'">'+formatDate(d)+'</a></td>';
+	return buildUI_eventtext(fdate, clas);
 }
 
+function buildUI_eventtext(text, clas) {
+	return '<td><a href="#" class="linkEvent '+clas+'">'+text+'</a></td>';
+}
 
 
 function buildUI_news(){
