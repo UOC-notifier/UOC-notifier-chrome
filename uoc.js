@@ -77,9 +77,9 @@ function show_PAC_notifications() {
 			var ev = classrooms[i].events[x];
 			var start = new Date(ev.start);
 			var end = new Date(ev.end);
-			if (formatDate(ev.end) == formatDate(today)) {
+			if (isToday(ev.end)) {
 				text += "Hoy acaba la "+ev.name+" de "+classrooms[i].title+"\n";
-			} else if (formatDate(ev.start) == formatDate(today)) {
+			} else if (isToday(ev.start)) {
 				text += "Hoy empieza la "+ev.name+" de "+classrooms[i].title+"\n";
 			}
 		}
@@ -275,10 +275,10 @@ function retrieve_events() {
 						}
 
 						evnt.link = root_url + urlbase+'?'+uri_data(args)+'&s=';
-						evnt.start = parseDate(act.startDateStr);
-						evnt.end = parseDate(act.deliveryDateStr);
-						evnt.solution = parseDate(act.solutionDateStr);
-						evnt.grading = parseDate(act.qualificationDateStr);
+						evnt.start = act.startDateStr;
+						evnt.end = act.deliveryDateStr;
+						evnt.solution = act.solutionDateStr;
+						evnt.grading = act.qualificationDateStr;
 						classroom.add_event(evnt);
 					}
 				}
@@ -293,6 +293,19 @@ function retrieve_events() {
 					enqueue_request('/webapps/rac/listEstudiant.action', args, 'GET', function(data) {
 						data = data.replace(/<img/gi, '<noload');
 						data = $(data).filter('.TablaNotas');
+						$(data).find("td a[href*='viewPrac']").each(function() {
+							var name = $(this).parent('td').siblings('.PacEstudiant').text().trim();
+							for(var x in classroom.events) {
+								var s = name.search(classroom.events[x].name);
+								if (s > 0 && s < 6) {
+									var evnt = new Event(classroom.events[x].name);
+									console.log(classroom.events[x].name);
+									evnt.committed = true;
+									classroom.add_event(evnt);
+									break;
+								}
+							}
+						});
 						$(data).find('.Nota').each(function() {
 							var nota = $(this).text().trim();
 							if (nota.length > 0 && nota != '-') {

@@ -110,17 +110,23 @@ function buildUI_event(ev, classroom_code){
 	}
 
 	var eventstate = "";
-	var start = new Date(ev.start);
-	var end = new Date(ev.end);
-	if (today > start || formatDate(ev.start) == formatDate(today)) {
-		if (today > end) {
+	if (isBeforeToday(ev.start) || isToday(ev.start)) {
+		if (isBeforeToday(ev.end)) {
+			console.log(ev.start, ev.end)
 			eventstate = ' success';
 		} else {
 			eventstate = ' warning';
 		}
 	}
 	var dstart = buildUI_eventdate(ev.start, "");
-	var dend = buildUI_eventdate(ev.end, "end");
+
+	if (ev.committed && (!isBeforeToday(ev.end))) {
+		var dend = buildUI_eventdate(ev.end, "end", '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="Entregado"></span>');
+	} else if (!ev.committed && isBeforeToday(ev.end)) {
+		var dend = buildUI_eventtext('<span class="glyphicon glyphicon-remove" aria-hidden="true" title="Entregado"></span>', "text-danger");
+	} else {
+		var dend = buildUI_eventdate(ev.end, "end");
+	}
 	var dgrade = ev.grade != false ? buildUI_eventtext(ev.grade, "graded"): buildUI_eventdate(ev.grading, "");
 	var dsol = buildUI_eventdate(ev.solution, "");
 	return '<tr class="event'+eventstate+'" '+link+'"> \
@@ -128,23 +134,27 @@ function buildUI_event(ev, classroom_code){
 				'+dstart+dend+dgrade+dsol+'</tr>';
 }
 
-function buildUI_eventdate(d, clas) {
-	var fdate = "-";
+function buildUI_eventdate(d, clas, append) {
 	if (d) {
-		fdate = formatDate(d);
-		var date = new Date(d);
-		if (date < today) {
+		dsplit = d.split('/');
+		fdate = dsplit[0]+'/'+dsplit[1];
+		if (isBeforeToday(d)) {
 			clas += " text-success";
-			fdate = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
-		} else if (formatDate(d) == formatDate(today)) {
+			fdate = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+fdate+'"></span>';
+		} else if (isToday(d)) {
 			clas += " today";
 		}
+	} else {
+		fdate = '-';
 	}
-	return buildUI_eventtext(fdate, clas);
+	return buildUI_eventtext(fdate, clas, append);
 }
 
-function buildUI_eventtext(text, clas) {
-	return '<td><a href="#" class="linkEvent '+clas+'">'+text+'</a></td>';
+function buildUI_eventtext(text, clas, append) {
+	if (!append) {
+		append = "";
+	}
+	return '<td><a href="#" class="linkEvent '+clas+'">'+text+append+'</a></td>';
 }
 
 

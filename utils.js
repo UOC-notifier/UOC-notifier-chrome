@@ -1,28 +1,25 @@
-var today = getToday();
-
-function getToday() {
+function isToday(date) {
     var q = new Date();
-    var m = q.getMonth();
+    var y = q.getFullYear() - 2000;
+    var m = q.getMonth() + 1;
     var d = q.getDate();
-    var y = q.getFullYear();
-    return new Date(y, m, d);
-}
-
-function parseDate(date) {
     var dsplit = date.split("/");
-    return new Date("20"+dsplit[2], dsplit[1]-1, dsplit[0], 0, 0, 0, 0);
+    return dsplit[0] == d && dsplit[1] == m && dsplit[2] == m;
 }
 
-function formatDate(date) {
-    if (!date) {
-        return "";
+function isBeforeToday(date) {
+    var q = new Date();
+    var y = q.getFullYear() - 2000;
+    var m = q.getMonth() + 1;
+    var d = q.getDate();
+    var dsplit = date.split("/");
+    if (dsplit[2] == y) {
+        if (dsplit[1] == m) {
+            return dsplit[0] < d;
+        }
+        return dsplit[1] < m;
     }
-    var d = new Date(date);
-    var month = d.getMonth()+1;
-    if (month <= 9) {
-        month = '0'+month;
-    }
-    return d.getDate() + '/' + month;
+    return dsplit[2] < y;
 }
 
 function get_url_attr(url, attr){
