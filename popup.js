@@ -99,7 +99,7 @@ function buildUI_classroom_events(classroom) {
 		events_html += buildUI_event(classroom.events[j], classroom.code);
 	}
 	return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
-			<thead><tr><th></th><th>Inicio</th><th>Fin</th><th>Qualificación</th><th>Solución</th></tr></thead>\
+			<thead><tr><th></th><th>Inicio</th><th>Fin</th><th>Solución</th><th>Nota</th></tr></thead>\
 			<tbody>' + events_html + ' </tbody>\
 		</table>';
 }
@@ -131,7 +131,7 @@ function buildUI_event(ev, classroom_code){
 	var dsol = buildUI_eventdate(ev.solution, "");
 	return '<tr class="event'+eventstate+'" '+link+'"> \
 				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td> \
-				'+dstart+dend+dgrade+dsol+'</tr>';
+				'+dstart+dend+dsol+dgrade+'</tr>';
 }
 
 function buildUI_eventdate(d, clas, append) {
