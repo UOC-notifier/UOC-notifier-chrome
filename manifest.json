@@ -16,6 +16,6 @@
    "name": "UOC Notifier",
    "options_page": "options.html",
    "permissions": [ "http://cv.uoc.edu/", "notifications", "alarms"],
-   "version": "1.20",
+   "version": "1.21",
    "web_accessible_resources": ["*.png"]
 }

@@ -56,7 +56,7 @@ function set_messages() {
 	if(messages > 0){
 		chrome.browserAction.setBadgeText({text:""+messages});
 		if(old_messages < messages && messages >= get_critical()){
-			notify('Tienes '+messages+' mensajes por leer');
+			notify(_('Tienes ')+messages+_(' mensajes por leer'));
 		}
 	} else {
 		chrome.browserAction.setBadgeText({text:""});
@@ -75,9 +75,9 @@ function show_PAC_notifications() {
 			var start = new Date(ev.start);
 			var end = new Date(ev.end);
 			if (isToday(ev.end)) {
-				text += "Hoy acaba la "+ev.name+" de "+classrooms[i].title+"\n";
+				text += _("Hoy acaba la ")+ev.name+_(" de ")+classrooms[i].title+"\n";
 			} else if (isToday(ev.start)) {
-				text += "Hoy empieza la "+ev.name+" de "+classrooms[i].title+"\n";
+				text += _("Hoy empieza la ")+ev.name+_(" de ")+classrooms[i].title+"\n";
 			}
 		}
 	}
@@ -298,7 +298,6 @@ function retrieve_events() {
 								var s = name.search(classroom.events[x].name);
 								if (s > 0 && s < 6) {
 									var evnt = new Event(classroom.events[x].name);
-									console.log(classroom.events[x].name);
 									evnt.committed = true;
 									classroom.add_event(evnt);
 									break;
@@ -358,7 +357,7 @@ function retrieve_session() {
 					run_requests();
 				} else {
 					console.error('ERROR: Cannot fetch session');
-					$("#status").text("El usuario/password no es correcto");
+					$("#status").text(_("El usuario/password no es correcto"));
 					$(".alert").show();
 				}
 			});

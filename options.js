@@ -63,7 +63,7 @@ function save_options(){
 	//populate_classrooms();
 	reset_session(after_save_options);
 
-	$("#status").text("Opciones guardadas. Espera a que se actualizen las aulas...");
+	$("#status").text(_("Opciones guardadas. Espera a que se actualizen las aulas..."));
 	$(".alert").show();
 }
 
