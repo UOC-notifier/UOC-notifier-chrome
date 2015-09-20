@@ -237,9 +237,10 @@ function buildUI_badge(messages, classes, allmessages, title){
 function get_badge(messages){
 	var critical = get_critical();
 	if(isNaN(messages)) return "btn-info";
-	if( messages >= critical ) return "btn-danger";
-	if( messages > 0 ) return "btn-warning";
-	return "btn-success";
+	if( messages == 0) return "btn-success";
+	if( messages >= critical) return "btn-danger";
+	return "btn-warning";
+
 }
 
 function show_total_messages(){
