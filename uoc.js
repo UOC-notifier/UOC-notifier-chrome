@@ -53,20 +53,17 @@ function set_messages() {
 	save_icon(messages);
 
 	// Set icon
-	if( messages > 0){
+	if(messages > 0){
 		chrome.browserAction.setBadgeText({text:""+messages});
+		if(old_messages < messages && messages >= get_critical()){
+			notify('Tienes '+messages+' mensajes por leer');
+		}
 	} else {
 		chrome.browserAction.setBadgeText({text:""});
 	}
 	//chrome.browserAction.setIcon({path:"logo.png"});
 
 	console.log("Check messages: Old "+old_messages+" New "+messages);
-	if(old_messages < messages){
-		var notitication = get_notification();
-		if( notitication && messages >= get_critical()){
-			notify('Tienes '+messages+' mensajes por leer');
-		}
-	}
 }
 
 function show_PAC_notifications() {
@@ -88,10 +85,12 @@ function show_PAC_notifications() {
 }
 
 function notify(str) {
-	var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo.png", body: str });
-	notification.onshow = function() {setTimeout(function(){
-		notification.close();
-	}, 3000)};
+	if (get_notification() && str.length > 0) {
+		var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo.png", body: str });
+		notification.onshow = function() {setTimeout(function(){
+			notification.close();
+		}, 3000)};
+	}
 }
 
 function parse_classroom(classr){
