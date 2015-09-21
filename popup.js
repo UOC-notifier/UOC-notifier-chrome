@@ -126,7 +126,7 @@ function buildUI_event(ev, classroom_code){
 	} else {
 		var dend = buildUI_eventdate(ev.end, "end");
 	}
-	var dgrade = ev.graded != false ? buildUI_eventtext(ev.graded, "graded"): buildUI_eventdate(ev.grading, "");
+	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded"): buildUI_eventdate(ev.grading, "");
 	var dsol = buildUI_eventdate(ev.solution, "");
 	return '<tr class="event'+eventstate+'" '+link+'"> \
 				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td> \
