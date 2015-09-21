@@ -104,7 +104,7 @@ var Classes = new function(){
 						ev.grading = evl.grading;
 						ev.solution = evl.solution;
 						ev.link = evl.link;
-						ev.grade = evl.grade;
+						ev.graded = evl.graded;
 						ev.committed = evl.committed;
 						classr.add_event(ev);
 					}
@@ -163,6 +163,16 @@ function Classroom(title, code, domain, type, template){
 			this.color = color;
 		}
 	};
+
+	this.get_acronym = function() {
+		var words = this.title.split(' ');
+    	var acronym = "";
+    	var index = 0
+    	for (var x in words) {
+            acronym += words[x].charAt(0);
+	    }
+    	return acronym.toUpperCase();
+	}
 
 	this.get_subject_code = function(){
 		if(this.type != 'TUTORIA'){
@@ -265,11 +275,8 @@ function Classroom(title, code, domain, type, template){
 		if (ev.end) this.events[idx].end = ev.end;
 		if (ev.grading) this.events[idx].grading = ev.grading;
 		if (ev.solution) this.events[idx].solution = ev.solution;
-		if (ev.grade) this.events[idx].grade = ev.grade;
+		if (ev.graded) this.events[idx].graded = ev.graded;
 		if (ev.committed) this.events[idx].committed = ev.committed;
-		if (this.events[idx].grade == this.events[idx].grading) {
-			this.events[idx].grade = false;
-		}
 	};
 }
 
@@ -345,7 +352,7 @@ function Event(name) {
 	this.end = false;
 	this.grading = false;
 	this.solution = false;
-	this.grade = false;
+	this.graded = false;
 	this.committed = false;
 	this.link = "";
 }

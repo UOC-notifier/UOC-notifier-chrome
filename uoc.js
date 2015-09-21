@@ -67,7 +67,6 @@ function set_messages() {
 }
 
 function show_PAC_notifications() {
-	var text = "";
 	var classrooms = Classes.get_notified();
 	for(var i in classrooms) {
 		for(var x in classrooms[i].events) {
@@ -75,13 +74,12 @@ function show_PAC_notifications() {
 			var start = new Date(ev.start);
 			var end = new Date(ev.end);
 			if (isToday(ev.end)) {
-				text += _("Hoy acaba la ")+ev.name+_(" de ")+classrooms[i].title+"\n";
+				notify(_("Hoy acaba la ")+ev.name+_(" de ")+classrooms[i].get_acronym());
 			} else if (isToday(ev.start)) {
-				text += _("Hoy empieza la ")+ev.name+_(" de ")+classrooms[i].title+"\n";
+				notify(_("Hoy empieza la ")+ev.name+_(" de ")+classrooms[i].get_acronym());
 			}
 		}
 	}
-	notify(text);
 }
 
 function notify(str) {
@@ -285,11 +283,11 @@ function retrieve_events() {
 			var classrooms = Classes.get_notified();
 			for(var i in classrooms) {
 				if (classrooms[i].events.length > 0) {
-					var classroom = Classes.search_domain(classrooms[i].domain);
 					var args = {
 						domainId: classrooms[i].domain
 					}
-					enqueue_request('/webapps/rac/listEstudiant.action', args, 'GET', function(data) {
+					enqueue_request('/webapps/rac/listEstudiant.action', args, 'GET', function(data, args) {
+						var classroom = Classes.search_domain(args.domainId);
 						data = data.replace(/<img/gi, '<noload');
 						data = $(data).filter('.TablaNotas');
 						$(data).find("td a[href*='viewPrac']").each(function() {
@@ -297,7 +295,7 @@ function retrieve_events() {
 							for(var x in classroom.events) {
 								var s = name.search(classroom.events[x].name);
 								if (s > 0 && s < 6) {
-									var evnt = new Event(classroom.events[x].name);
+									var evnt = classroom.events[x];
 									evnt.committed = true;
 									classroom.add_event(evnt);
 									break;
@@ -305,15 +303,18 @@ function retrieve_events() {
 							}
 						});
 						$(data).find('.Nota').each(function() {
-							var nota = $(this).text().trim();
-							if (nota.length > 0 && nota != '-') {
+							var grade = $(this).text().trim();
+							if (grade.length > 0 && grade != '-') {
 								var name = $(this).siblings('.PacEstudiant').text().trim();
 								for(var x in classroom.events) {
 									var s = name.search(classroom.events[x].name);
 									if (s > 0 && s < 6) {
-										var evnt = new Event(classroom.events[x].name);
-										evnt.grade = nota;
-										classroom.add_event(evnt);
+										var evnt = classroom.events[x];
+										if (evnt.graded != grade) {
+											evnt.graded = grade;
+											classroom.add_event(evnt);
+											notify(_("Has sacado una ")+grade+_(" en la ")+evnt.name+_(" de ") + classroom.get_acronym());
+										}
 										break;
 									}
 								}

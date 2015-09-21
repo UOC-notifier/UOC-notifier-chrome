@@ -101,30 +101,30 @@ function ajax_do(session, url, data, type, handler_succ, handler_err){
     url = root_url + url;
     if (type == 'GET') {
         url += '?'+uri_data(data);
-        data = false;
+        var args = false;
     } else {
-        data = uri_data(data);
+        var args = uri_data(data);
     }
 
     $.ajax({
         type: type,
         url: url,
-        data: data,
-        processData: false,
-        success: function(resp) {
-            if (handler_succ) {
-                handler_succ(resp);
-            }
-        },
-        error: function(resp) {
-            console.error('ERROR: Cannot fetch '+url);
-            if (handler_err) {
-                handler_err(resp);
-            }
-        },
-        complete: function(resp) {
-            run_requests();
-        },
+        data: args,
+        processData: false
+    })
+    .done(function(resp) {
+        if (handler_succ) {
+            handler_succ(resp, data);
+        }
+    })
+    .fail(function(resp) {
+        console.error('ERROR: Cannot fetch '+url);
+        if (handler_err) {
+            handler_err(resp);
+        }
+    })
+    .always(function() {
+        run_requests();
     });
 }
 
@@ -140,14 +140,14 @@ function ajax_uoc_login(url, data, type, handler_succ){
         },
         url: url,
         data: uri_data(data),
-        processData: false,
-        success: handler_succ,
-        error: function(resp) {
-            console.error('ERROR: Cannot fetch '+url);
-        },
-        complete: function(resp) {
-            set_retrieving(false);
-        },
+        processData: false
+    })
+    .done(handler_succ)
+    .fail(function() {
+        console.error('ERROR: Cannot fetch '+url);
+    })
+    .always(function() {
+        set_retrieving(false);
     });
 }
 

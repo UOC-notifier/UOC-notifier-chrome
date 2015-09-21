@@ -191,6 +191,14 @@ var strings = {
         ca: 'No hi ha aules visibles. Confirma a la configuració les aules que vols veure',
         es: 'No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar'
     },
+    'Has sacado una ' : {
+        ca: 'Has tret una ',
+        es: 'Has sacado una '
+    },
+    ' en la ' : {
+        ca: ' a la ',
+        es: ' en la '
+    },
 }
 
 var language = navigator.language || navigator.userLanguage;
