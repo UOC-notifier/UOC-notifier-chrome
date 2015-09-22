@@ -4,7 +4,7 @@ function isToday(date) {
     var m = q.getMonth() + 1;
     var d = q.getDate();
     var dsplit = date.split("/");
-    return dsplit[0] == d && dsplit[1] == m && dsplit[2] == m;
+    return dsplit[0] == d && dsplit[1] == m && dsplit[2] == y;
 }
 
 function isBeforeToday(date) {

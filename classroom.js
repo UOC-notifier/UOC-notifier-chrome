@@ -165,11 +165,17 @@ function Classroom(title, code, domain, type, template){
 	};
 
 	this.get_acronym = function() {
-		var words = this.title.split(' ');
+		var words = this.title.split(/[\s, ':\(\)]+/);
     	var acronym = "";
-    	var index = 0
+    	var nowords = new Array('de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'l', 'd');
     	for (var x in words) {
-            acronym += words[x].charAt(0);
+    		if (nowords.indexOf(words[x].toLowerCase()) < 0) {
+    			if (words[x] == words[x].toUpperCase()) {
+					acronym += words[x];
+    			} else {
+            		acronym += words[x].charAt(0);
+            	}
+            }
 	    }
     	return acronym.toUpperCase();
 	}
@@ -355,4 +361,20 @@ function Event(name) {
 	this.graded = false;
 	this.committed = false;
 	this.link = "";
+
+	this.has_started = function(){
+		return isBeforeToday(this.start) || isToday(this.start);
+	}
+
+	this.has_ended = function(){
+		return isBeforeToday(this.end);
+	}
+
+	this.starts_today = function(){
+		return isToday(this.start);
+	}
+
+	this.ends_today = function(){
+		return isToday(this.end);
+	}
 }

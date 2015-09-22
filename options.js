@@ -33,7 +33,7 @@ function populate_classroom(classroom){
 	var checked = classroom.notify ? "checked" : "";
 	return '<div class="input-group not_classroom"><span class="input-group-addon" style="background-color:#'+classroom.color+';"> \
 			<input class="notify_classroom" type="checkbox" id="'+classroom.code+'" value="'+classroom.code+'" '+checked+'> \
-			</span><label for="'+classroom.code+'" class="form-control">'+classroom.title+'</label></div>';
+			</span><label for="'+classroom.code+'" class="form-control">'+classroom.title+" - "+classroom.get_acronym() + '</label></div>';
 }
 
 function populate_options(){

@@ -71,11 +71,9 @@ function show_PAC_notifications() {
 	for(var i in classrooms) {
 		for(var x in classrooms[i].events) {
 			var ev = classrooms[i].events[x];
-			var start = new Date(ev.start);
-			var end = new Date(ev.end);
-			if (isToday(ev.end)) {
+			if (ev.ends_today()) {
 				notify(_("Hoy acaba la ")+ev.name+_(" de ")+classrooms[i].get_acronym());
-			} else if (isToday(ev.start)) {
+			} else if (ev.starts_today()) {
 				notify(_("Hoy empieza la ")+ev.name+_(" de ")+classrooms[i].get_acronym());
 			}
 		}

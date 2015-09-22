@@ -110,8 +110,8 @@ function buildUI_event(ev, classroom_code){
 	}
 
 	var eventstate = "";
-	if (isBeforeToday(ev.start) || isToday(ev.start)) {
-		if (isBeforeToday(ev.end)) {
+	if (ev.has_started()) {
+		if (ev.has_ended()) {
 			eventstate = ' success';
 		} else {
 			eventstate = ' warning';
@@ -119,9 +119,9 @@ function buildUI_event(ev, classroom_code){
 	}
 	var dstart = buildUI_eventdate(ev.start, "");
 
-	if (ev.committed && (!isBeforeToday(ev.end))) {
+	if (ev.committed && !ev.has_ended()) {
 		var dend = buildUI_eventdate(ev.end, "end", '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+_('Entregado')+'"></span>');
-	} else if (!ev.committed && isBeforeToday(ev.end)) {
+	} else if (!ev.committed && ev.has_ended()) {
 		var dend = buildUI_eventtext('<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'+_('Entregado')+'"></span>', "text-danger");
 	} else {
 		var dend = buildUI_eventdate(ev.end, "end");
@@ -129,8 +129,7 @@ function buildUI_event(ev, classroom_code){
 	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded"): buildUI_eventdate(ev.grading, "");
 	var dsol = buildUI_eventdate(ev.solution, "");
 	return '<tr class="event'+eventstate+'" '+link+'"> \
-				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td> \
-				'+dstart+dend+dsol+dgrade+'</tr>';
+				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
 }
 
 function buildUI_eventdate(d, clas, append) {
