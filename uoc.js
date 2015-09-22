@@ -82,7 +82,7 @@ function show_PAC_notifications() {
 
 function notify(str) {
 	if (get_notification() && str.length > 0) {
-		var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo.png", body: str });
+		var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo128.png", body: str });
 		notification.onshow = function() {setTimeout(function(){
 			notification.close();
 		}, 3000)};
