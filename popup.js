@@ -306,7 +306,7 @@ function handleEvents(){
 		var url = root_url + '/tren/trenacc';
 		var data = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
 					assig: classroom.get_subject_code(),
-					pAnyAcademic: calc_any()};
+					pAnyAcademic: classroom.any};
 		open_tab(url, data);
 	});
 
@@ -404,6 +404,10 @@ function buildUI(){
 
 	$('#button_news').click(buildUI_news);
 	$('#button_agenda').click(buildUI_agenda);
+	$('#button_mail').click(function() {
+		var url = root_url + '/WebMail/listMails.do';
+		open_tab(url);
+	});
 
 	setTimeout( handleEvents, 100);
 

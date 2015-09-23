@@ -8,7 +8,6 @@ function check_messages(after_check_fnc){
 		format: 'json'
 	}
 	enqueue_request('/app/guaita/calendari', args, "GET", function(data) {
-		console.log(data);
 		for (x in data.classrooms) {
 			classroom = parse_classroom(data.classrooms[x]);
 		}

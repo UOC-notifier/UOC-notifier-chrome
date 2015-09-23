@@ -167,8 +167,12 @@ var strings = {
         ca: 'Consultor/a',
         es: 'Consultor/a'
     },
+    'Correo' : {
+        ca: 'Correu',
+        es: 'Correo'
+    },
     'Visto por última vez' : {
-        ca: 'Vist de darrer cop',
+        ca: 'Vist per darrer cop',
         es: 'Visto por última vez'
     },
     'a las' : {

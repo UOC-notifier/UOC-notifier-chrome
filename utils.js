@@ -25,23 +25,6 @@ function isBeforeToday(date) {
     return dsplit[2] < y;
 }
 
-function calc_any() {
-    var d = new Date();
-    var year = d.getFullYear();
-    var month = d.getMonth();
-
-    if (month <= 7) {
-        // Previous year
-        year--;
-    }
-
-    if (month >= 2 && month <= 7) {
-        // March to August
-        return year+"2";
-    }
-    return year+"1";
-}
-
 function get_url_attr(url, attr){
     if(url.indexOf(attr) == -1){
         return false;
