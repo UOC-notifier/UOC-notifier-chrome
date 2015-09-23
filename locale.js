@@ -37,10 +37,6 @@ var strings = {
         ca : 'Notifica aules',
         es : 'Notificar aulas'
     },
-    'Eliminar aulas antiguas' : {
-        ca : 'Elimina les aules antigues',
-        es : 'Eliminar aulas antiguas'
-    },
     'minutos' : {
         ca: 'minuts',
         es: 'minutos'
@@ -166,6 +162,18 @@ var strings = {
     ' de ' : {
         ca: ' de ',
         es: ' de '
+    },
+    'Consultor/a' : {
+        ca: 'Consultor/a',
+        es: 'Consultor/a'
+    },
+    'Visto por última vez' : {
+        ca: 'Vist de darrer cop',
+        es: 'Visto por última vez'
+    },
+    'a las' : {
+        ca: 'a les',
+        es: 'a las'
     },
     'El usuario/password no es correcto' : {
         ca: 'L\'usuari/contrasenya no és correcte',

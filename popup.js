@@ -64,9 +64,8 @@ function buildUI_classroom(classroom){
 					<div class="row">';
 
 	var title = classroom.title;
-	var classcode = classroom.get_class_code();
-	if (classcode) {
-		title += ' ('+classroom.get_class_code()+')';
+	if (classroom.aula) {
+		title += ' ('+classroom.aula+')';
 	}
 	content += '<div class="col-xs-9">' + title + '</div> \
 						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', _('Ir al aula')) + '</div> \
@@ -159,46 +158,73 @@ function buildUI_eventtext(text, clas, append) {
 function buildUI_news(){
 	if($('#detail_news').html() == "") {
 		/*session = get_session();
-		if(!session) return "";
+		if(!session) {
+			return false;
+		}
 
 		var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js';
 		var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsGetURLNovetatsExternesWithProviderServlet??up_isNoticiesInstitucionals=false&up_title=Novetats%2520i%2520noticies&up_maximized=true&up_maxDestacades=2&up_showImages=true&up_slide=false&up_sortable=true&up_ck=nee&up_rssUrlServiceProviderHTML=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant_widget_nou.js&up_maxAltres=5&up_rssUrlServiceProvider=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js&up_fxml=html&up_target=noticies.jsp&libs='+libs+'&fromCampus=true&lang=ca&country=ES&color=&userType=UOC-ESTUDIANT-gr06-a&hp_theme=false&s='+session;
-		var text = '<iframe src="'+src+'"></iframe>';*/
-		var text = retrieve_news();
+		$('#detail_news').html('<iframe src="'+src+'"></iframe>');*/
+		retrieve_news();
 	}
 }
 
 function buildUI_agenda(){
 	if($('#detail_agenda iframe').length == 0) {
 		session = get_session();
-		if(!session) return "";
+		if(!session) {
+			return;
+		}
 
 		var api = 'http%253A%252F%252Fcv.uoc.edu%252Fwebapps%252FAgenda%252FAgendaServlet%253Foperacion%253Dical';
 		var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944745.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height';
 		var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsIcalServlet?up_items=7&up_icalUrlServiceAPI='+api+'&up_targetMonth=agMonthlyView.jsp&up_target=agDailyView.jsp&libs='+libs+'&s='+session;
-		var text = '<iframe src="'+src+'"></iframe>';
-		$('#detail_agenda').html(text);
+		$('#detail_agenda').html('<iframe src="'+src+'"></iframe>');
 	}
 }
 
 function buildUI_rac(classroom){
+	var buttons = "";
+	var text = "";
 	if(classroom.type != 'TUTORIA'){
-		return '<div class="btn-group btn-group-sm pull-left" role="group">\
-			<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('Estadísticas')+'" title="'+_('Entregado')+'">\
-		    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>\
-		  	</button>\
-		  	<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('Materiales')+'" title="'+_('Materiales')+'">\
-		    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
-		  	</button>\
-		  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('Plan Docente')+'" title="'+_('Plan Docente')+'">\
-		    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
-		  	</button>\
-		</div>\
-		<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
-	    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('Notas') +'\
-	  	</button></div>';
+		buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('Estadísticas')+'" title="'+_('Estadísticas')+'">\
+	    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>\
+	  	</button>\
+	  	<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('Materiales')+'" title="'+_('Materiales')+'">\
+	    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
+	  	</button>\
+	  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('Plan Docente')+'" title="'+_('Plan Docente')+'">\
+	    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
+	  	</button>';
 	}
-	return "";
+
+	if (classroom.consultor) {
+		var title = _('Consultor/a')+': '+classroom.consultor;
+		if (classroom.consultorlastviewed) {
+			var d = new Date(classroom.consultorlastviewed);
+			title += "\n"+_('Visto por última vez')+': '+d.getDate()+'/'+d.getMonth() +' '+ _('a las') +' '+ d.getHours() + ':' + d.getMinutes();
+		}
+		if (classroom.consultormail) {
+			var img = "envelope";
+			var mail = 'mail="'+classroom.consultormail+'"';
+		} else {
+			var img = "user";
+			var mail = "";
+		}
+	  	buttons +=  '<button type="button" class="linkMail btn btn-success" '+mail+' aria-label="'+title+'" title="'+title+'">\
+	    	<span class="glyphicon glyphicon-'+img+'" aria-hidden="true"></span>\
+	  	</button>';
+	}
+
+  	if (buttons.length > 0) {
+  		text += '<div class="btn-group btn-group-sm pull-left" role="group">'+buttons+'</div>';
+  	}
+
+  	if(classroom.type != 'TUTORIA'){
+		text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
+	    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('Notas') +'</button></div>';
+    }
+  	return text;
 }
 
 function buildUI_color(classroom){
@@ -280,7 +306,7 @@ function handleEvents(){
 		var url = root_url + '/tren/trenacc';
 		var data = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
 					assig: classroom.get_subject_code(),
-					pAnyAcademic: anyAcad};
+					pAnyAcademic: calc_any()};
 		open_tab(url, data);
 	});
 
@@ -317,7 +343,7 @@ function handleEvents(){
 			var data = {};
 		} else {
 			var code = $(this).parents('.resource').attr('resource');
-			var url = root_url + '/cgi-bin/ma_mainMailFS';
+			var url = root_url + '/webapps/bustiaca/listMails.do';
 			var data = {l: code};
 		}
 		open_tab(url, data);
@@ -331,6 +357,16 @@ function handleEvents(){
 			var data = {};
 			open_tab(url, data);
 		}
+	});
+
+	$('.linkMail').unbind( "click" );
+	$('.linkMail').click(function(){
+		var mail = $(this).attr('mail');
+		var url = root_url+"/WebMail/writeMail.do";
+		var data = {
+			to: mail
+		};
+		open_tab(url, data);
 	});
 }
 

@@ -1,3 +1,6 @@
+var root_url = 'http://cv.uoc.edu';
+var root_url_ssl = 'https://cv.uoc.edu';
+
 function isToday(date) {
     var q = new Date();
     var y = q.getFullYear() - 2000;
@@ -20,6 +23,23 @@ function isBeforeToday(date) {
         return dsplit[1] < m;
     }
     return dsplit[2] < y;
+}
+
+function calc_any() {
+    var d = new Date();
+    var year = d.getFullYear();
+    var month = d.getMonth();
+
+    if (month <= 7) {
+        // Previous year
+        year--;
+    }
+
+    if (month >= 2 && month <= 7) {
+        // March to August
+        return year+"2";
+    }
+    return year+"1";
 }
 
 function get_url_attr(url, attr){
@@ -124,6 +144,7 @@ function ajax_do(session, url, data, type, handler_succ, handler_err){
         }
     })
     .always(function() {
+        executing = false;
         run_requests();
     });
 }
@@ -164,6 +185,7 @@ function ajax_uoc(url, data, type, handler_succ, handler_err){
 
 var queue = Array();
 var after_queue_function = false;
+var executing = false;
 function enqueue_request(url, data, type, handler_succ, handler_err) {
     if (url) {
         var pet = {
@@ -185,14 +207,18 @@ function set_after_queue_function(fnc){
 function run_requests() {
     var session = get_session();
     if (session) {
-        if (queue.length > 0) {
-            var pet = queue.shift();
-            console.log('Run ' + pet.url);
-            ajax_do(session, pet.url, pet.data, pet.type, pet.success, pet.error);
-        } else {
-            Classes.save();
-            if (after_queue_function) {
-                after_queue_function();
+        if (!executing) {
+            if (queue.length > 0) {
+                executing = true;
+                var pet = queue.shift();
+                console.log('Run ' + pet.url);
+                ajax_do(session, pet.url, pet.data, pet.type, pet.success, pet.error);
+            } else {
+                console.log('End of queue');
+                Classes.save();
+                if (after_queue_function) {
+                    after_queue_function();
+                }
             }
         }
     } else {

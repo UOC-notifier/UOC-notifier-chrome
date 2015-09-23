@@ -29,15 +29,28 @@ var Classes = new function(){
 		return false;
 	};
 
-	this.delete_code = function(code){
-		for(i in classes){
-			if(classes[i].code == code){
-				classes.splice(i, 1);
-				return true;
+	this.purge_old = function() {
+		var max_any = 0;
+		for(x in classes) {
+			if (classes[x].any && parseInt(classes[x].any) > max_any) {
+				max_any = parseInt(classes[x].any);
 			}
 		}
-		return false;
-	};
+		if (max_any > 0) {
+			for(x in classes) {
+				if (classes[x].any && parseInt(classes[x].any) < max_any) {
+					classes.splice(x, 1);
+				}
+			}
+		}
+	}
+
+	this.purge_all = function() {
+		classes = [];
+		this.messages = 0;
+		this.notified_messages = 0;
+		this.save();
+	}
 
 	this.get_index = function(code){
 		for(i in classes){
@@ -84,9 +97,14 @@ var Classes = new function(){
 			var classesl = JSON.parse(classroom);
 			for(i in classesl){
 				var classl = classesl[i];
-				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type, classl.template);
+				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type);
 				classr.domainassig = classl.domainassig;
 				classr.set_color(classl.color);
+				classr.any = classl.any;
+				classr.aula = classl.aula;
+				classr.consultor = classl.consultor;
+				classr.consultormail = classl.consultormail;
+				classr.consultorlastviewed = classl.consultorlastviewed;
 				classr.set_notify(classl.notify);
 				if(classl.notify) {
 					for(j in classl.resources){
@@ -145,14 +163,19 @@ var Classes = new function(){
 	this.load();
 }
 
-function Classroom(title, code, domain, type, template){
+function Classroom(title, code, domain, type){
 	this.title = title;
 	this.code = code;
 	this.domain = domain;
 	this.domainassig = domain;
 	this.type = type;
-	this.template = template;
 	this.color = false;
+	this.any = false;
+	this.aula = false;
+	this.consultor = false;
+	this.consultormail = false;
+	this.consultorlastviewed = false;
+
 	this.notify = true;
 	this.messages = 0;
 	this.resources = [];
@@ -165,9 +188,12 @@ function Classroom(title, code, domain, type, template){
 	};
 
 	this.get_acronym = function() {
-		var words = this.title.split(/[\s, ':\(\)]+/);
+		if(this.type == 'TUTORIA'){
+			return 'TUT'+this.aula;
+		}
+		var words = this.title.split(/[\s, ':\(\)\-]+/);
     	var acronym = "";
-    	var nowords = new Array('de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'l', 'd');
+    	var nowords = new Array('de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd');
     	for (var x in words) {
     		if (nowords.indexOf(words[x].toLowerCase()) < 0) {
     			if (words[x] == words[x].toUpperCase()) {
@@ -185,14 +211,6 @@ function Classroom(title, code, domain, type, template){
 			var temp = code.split("_");
 			return temp[1]+'.'+temp[2];
 			this.classcode = parseInt(temp[3]);
-		}
-		return false;
-	}
-
-	this.get_class_code = function(){
-		if(this.type != 'TUTORIA'){
-			var temp = code.split("_");
-			return parseInt(temp[3]);
 		}
 		return false;
 	}

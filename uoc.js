@@ -1,49 +1,38 @@
-var root_url = 'http://cv.uoc.edu';
-var root_url_ssl = 'https://cv.uoc.edu';
-var anyAcad = calc_any();
-
-function calc_any() {
-	var d = new Date();
-	var year = d.getFullYear();
-	var month = d.getMonth();
-
-	if (month <= 7) {
-		// Previous year
-		year--;
-	}
-
-	if (month >= 2 && month <= 7) {
-		// March to August
-		return year+"2";
-	}
-	return year+"1";
-}
-
 function check_messages(after_check_fnc){
 	set_after_queue_function(after_check_fnc);
 
+	// Get the new aulas
 	var args = {
-		newStartingPage:0,
-		language:"b"
+		perfil : 'estudiant',
+		setLng : get_lang(),
+		format: 'json'
 	}
-	ajax_uoc('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
-		var index = resp.indexOf("aulas = ");
-		if (index != -1) {
-			var lastPage = resp.substring(index + 8);
-			var last = lastPage.indexOf(";");
-			lastPage = lastPage.substring(0,last);
-			var classrooms = eval(lastPage);
-			var class_codes = [];
-			for(var i in classrooms){
-				classroom = parse_classroom(classrooms[i]);
-				if(classroom){
-					Classes.add(classroom);
+	enqueue_request('/app/guaita/calendari', args, "GET", function(data) {
+		console.log(data);
+		for (x in data.classrooms) {
+			classroom = parse_classroom(data.classrooms[x]);
+		}
+		Classes.purge_old();
+
+		var args = {
+			newStartingPage:0,
+			language:"b"
+		}
+		ajax_uoc('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
+			var index = resp.indexOf("aulas = ");
+			if (index != -1) {
+				var lastPage = resp.substring(index + 8);
+				var last = lastPage.indexOf(";");
+				lastPage = lastPage.substring(0,last);
+				var classrooms = eval(lastPage);
+				for(var i in classrooms){
+					parse_classroom_old(classrooms[i]);
 				}
 			}
-			retrieve_more_info_classrooms();
-		} else {
-			reset_session();
-		}
+		});
+	},
+	function(data) {
+		reset_session();
 	});
 }
 
@@ -89,139 +78,174 @@ function notify(str) {
 	}
 }
 
-function parse_classroom(classr){
+function parse_classroom(classr) {
+	var title = classr.shortTitle ? classr.shortTitle : classr.title;
+	var classroom = Classes.search_domainassig(classr.domainFatherId);
+	if (!classroom) {
+		var classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId);
+		classroom.domainassig = classr.domainFatherId;
+	} else {
+		classroom.title = title;
+		classroom.code = classr.domainCode;
+		classroom.domain = classr.domainId;
+		classroom.type = classr.domaintypeid;
+	}
+	classroom.set_color(classr.color);
+	classroom.any = classr.anyAcademic;
+	classroom.aula = classr.numeralAula;
+	classroom.consultor = classr.widget.consultor.nomComplert;
+	for (var x in classr.widget.referenceUsers) {
+		if (classr.widget.referenceUsers[x].fullName == classroom.consultor) {
+			classroom.consultormail = classr.widget.referenceUsers[x].email;
+			classroom.consultorlastviewed = classr.widget.referenceUsers[x].lastLoginTime;
+			break;
+		}
+	}
+	Classes.add(classroom);
+
+	if (!Classes.get_notify(classroom.code)) {
+		return;
+	}
+
+	// Parse resources
+	if (classr.widget.eines.length > 0) {
+		for(var j in classr.widget.eines){
+			var resourcel = classr.widget.eines[j];
+			var resource = new Resource(resourcel.nom, resourcel.resourceId);
+			classroom.add_resource(resource);
+			resource.set_link(resourcel.viewItemsUrl);
+			retrieve_resource(classroom, resource);
+		}
+	}
+
+	// Parse events
+	if (classr.activitats.length > 0) {
+		for (y in classr.activitats) {
+			var act = classr.activitats[y];
+			var evnt = new Event(act.name);
+
+			var args = {};
+			if (classr.presentation == "AULACA") {
+				var urlbase = '/webapps/aulaca/classroom/Classroom.action';
+				args.classroomId = act.classroomId;
+				args.subjectId = act.subjectId;
+				args.activityId = act.eventId;
+				args.javascriptDisabled = false;
+			} else {
+				var urlbase = '/webapps/classroom/081_common/jsp/eventFS.jsp';
+				args.domainId = act.domainId;
+				var aux = classr.domainCode.split('_');
+				args.domainTemplate = 'uoc_'+aux[0]+'_'+classr.codi;
+				args.idLang = 'a';
+				args.eventsId = act.eventId;
+				args.opId = 'view';
+				args.userTypeId = 'ESTUDIANT';
+				args.canCreateEvent = false;
+			}
+
+			evnt.link = root_url + urlbase+'?'+uri_data(args)+'&s=';
+			evnt.start = act.startDateStr;
+			evnt.end = act.deliveryDateStr;
+			evnt.solution = act.solutionDateStr;
+			evnt.grading = act.qualificationDateStr;
+			classroom.add_event(evnt);
+		}
+
+		// Parse Grades
+		retrieve_gradeinfo(classroom);
+	}
+}
+
+function parse_classroom_old(classr){
 	if(classr.title) {
 		var title = classr.shortname ? classr.shortname : classr.title;
 		switch (classr.domaintypeid) {
-			case 'AULA':
-				var classroom = Classes.search_domainassig(classr.domainfatherid);
-				if (classroom) {
-					//classroom.title = title;
-					classroom.code = classr.code;
-					classroom.domain = classr.domainid;
-					classroom.domainassig = classr.domainfatherid;
-					this.type = classr.domaintypeid;
-					this.template = classr.pt_template;
-				}
+			case 'TUTORIA':
+				var sp = title.split(classr.codi_tercers);
+				title = sp[0].trim();
+				var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid);
+				classroom.aula = classr.codi_tercers;
+				classroom.consultor = sp[1].trim();
+
+				sp = classr.code.split('_');
+				classroom.consultormail = sp[1].trim()+'@uoc.edu';
 				break;
 			case 'ASSIGNATURA':
+				// Override title
 				var classroom = Classes.search_domainassig(classr.domainid);
 				classroom.title = title;
-				break;
+				return;
+			case 'AULA':
+				return;
+
 		}
 
-		if (!classroom) {
-			var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
-			if(classroom.type == 'AULA') {
-				classroom.domainassig = classr.domainfatherid;
-			}
-		}
-
-		if(!Classes.get_notify(classroom.code)) return classroom;
-
-		for(var j in classr.resources){
-			var resourcel = classr.resources[j];
-			if(resourcel.title){
-				if(resourcel.numMesTot != '0'){
+		if(Classes.get_notify(classroom.code)) {
+			for(var j in classr.resources){
+				var resourcel = classr.resources[j];
+				if(resourcel.title){
 					var resource = new Resource(resourcel.title, resourcel.code);
 					resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
 					classroom.add_resource(resource);
 				}
 			}
 		}
-		return classroom;
+		Classes.add(classroom);
 	}
-	return false;
 }
 
-function retrieve_news(){
+function retrieve_gradeinfo(classroom) {
 	var args = {
-		up_isNoticiesInstitucionals : false,
-		up_title : 'Novetats%2520i%2520noticies',
-		up_maximized: true,
-		up_maxDestacades : 2,
-		up_showImages : 0,
-		up_sortable : true,
-		up_ck : 'nee',
-		up_maxAltres: 5,
-		up_rssUrlServiceProvider : '%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js',
-		up_target : 'noticies.jsp',
-		libs : '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height',
-		fromCampus : true,
-		lang: get_lang(),
-		country: 'ES',
-		color: '',
-		userType: 'UOC-ESTUDIANT-gr06-a',
-		hp_theme: 'false'
+		domainId: classroom.domain
 	}
-
-	ajax_uoc('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
-		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
-		if (news != undefined) {
-			$('#detail_news').html(news);
-		}
-	});
-}
-
-function retrieve_more_info_classrooms(){
-	// Get the new aulas
-	var args = {
-		perfil : 'estudiant',
-		setLng : get_lang()
-	}
-	enqueue_request('/app/guaita/assignatures', args, "GET", function(resp) {
-		resp = resp.replace(/<img/gi, '<noload');
-		$(resp).find('#sidebar .block').each(function() {
-			parse_classroom_more_info(this);
+	enqueue_request('/webapps/rac/listEstudiant.action', args, 'GET', function(data, args) {
+		data = data.replace(/<img/gi, '<noload');
+		data = $(data).filter('.TablaNotas');
+		$(data).find("td a[href*='viewPrac']").each(function() {
+			var name = $(this).parent('td').siblings('.PacEstudiant').text().trim();
+			for(var x in classroom.events) {
+				var s = name.search(classroom.events[x].name);
+				if (s > 0 && s < 6) {
+					var evnt = classroom.events[x];
+					evnt.committed = true;
+					classroom.add_event(evnt);
+					break;
+				}
+			}
 		});
-		retrieve_events();
+		$(data).find('.Nota').each(function() {
+			var grade = $(this).text().trim();
+			if (grade.length > 0 && grade != '-') {
+				var name = $(this).siblings('.PacEstudiant').text().trim();
+				for(var x in classroom.events) {
+					var s = name.search(classroom.events[x].name);
+					if (s > 0 && s < 6) {
+						var evnt = classroom.events[x];
+						if (evnt.graded != grade) {
+							evnt.graded = grade;
+							classroom.add_event(evnt);
+							notify(_("Has sacado una ")+grade+_(" en la ")+evnt.name+_(" de ") + classroom.get_acronym());
+						}
+						break;
+					}
+				}
+			}
+		});
 	});
 }
-function parse_classroom_more_info(html){
-	var domainid = get_url_attr($(html).find('.LaunchesOWin').attr('href'),'classroomId');
-	if(!domainid){
-		var domainid = get_url_attr($(html).find('.LaunchesOWin').attr('href'),'domainId');
-	}
-	if(domainid){
-		var classroom = Classes.search_domain(domainid);
-		if(classroom){
-			classroom.set_color($(html).find('.block-color').attr('data-color'));
-			$(html).find("a[data-bocamoll-object-resourceid]").each(function() {
-	        	var element = $(this);
 
-				var title = element.html();
-				var code  = element.attr('data-bocamoll-object-resourceid');
-				var resource = new Resource(title, code);
-				var link = element.attr('href');
-				resource.set_link(link);
-				retrieve_resource(classroom, resource, element);
-			});
-		}
-	}
-}
-
-function retrieve_resource(classroom, resource, element){
-    var subjectid = $(element).data('bocamoll-subject-id');
-    var classroomid= $(element).data('bocamoll-classroom-id');
-    var resourceid = $(element).data('bocamoll-object-resourceid');
-
+function retrieve_resource(classroom, resource){
 	var args = {
 		sectionId : '-1',
 		pageSize : 0,
 		pageCount: 0,
-		classroomId: classroomid,
-		subjectId: subjectid,
-		resourceId: resourceid
+		classroomId: classroom.domain,
+		subjectId: classroom.domain,
+		resourceId: resource.code
 	};
 	enqueue_request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
         var num_msg_pendents = Math.max(data.resource.newItems, 0);
         var num_msg_totals = data.resource.totalItems;
-        var usernumber = data.currentUser.userNumber;
-        var user_save = get_user();
-        if (usernumber && user_save.usernumber != usernumber) {
-        	save_usernumber(usernumber);
-        }
-
 		resource.set_messages(num_msg_pendents, num_msg_totals);
 		classroom.add_resource(resource);
     },
@@ -232,99 +256,34 @@ function retrieve_resource(classroom, resource, element){
     });
 }
 
-function retrieve_events() {
-	var user_save = get_user();
-    if (user_save.usernumber) {
-		var args = {
-			idp: user_save.usernumber,
-			perfil: 'estudiant',
-			format: 'json'
-		}
-		enqueue_request('/app/guaita/calendari', args, 'GET', function(data) {
-			//console.log(data.classrooms);
-			for (x in data.classrooms) {
-				var c = data.classrooms[x];
-				if (c.activitats.length > 0) {
-					var classroom = Classes.search_domain(c.domainId);
-					for (y in c.activitats) {
-						var act = c.activitats[y];
-						var evnt = new Event(act.name);
-
-						var args = {};
-						if (c.presentation == "AULACA") {
-							var urlbase = '/webapps/aulaca/classroom/Classroom.action';
-							args.classroomId = act.classroomId;
-							args.subjectId = act.subjectId;
-							args.activityId = act.eventId;
-							args.javascriptDisabled = false;
-						} else {
-							var urlbase = '/webapps/classroom/081_common/jsp/eventFS.jsp';
-							args.domainId = act.domainId;
-							var aux = c.domainCode.split('_');
-							args.domainTemplate = 'uoc_'+aux[0]+'_'+c.codi;
-							args.idLang = 'a';
-							args.eventsId = act.eventId;
-							args.opId = 'view';
-							args.userTypeId = 'ESTUDIANT';
-							args.canCreateEvent = false;
-						}
-
-						evnt.link = root_url + urlbase+'?'+uri_data(args)+'&s=';
-						evnt.start = act.startDateStr;
-						evnt.end = act.deliveryDateStr;
-						evnt.solution = act.solutionDateStr;
-						evnt.grading = act.qualificationDateStr;
-						classroom.add_event(evnt);
-					}
-				}
-			}
-			var classrooms = Classes.get_notified();
-			for(var i in classrooms) {
-				if (classrooms[i].events.length > 0) {
-					var args = {
-						domainId: classrooms[i].domain
-					}
-					enqueue_request('/webapps/rac/listEstudiant.action', args, 'GET', function(data, args) {
-						var classroom = Classes.search_domain(args.domainId);
-						data = data.replace(/<img/gi, '<noload');
-						data = $(data).filter('.TablaNotas');
-						$(data).find("td a[href*='viewPrac']").each(function() {
-							var name = $(this).parent('td').siblings('.PacEstudiant').text().trim();
-							for(var x in classroom.events) {
-								var s = name.search(classroom.events[x].name);
-								if (s > 0 && s < 6) {
-									var evnt = classroom.events[x];
-									evnt.committed = true;
-									classroom.add_event(evnt);
-									break;
-								}
-							}
-						});
-						$(data).find('.Nota').each(function() {
-							var grade = $(this).text().trim();
-							if (grade.length > 0 && grade != '-') {
-								var name = $(this).siblings('.PacEstudiant').text().trim();
-								for(var x in classroom.events) {
-									var s = name.search(classroom.events[x].name);
-									if (s > 0 && s < 6) {
-										var evnt = classroom.events[x];
-										if (evnt.graded != grade) {
-											evnt.graded = grade;
-											classroom.add_event(evnt);
-											notify(_("Has sacado una ")+grade+_(" en la ")+evnt.name+_(" de ") + classroom.get_acronym());
-										}
-										break;
-									}
-								}
-							}
-						});
-					});
-				}
-			}
-	    });
+function retrieve_news(){
+	var args = {
+		up_isNoticiesInstitucionals : false,
+		//up_title : 'Novetats%2520i%2520noticies',
+		//up_maximized: true,
+		up_maxDestacades : 2,
+		up_showImages : 0,
+		up_sortable : true,
+		//up_ck : 'nee',
+		up_maxAltres: 5,
+		up_rssUrlServiceProvider : '%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js',
+		up_target : 'noticies.jsp',
+		//libs : '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height',
+		fromCampus : true,
+		//lang: get_lang(),
+		//country: 'ES',
+		//color: '',
+		//userType: 'UOC-ESTUDIANT-gr06-a',
+		//hp_theme: 'false'
 	}
-}
 
+	ajax_uoc('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
+		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
+		if (news != undefined) {
+			$('#detail_news').html(news);
+		}
+	});
+}
 
 function retrieve_session() {
 	var user_save = get_user();

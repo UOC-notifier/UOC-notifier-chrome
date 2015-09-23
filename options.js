@@ -7,11 +7,6 @@ $(document).ready(function(){
 		save_options();
 		return false;
 	});
-
-	$('#purge_btn').on('click',function(){
-		purge_classrooms();
-		return false;
-	});
 });
 
 function populate_classrooms(){
@@ -31,7 +26,8 @@ function populate_classrooms(){
 
 function populate_classroom(classroom){
 	var checked = classroom.notify ? "checked" : "";
-	return '<div class="input-group not_classroom"><span class="input-group-addon" style="background-color:#'+classroom.color+';"> \
+	var color = classroom.color ? classroom.color : 'faf2cc';
+	return '<div class="input-group not_classroom"><span class="input-group-addon" style="background-color:#'+color+';"> \
 			<input class="notify_classroom" type="checkbox" id="'+classroom.code+'" value="'+classroom.code+'" '+checked+'> \
 			</span><label for="'+classroom.code+'" class="form-control">'+classroom.title+" - "+classroom.get_acronym() + '</label></div>';
 }
@@ -73,16 +69,5 @@ function after_save_options() {
 
 function after_check_messages() {
 	$(".alert").hide();
-	populate_classrooms();
-}
-
-function purge_classrooms(){
-	$(".notify_classroom").each(function(){
-		var classroom_code = $(this).attr('value');
-		var notify = $(this).prop('checked');
-		if(!notify) {
-			purge_classroom(classroom_code);
-		}
-	});
 	populate_classrooms();
 }
