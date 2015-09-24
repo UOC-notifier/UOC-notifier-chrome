@@ -1,0 +1,195 @@
+{
+    "TITLE" : {
+        "message" : "UOC Notifier"
+    },
+    "DESCRIPTION" : {
+        "message" : "Notificador de la UOC para Google Chrome"
+    },
+    //Options
+    "__USER__" : {
+        "message" : "Usuario"
+    },
+    "__PASSWORD__" : {
+        "message" : "Contraseña"
+    },
+    "__UNI__" : {
+        "message" : "Universidad"
+    },
+    "__INTERVAL__" : {
+        "message" : "Intervalo de comprovación"
+    },
+    "__CRITICAL__" : {
+        "message" : "Mínimo de mensajes para considerar crítico y notificar"
+    },
+    "__NOTIFICATION__" : {
+        "message" : "Mensajes emergentes"
+    },
+    "__MESSAGES__" : {
+        "message" : "Mensajes"
+    },
+    "__SAVE__" : {
+        "message" : "Guardar"
+    },
+    "__CLASS_NOTIFY__" : {
+        "message" : "Notificar aulas"
+    },
+    "__MINUTES__" : {
+        "message" : "minutos"
+    },
+    "__SAVED_OPTIONS__" : {
+        "message" : "Opciones guardadas. Espera a que se actualizen las aulas..."
+    },
+
+    //Popup
+    "__GRADE_RESUME__" : {
+        "message" : "Resumen de notas"
+    },
+    "__EXAM_REVISION__" : {
+        "message" : "Rev. de exámen"
+    },
+    "__FINAL_GRADES__" : {
+        "message" : "Notas finales"
+    },
+    "__STATS__" : {
+        "message" : "Estadísticas"
+    },
+    "__ENROLL_PROP__" : {
+        "message" : "Prop. Matric"
+    },
+    "__ENROLL__" : {
+        "message" : "Matrícula"
+    },
+    "__GRADES_SMS__" : {
+        "message" : "Notas por SMS"
+    },
+    "__EXPEDIENT__" : {
+        "message" : "Expediente"
+    },
+    "__OLD_AGENDA__" : {
+        "message" : "Agenda antigua"
+    },
+    "__NEW_AGENDA__" : {
+        "message" : "Agenda nueva"
+    },
+    "__COMMITTED__" : {
+        "message" : "Entregado"
+    },
+    "__EQUIPMENT__" : {
+        "message" : "Materiales"
+    },
+    "__TEACHING_PLAN__" : {
+        "message" : "Plan Docente"
+    },
+    "__GOTO_CAMPUS__" : {
+        "message" : "Ir al campus"
+    },
+    "__GOTO_CLASS__" : {
+        "message" : "Ir al aula"
+    },
+    "__GOTO_RES__" : {
+        "message" : "Ir al recurso"
+    },
+    "__START__" : {
+        "message" : "Inicio"
+    },
+    "__END__" : {
+        "message" : "Fin"
+    },
+    "__SOLUTION__" : {
+        "message" : "Solución"
+    },
+    "__GRADE__" : {
+        "message" : "Nota"
+    },
+    "__GRADES__" : {
+        "message" : "Notas"
+    },
+    "__NEWS__" : {
+        "message" : "Noticias"
+    },
+    "__AGENDA__" : {
+        "message" : "Agenda"
+    },
+    "__LINKS_TO_CAMPUS__" : {
+        "message" : "Enlaces del campus"
+    },
+    "__UPDATE__" : {
+        "message" : "Actualizar"
+    },
+    "__TEACHER__" : {
+        "message" : "Consultor/a"
+    },
+    "__MAIL__" : {
+        "message" : "Correo"
+    },
+    "__VIEWED_LAST_TIME__" : {
+        "message" : "Visto por última vez: $date$ a las $time$",
+        "placeholders": {
+          "date": {
+            "content": "$1"
+          },
+          "time": {
+            "content": "$2"
+          }
+        }
+    },
+    "__NOTIFICATION_UNREAD__" : {
+        "message" : "Tienes $messages$ mensajes por leer",
+        "placeholders": {
+          "messages": {
+            "content": "$1"
+          }
+        }
+    },
+    "__PRACT_START__" : {
+        "message" : "Hoy empieza la $pract$ de $class$",
+        "placeholders": {
+          "pract": {
+            "content": "$1"
+          },
+          "class": {
+            "content": "$2"
+          }
+        }
+    },
+    "__PRACT_END__" : {
+        "message" : "Hoy acaba la $pract$ de $class$",
+        "placeholders": {
+          "pract": {
+            "content": "$1"
+          },
+          "class": {
+            "content": "$2"
+          }
+        }
+    },
+    "__PRACT_GRADE__" : {
+        "message" : "Has sacado una $grade$ en la $pract$ de $class$",
+        "placeholders": {
+          "grade": {
+            "content": "$1"
+          },
+          "pract": {
+            "content": "$2"
+          },
+          "class": {
+            "content": "$2"
+          }
+        }
+    },
+    "__INCORRECT_USER__" : {
+        "message" : "El usuario/password no es correcto"
+    },
+    "__NO_USER_PASSWORD__" : {
+        "message" : "No hay usuario y password..."
+    },
+    "__WAITING_TO_LOGIN__" : {
+        "message" : "Esperando a entrar... Si el mensaje no desaparece puede que el usuari y password sean incorrectos."
+    },
+    "__ATTENTION__" : {
+        "message" : "Atención"
+    },
+    "__NO_CLASSROOMS__" : {
+        "message" : "No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar"
+    }
+}

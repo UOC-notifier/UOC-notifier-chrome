@@ -12,13 +12,13 @@ function buildUI_tools(){
     var urls = new Array();
     //urls.push({url: '.INFCONSULTA/inici', title: _('Expediente antiguo (no funciona)')});
     //urls.push({url: '.NOTESAVAL/rac.rac&tipus=1', title: _('REC antiguo (no funciona)')});
-    urls.push({url: '.NOTESAVAL/NotesEstudiant.inici', title: _('Resumen de notas')});
-    urls.push({url: '.EXASOLREVISION/consrevision.consrevision', title: _('Rev. de exámen')});
-    urls.push({url: '.PAPERETES/paperetes.paperetes', title: _('Notas finales')});
-    urls.push({url: '.ESTADNOTES/estadis.inici', title: _('Estadísticas')});
-    urls.push({url: '.MATPREMATRICULA/inici', title: _('Prop. Matric')});
-    urls.push({url: '.MATMATRICULA/inici', title: _('Matrícula')});
-    urls.push({url: '.NOTAS_SMS', title: _('Notas por SMS')});
+    urls.push({url: '.NOTESAVAL/NotesEstudiant.inici', title: _('__GRADE_RESUME__')});
+    urls.push({url: '.EXASOLREVISION/consrevision.consrevision', title: _('__EXAM_REVISION__')});
+    urls.push({url: '.PAPERETES/paperetes.paperetes', title: _('__FINAL_GRADES__')});
+    urls.push({url: '.ESTADNOTES/estadis.inici', title: _('__STATS__')});
+    urls.push({url: '.MATPREMATRICULA/inici', title: _('__ENROLL_PROP__')});
+    urls.push({url: '.MATMATRICULA/inici', title: _('__ENROLL__')});
+    urls.push({url: '.NOTAS_SMS', title: _('__GRADES_SMS__')});
 
     var text = '<div class="container-fluid resources">';
     var par = -1;
@@ -30,15 +30,15 @@ function buildUI_tools(){
     }
     // New expedient
 	link = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
-	text += get_general_link(link, _('Expediente'), par);
+	text += get_general_link(link, _('__EXPEDIENT__'), par);
 	par = -par;
 
 	link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont&s='
-	text += get_general_link(link, _('Agenda antigua'), par);
+	text += get_general_link(link, _('__OLD_AGENDA__'), par);
 	par = -par;
 
 	link = root_url + '/app/guaita/calendari?perfil=estudiant&s='
-	text += get_general_link(link, _('Agenda nueva'), par);
+	text += get_general_link(link, _('__NEW_AGENDA__'), par);
 	par = -par;
 
     text += '</div>';
@@ -68,7 +68,7 @@ function buildUI_classroom(classroom){
 		title += ' ('+classroom.aula+')';
 	}
 	content += '<div class="col-xs-9">' + title + '</div> \
-						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', _('Ir al aula')) + '</div> \
+						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', _('__GOTO_CLASS__')) + '</div> \
 					</div> \
 				</div>'+ buildUI_classroom_resources(classroom) +' \
 			</div>';
@@ -98,7 +98,7 @@ function buildUI_classroom_events(classroom) {
 		events_html += buildUI_event(classroom.events[j], classroom.code);
 	}
 	return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
-			<thead><tr><th></th><th>'+_('Inicio')+'</th><th>'+_('Fin')+'</th><th>'+_('Solución')+'</th><th>'+_('Nota')+'</th></tr></thead>\
+			<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
 			<tbody>' + events_html + ' </tbody>\
 		</table>';
 }
@@ -119,9 +119,9 @@ function buildUI_event(ev, classroom_code){
 	var dstart = buildUI_eventdate(ev.start, "");
 
 	if (ev.committed && !ev.has_ended()) {
-		var dend = buildUI_eventdate(ev.end, "end", '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+_('Entregado')+'"></span>');
+		var dend = buildUI_eventdate(ev.end, "end", '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>');
 	} else if (!ev.committed && ev.has_ended()) {
-		var dend = buildUI_eventtext('<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'+_('Entregado')+'"></span>', "text-danger");
+		var dend = buildUI_eventtext('<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>', "text-danger");
 	} else {
 		var dend = buildUI_eventdate(ev.end, "end");
 	}
@@ -187,22 +187,21 @@ function buildUI_rac(classroom){
 	var buttons = "";
 	var text = "";
 	if(classroom.type != 'TUTORIA'){
-		buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('Estadísticas')+'" title="'+_('Estadísticas')+'">\
+		buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('__STATS__')+'" title="'+_('__STATS__')+'">\
 	    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>\
 	  	</button>\
-	  	<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('Materiales')+'" title="'+_('Materiales')+'">\
+	  	<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
 	    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
 	  	</button>\
-	  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('Plan Docente')+'" title="'+_('Plan Docente')+'">\
+	  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('__TEACHING_PLAN__')+'" title="'+_('__TEACHING_PLAN__')+'">\
 	    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
 	  	</button>';
 	}
 
 	if (classroom.consultor) {
-		var title = _('Consultor/a')+': '+classroom.consultor;
+		var title = _('__TEACHER__')+': '+classroom.consultor;
 		if (classroom.consultorlastviewed) {
-			var d = new Date(classroom.consultorlastviewed);
-			title += "\n"+_('Visto por última vez')+': '+d.getDate()+'/'+d.getMonth() +' '+ _('a las') +' '+ d.getHours() + ':' + d.getMinutes();
+			title += "\n"+_('__VIEWED_LAST_TIME__', [getDate(classroom.consultorlastviewed), getTime(classroom.consultorlastviewed)]);
 		}
 		if (classroom.consultormail) {
 			var img = "envelope";
@@ -222,7 +221,7 @@ function buildUI_rac(classroom){
 
   	if(classroom.type != 'TUTORIA'){
 		text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
-	    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('Notas') +'</button></div>';
+	    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('__GRADES__') +'</button></div>';
     }
   	return text;
 }
@@ -242,7 +241,7 @@ function buildUI_resource(resource, classroom_code){
 	}
 	return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
 				<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
-				<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages, _('Ir al recurso')) + '</div> \
+				<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages, _('__GOTO_RES__')) + '</div> \
 			</li>';
 }
 
@@ -417,7 +416,7 @@ function buildUI(){
 
 
 	if( !visibles ){
-		$('#classrooms').html("<div class='alert'><h4>"+_('Atención')+"</h4>"+_('No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar')+"</div>")
+		$('#classrooms').html("<div class='alert'><h4>"+_('__ATTENTION__')+"</h4>"+_('__NO_CLASSROOMS__')+"</div>")
 		return;
 	}
 
@@ -440,14 +439,14 @@ $(document).ready(function(){
 	if(user_save.username && user_save.password){
 		session = get_session();
 		if(!session){
-			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('Esperando a entrar... Si el mensaje no desaparece puede que el usuari y password sean incorrectos.')+'</div></div>');
+			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__WAITING_TO_LOGIN__')+'</div></div>');
 			check_messages(buildUI);
 			return;
 		}
 		buildUI();
 		return;
 	} else {
-		$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('No hay usuario y password...')+'</div></div>');
+		$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__NO_USER_PASSWORD__')+'</div></div>');
 		open_new_tab("options.html");
 	}
 });

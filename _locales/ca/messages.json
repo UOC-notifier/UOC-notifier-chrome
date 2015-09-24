@@ -1,0 +1,195 @@
+{
+    "TITLE" : {
+        "message" : "UOC Notifier"
+    },
+    "DESCRIPTION" : {
+        "message" : "Notificador de la UOC per Google Chrome"
+    },
+    //Options
+    "__USER__" : {
+        "message" : "Usuari"
+    },
+    "__PASSWORD__" : {
+        "message" : "Contrasenya"
+    },
+    "__UNI__" : {
+        "message" : "Universitat"
+    },
+    "__INTERVAL__" : {
+        "message" : "Interval de comprovació"
+    },
+    "__CRITICAL__" : {
+        "message" : "Mínim de missatges per considerar crític i notificar"
+    },
+    "__NOTIFICATION__" : {
+        "message" : "Missatges emergents"
+    },
+    "__MESSAGES__" : {
+        "message" : "Missatges"
+    },
+    "__SAVE__" : {
+        "message" : "Desa"
+    },
+    "__CLASS_NOTIFY__" : {
+        "message" : "Notifica aules"
+    },
+    "__MINUTES__" : {
+        "message" : "minuts"
+    },
+    "__SAVED_OPTIONS__" : {
+        "message" : "Opcions desades. Espera a que s'actualitzin las aules..."
+    },
+
+    //Popup
+    "__GRADE_RESUME__" : {
+        "message" : "Resum de notes"
+    },
+    "__EXAM_REVISION__" : {
+        "message" : "Rev. exàmen"
+    },
+    "__FINAL_GRADES__" : {
+        "message" : "Notes finals"
+    },
+    "__STATS__" : {
+        "message" : "Estadístiques"
+    },
+    "__ENROLL_PROP__" : {
+        "message" : "Prop. Matric"
+    },
+    "__ENROLL__" : {
+        "message" : "Matrícula"
+    },
+    "__GRADES_SMS__" : {
+        "message" : "Notes per SMS"
+    },
+    "__EXPEDIENT__" : {
+        "message" : "Expedient"
+    },
+    "__OLD_AGENDA__" : {
+        "message" : "Agenda antiga"
+    },
+    "__NEW_AGENDA__" : {
+        "message" : "Agenda nova"
+    },
+    "__COMMITTED__" : {
+        "message" : "Entregat"
+    },
+    "__EQUIPMENT__" : {
+        "message" : "Materials"
+    },
+    "__TEACHING_PLAN__" : {
+        "message" : "Pla Docent"
+    },
+    "__GOTO_CAMPUS__" : {
+        "message" : "Vés al campus"
+    },
+    "__GOTO_CLASS__" : {
+        "message" : "Vés a l'aula"
+    },
+    "__GOTO_RES__" : {
+        "message" : "Vés al recurs"
+    },
+    "__START__" : {
+        "message" : "Inici"
+    },
+    "__END__" : {
+        "message" : "Fi"
+    },
+    "__SOLUTION__" : {
+        "message" : "Solució"
+    },
+    "__GRADE__" : {
+        "message" : "Nota"
+    },
+    "__GRADES__" : {
+        "message" : "Notes"
+    },
+    "__NEWS__" : {
+        "message" : "Notícies"
+    },
+    "__AGENDA__" : {
+        "message" : "Agenda"
+    },
+    "__LINKS_TO_CAMPUS__" : {
+        "message" : "Enllaços del campus"
+    },
+    "__UPDATE__" : {
+        "message" : "Actualitzar"
+    },
+    "__TEACHER__" : {
+        "message" : "Consultor/a"
+    },
+    "__MAIL__" : {
+        "message" : "Correu"
+    },
+    "__VIEWED_LAST_TIME__" : {
+        "message" : "Vist per darrer cop: $date$ a les $time$",
+        "placeholders": {
+          "date": {
+            "content": "$1"
+          },
+          "time": {
+            "content": "$2"
+          }
+        }
+    },
+    "__NOTIFICATION_UNREAD__" : {
+        "message" : "Tens $messages$ missatges per llegir",
+        "placeholders": {
+          "messages": {
+            "content": "$1"
+          }
+        }
+    },
+    "__PRACT_START__" : {
+        "message" : "Avui comença la $pract$ de $class$",
+        "placeholders": {
+          "pract": {
+            "content": "$1"
+          },
+          "class": {
+            "content": "$2"
+          }
+        }
+    },
+    "__PRACT_END__" : {
+        "message" : "Avui acaba la $pract$ de $class$",
+        "placeholders": {
+          "pract": {
+            "content": "$1"
+          },
+          "class": {
+            "content": "$2"
+          }
+        }
+    },
+    "__PRACT_GRADE__" : {
+        "message" : "Has tret una $grade$ a la $pract$ de $class$",
+        "placeholders": {
+          "grade": {
+            "content": "$1"
+          },
+          "pract": {
+            "content": "$2"
+          },
+          "class": {
+            "content": "$2"
+          }
+        }
+    },
+    "__INCORRECT_USER__" : {
+        "message" : "L'usuari/contrasenya no és correcte"
+    },
+    "__NO_USER_PASSWORD__" : {
+        "message" : "No hi ha usuari i password..."
+    },
+    "__WAITING_TO_LOGIN__" : {
+        "message" : "Esperant per entrar... Si el missatge no desapareix, pot ser que l'usuari i contrasenya no siguin correctes."
+    },
+    "__ATTENTION__" : {
+        "message" : "Atenció"
+    },
+    "__NO_CLASSROOMS__" : {
+        "message" : "No hi ha aules visibles. Confirma a la configuració les aules que vols veure"
+    }
+}

@@ -16,7 +16,6 @@
 <script src="options.js"></script>
 <script src="storage.js"></script>
 <script src="background.js"></script>
-<script src="locale.js"></script>
 <style>
 #tclassrooms {
   margin-bottom: 20px;
@@ -36,21 +35,21 @@
         <div class="row">
           <div class="col-xs-6">
             <div class="form-group">
-              <label for="username" class="translate">Usuario</label>
+              <label for="username" class="translate">__USER__</label>
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                <input id="username" type="text" class="form-control translateph" placeholder="Usuario">
+                <input id="username" type="text" class="form-control translateph" placeholder="__USER__">
               </div>
             </div>
             <div class="form-group">
-              <label for="pwd" class="translate">Password</label>
+              <label for="pwd" class="translate">__PASSWORD__</label>
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-                <input id="pwd" type="password" class="form-control translateph" placeholder="Password">
+                <input id="pwd" type="password" class="form-control translateph" placeholder="__PASSWORD__">
               </div>
             </div>
             <div class="form-group">
-              <label for="uni" class="translate">Universidad</label>
+              <label for="uni" class="translate">__UNI__</label>
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
                 <select id="uni" class="form-control">
@@ -62,18 +61,18 @@
           </div>
           <div class="col-xs-6">
             <div class="form-group">
-              <label for="check_interval" class="translate">Intervalo de comprovación</label>
+              <label for="check_interval" class="translate">__INTERVAL__</label>
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
-                <input id="check_interval" type="number" min="5" class="form-control translateph" placeholder="Intervalo de comprovación">
-                <span class="input-group-addon translate">minutos</span>
+                <input id="check_interval" type="number" min="5" class="form-control translateph" placeholder="__INTERVAL__">
+                <span class="input-group-addon translate">__MINUTES__</span>
               </div>
             </div>
             <div class="form-group">
-              <label for="critical" class="translate">Mínimo de mensajes para considerar crítico y notificar</label>
+              <label for="critical" class="translate">__CRITICAL__</label>
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-warning-sign"></span></span>
-                <input id="critical" type="number" min="0" class="form-control translateph" placeholder="Mensajes">
+                <input id="critical" type="number" min="0" class="form-control translateph" placeholder="__MESSAGES__">
               </div>
             </div>
             <div class="form-group">
@@ -82,19 +81,19 @@
                 <span class="input-group-addon">
                   <input id="notification"type="checkbox">
                 </span>
-                <label for="notification" class="form-control translate">Mensajes emergentes</label>
+                <label for="notification" class="form-control translate">__NOTIFICATION__</label>
               </div>
             </div>
           </div>
         </div>
-        <button id="save_btn" class="btn btn-large btn-primary"><span class="glyphicon glyphicon-save"></span> <span class="translate">Guardar<span></button>
+        <button id="save_btn" class="btn btn-large btn-primary"><span class="glyphicon glyphicon-save"></span> <span class="translate">__SAVE__<span></button>
       </form>
       <br/>
 	  <div class="alert alert-success alert-dismissable">
       <span id="status"></span>
 	  </div>
 
-    <h3 class="translate">Notificar aulas</h3>
+    <h3 class="translate">__CLASS_NOTIFY__</h3>
     <div id="tclassrooms"></div>
 </div>
 </body>

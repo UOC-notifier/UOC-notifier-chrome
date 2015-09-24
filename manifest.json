@@ -8,16 +8,17 @@
       "persistent": false
    },
    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-   "description": "UOC notifier for Google Chrome",
+   "description": "__MSG_DESCRIPTION__",
    "icons": {
       "16": "img/logo16.png",
       "32": "img/logo32.png",
       "64": "img/logo64.png",
       "128": "img/logo128.png"
    },
+   "default_locale": "en",
    "manifest_version": 2,
-   "name": "UOC Notifier",
+   "name": "__MSG_TITLE__",
    "options_page": "options.html",
    "permissions": [ "http://cv.uoc.edu/", "https://cv.uoc.edu/", "notifications", "alarms"],
-   "version": "1.31"
+   "version": "1.34"
 }

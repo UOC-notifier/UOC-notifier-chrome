@@ -60,7 +60,7 @@ function save_options(){
 	reset_session(after_save_options);
 	reset_alarm();
 
-	$("#status").text(_("Opciones guardadas. Espera a que se actualizen las aulas..."));
+	$("#status").text(_("__SAVED_OPTIONS__"));
 	$(".alert").show();
 }
 

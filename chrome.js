@@ -1,6 +1,8 @@
 function setBadge(number, color) {
     chrome.browserAction.setBadgeText({text: ""+number});
-    chrome.browserAction.setBadgeBackgroundColor({color: color});
+    if (color) {
+        chrome.browserAction.setBadgeBackgroundColor({color: color});
+    }
     //chrome.browserAction.setIcon({path:"logo.png"});
 }
 
@@ -15,4 +17,8 @@ function popup_notification(title, icon, body, timeout) {
 
 function open_new_tab(url) {
     chrome.tabs.create({url : url});
+}
+
+function translate(str, params){
+    return chrome.i18n.getMessage(str, params);
 }

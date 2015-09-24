@@ -1,6 +1,26 @@
 var root_url = 'http://cv.uoc.edu';
 var root_url_ssl = 'https://cv.uoc.edu';
 
+function getDate(date) {
+    var d = new Date(date);
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    if (month <= 9) {
+        return day +'/0'+month;
+    }
+    return day +'/'+month;
+}
+
+function getTime(date) {
+    var d = new Date(date);
+    var h = d.getHours();
+    var m = d.getMinutes();
+    if (m <= 9) {
+        return h +':0'+m;
+    }
+    return h +':'+m;
+}
+
 function isToday(date) {
     var q = new Date();
     var y = q.getFullYear() - 2000;
@@ -198,3 +218,31 @@ function run_requests() {
         retrieve_session();
     }
 }
+
+function _(str, params) {
+    var st = translate(str, params);
+    if (st) {
+        return st;
+    }
+    console.log(str);
+    return str;
+}
+
+$( document ).ready(function() {
+    $('.translate').each(function() {
+        var text = $(this).text();
+        $(this).text(_(text));
+    });
+    $('.translateph').each(function() {
+        var text = $(this).attr('placeholder');
+        $(this).attr('placeholder', _(text));
+    });
+    $('.translatetit').each(function() {
+        var text = $(this).attr('title');
+        $(this).attr('title', _(text));
+    });
+    $('.translateal').each(function() {
+        var text = $(this).attr('aria-label');
+        $(this).attr('aria-label', _(text));
+    });
+});

@@ -45,7 +45,7 @@ function set_messages() {
 		var color = messages >= get_critical() ? '#AA0000' : '#EB9316';
 		setBadge(messages, color);
 		if(old_messages < messages && messages >= get_critical()){
-			notify(_('Tienes ')+messages+_(' mensajes por leer'));
+			notify(_('__NOTIFICATION_UNREAD__', [messages]));
 		}
 	} else {
 		setBadge("");
@@ -60,9 +60,9 @@ function show_PAC_notifications() {
 		for(var x in classrooms[i].events) {
 			var ev = classrooms[i].events[x];
 			if (ev.ends_today()) {
-				notify(_("Hoy acaba la ")+ev.name+_(" de ")+classrooms[i].get_acronym());
+				notify(_('__PRACT_END__', [ev.name, classrooms[i].get_acronym()]));
 			} else if (ev.starts_today()) {
-				notify(_("Hoy empieza la ")+ev.name+_(" de ")+classrooms[i].get_acronym());
+				notify(_('__PRACT_START__', [ev.name, classrooms[i].get_acronym()]));
 			}
 		}
 	}
@@ -220,7 +220,7 @@ function retrieve_gradeinfo(classroom) {
 						if (evnt.graded != grade) {
 							evnt.graded = grade;
 							classroom.add_event(evnt);
-							notify(_("Has sacado una ")+grade+_(" en la ")+evnt.name+_(" de ") + classroom.get_acronym());
+							notify(_('__PRACT_GRADE__', [grade, ev.name, classrooms.get_acronym()]));
 						}
 						break;
 					}
@@ -311,7 +311,7 @@ function retrieve_session() {
 					run_requests();
 				} else {
 					console.error('ERROR: Cannot fetch session');
-					$("#status").text(_("El usuario/password no es correcto"));
+					$("#status").text(_("__INCORRECT_USER__"));
 					$(".alert").show();
 				}
 			});
