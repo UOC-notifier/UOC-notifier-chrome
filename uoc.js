@@ -42,14 +42,13 @@ function set_messages() {
 
 	// Set icon
 	if(messages > 0){
-		chrome.browserAction.setBadgeText({text:""+messages});
+		setBadge(messages);
 		if(old_messages < messages && messages >= get_critical()){
 			notify(_('Tienes ')+messages+_(' mensajes por leer'));
 		}
 	} else {
-		chrome.browserAction.setBadgeText({text:""});
+		setBadge("");
 	}
-	//chrome.browserAction.setIcon({path:"logo.png"});
 
 	console.log("Check messages: Old "+old_messages+" New "+messages);
 }
@@ -70,24 +69,23 @@ function show_PAC_notifications() {
 
 function notify(str) {
 	if (get_notification() && str.length > 0) {
-		var notification = new Notification('UOC Notifier', { icon: window.location.origin +"/logo128.png", body: str });
-		notification.onshow = function() {setTimeout(function(){
-			notification.close();
-		}, 3000)};
+		popup_notification('UOC Notifier', "/img/logo128.png", str, 3000);
 	}
 }
 
 function parse_classroom(classr) {
+	console.log(classr);
 	var title = classr.shortTitle ? classr.shortTitle : classr.title;
 	var classroom = Classes.search_domainassig(classr.domainFatherId);
 	if (!classroom) {
-		var classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId);
+		var classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId, classr.ptTemplate);
 		classroom.domainassig = classr.domainFatherId;
 	} else {
 		classroom.title = title;
 		classroom.code = classr.domainCode;
 		classroom.domain = classr.domainId;
 		classroom.type = classr.domaintypeid;
+		classroom.template = classr.ptTemplate;
 	}
 	classroom.set_color(classr.color);
 	classroom.any = classr.anyAcademic;
@@ -162,10 +160,9 @@ function parse_classroom_old(classr){
 			case 'TUTORIA':
 				var sp = title.split(classr.codi_tercers);
 				title = sp[0].trim();
-				var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid);
+				var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
 				classroom.aula = classr.codi_tercers;
 				classroom.consultor = sp[1].trim();
-
 				sp = classr.code.split('_');
 				classroom.consultormail = sp[1].trim()+'@uoc.edu';
 				break;

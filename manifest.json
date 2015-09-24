@@ -1,6 +1,6 @@
 {
    "browser_action": {
-      "default_icon": "logo128.png",
+      "default_icon": "img/logo128.png",
       "default_popup": "popup.html"
    },
    "background": {
@@ -10,12 +10,14 @@
    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
    "description": "UOC notifier for Google Chrome",
    "icons": {
-      "128": "logo128.png"
+      "16": "img/logo16.png",
+      "32": "img/logo32.png",
+      "64": "img/logo64.png",
+      "128": "img/logo128.png"
    },
    "manifest_version": 2,
    "name": "UOC Notifier",
    "options_page": "options.html",
    "permissions": [ "http://cv.uoc.edu/", "notifications", "alarms"],
-   "version": "1.29",
-   "web_accessible_resources": ["*.png"]
+   "version": "1.30"
 }

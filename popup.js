@@ -380,7 +380,7 @@ function open_tab(url, data){
 		} else {
 			url += session;
 		}
-		chrome.tabs.create({url : url});
+		open_new_tab(url);
 	}
 }
 
@@ -448,7 +448,7 @@ $(document).ready(function(){
 		return;
 	} else {
 		$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('No hay usuario y password...')+'</div></div>');
-		chrome.tabs.create({ url: "options.html" });
+		open_new_tab("options.html");
 	}
 });
 

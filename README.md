@@ -14,5 +14,5 @@ Original idea and development of Jorge Aguilera
 Thirdparty Libraries
 =====================
 
-* Jquery 2.1.3
-* Bootstrap 3.3.2
+* Jquery 2.1.4
+* Bootstrap 3.3.5
