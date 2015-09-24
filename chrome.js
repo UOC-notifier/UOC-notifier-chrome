@@ -1,5 +1,6 @@
-function setBadge(number) {
+function setBadge(number, color) {
     chrome.browserAction.setBadgeText({text: ""+number});
+    chrome.browserAction.setBadgeBackgroundColor({color: color});
     //chrome.browserAction.setIcon({path:"logo.png"});
 }
 

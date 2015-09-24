@@ -42,7 +42,8 @@ function set_messages() {
 
 	// Set icon
 	if(messages > 0){
-		setBadge(messages);
+		var color = messages >= get_critical() ? '#AA0000' : '#EB9316';
+		setBadge(messages, color);
 		if(old_messages < messages && messages >= get_critical()){
 			notify(_('Tienes ')+messages+_(' mensajes por leer'));
 		}
@@ -74,7 +75,6 @@ function notify(str) {
 }
 
 function parse_classroom(classr) {
-	console.log(classr);
 	var title = classr.shortTitle ? classr.shortTitle : classr.title;
 	var classroom = Classes.search_domainassig(classr.domainFatherId);
 	if (!classroom) {
