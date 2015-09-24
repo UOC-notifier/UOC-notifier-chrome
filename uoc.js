@@ -17,7 +17,7 @@ function check_messages(after_check_fnc){
 			newStartingPage:0,
 			language:"b"
 		}
-		ajax_uoc('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
+		enqueue_request('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
 			var index = resp.indexOf("aulas = ");
 			if (index != -1) {
 				var lastPage = resp.substring(index + 8);
@@ -276,7 +276,7 @@ function retrieve_news(){
 		//hp_theme: 'false'
 	}
 
-	ajax_uoc('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
+	enqueue_request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
 		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
 		if (news != undefined) {
 			$('#detail_news').html(news);

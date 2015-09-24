@@ -155,17 +155,6 @@ function ajax_uoc_login(url, data, type, handler_succ){
     });
 }
 
-function ajax_uoc(url, data, type, handler_succ, handler_err){
-    enqueue_request(url, data, type, handler_succ, handler_err);
-    var session = get_session();
-    if (session) {
-        run_requests();
-    } else {
-        retrieve_session();
-    }
-
-}
-
 var queue = Array();
 var after_queue_function = false;
 var executing = false;
@@ -180,6 +169,7 @@ function enqueue_request(url, data, type, handler_succ, handler_err) {
         };
         queue.push(pet);
         console.log('Queued ' + url);
+        run_requests();
     }
 }
 
