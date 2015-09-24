@@ -211,7 +211,6 @@ function Classroom(title, code, domain, type, template){
 		if(this.type != 'TUTORIA'){
 			var temp = code.split("_");
 			return temp[1]+'.'+temp[2];
-			this.classcode = parseInt(temp[3]);
 		}
 		return false;
 	}

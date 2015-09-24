@@ -38,7 +38,6 @@ function save_interval(minutes){
 		minutes = 5;
 	}
 	localStorage.setItem("check_interval", minutes);
-	reset_alarm();
 }
 
 function get_notification(){
