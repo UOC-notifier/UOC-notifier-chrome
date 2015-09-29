@@ -162,9 +162,13 @@ function parse_classroom_old(classr){
 				title = sp[0].trim();
 				var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
 				classroom.aula = classr.codi_tercers;
-				classroom.consultor = sp[1].trim();
+				if (sp.lenght > 1) {
+					classroom.consultor = sp[1].trim();
+				}
 				sp = classr.code.split('_');
-				classroom.consultormail = sp[1].trim()+'@uoc.edu';
+				if (sp.lenght > 1) {
+					classroom.consultormail = sp[1].trim()+'@uoc.edu';
+				}
 				break;
 			case 'ASSIGNATURA':
 				// Override title
