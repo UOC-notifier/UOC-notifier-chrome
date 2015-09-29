@@ -22,3 +22,8 @@ function open_new_tab(url) {
 function translate(str, params){
     return chrome.i18n.getMessage(str, params);
 }
+
+function get_version() {
+    var manifest = chrome.runtime.getManifest();
+    return manifest.version;
+}

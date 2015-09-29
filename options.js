@@ -7,6 +7,7 @@ $(document).ready(function(){
 		save_options();
 		return false;
 	});
+	$('#version').html(get_version());
 });
 
 function populate_classrooms(){
