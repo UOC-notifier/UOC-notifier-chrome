@@ -191,5 +191,8 @@
     },
     "__NO_CLASSROOMS__" : {
         "message" : "There aren't visible classrooms. Check on settings the classrooms to show"
+    },
+    "__FAQ_LINK__": {
+        "message" : "Any problem? Visit the"
     }
 }

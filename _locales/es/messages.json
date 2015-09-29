@@ -191,5 +191,8 @@
     },
     "__NO_CLASSROOMS__" : {
         "message" : "No hay aulas visibles. Confirma en la configuración las aulas que quieres visualizar"
+    },
+    "__FAQ_LINK__": {
+        "message" : "Tienes problemas? Visita las"
     }
 }
