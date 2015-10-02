@@ -42,7 +42,9 @@ function save_interval(minutes){
 
 function get_notification(){
 	var notify = localStorage.getItem("notification");
-	if(notify == "undefined") return true;
+	if (notify == undefined) {
+		return true;
+	}
 	return notify == "true";
 }
 

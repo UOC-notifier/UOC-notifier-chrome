@@ -6,6 +6,9 @@
         "message" : "Notificador de la UOC per Google Chrome"
     },
     //Options
+    "__LOGIN__" : {
+        "message" : "Entrada"
+    },
     "__OPTIONS__" : {
         "message" : "Opcions"
     },
@@ -34,13 +37,13 @@
         "message" : "Desa"
     },
     "__CLASS_NOTIFY__" : {
-        "message" : "Notifica aules"
+        "message" : "Mostra i notifica aules"
     },
     "__MINUTES__" : {
         "message" : "minuts"
     },
     "__SAVED_OPTIONS__" : {
-        "message" : "Opcions desades. Espera a que s'actualitzin las aules..."
+        "message" : "Opcions desades. Espera a que s'actualitzin les aules..."
     },
     "__VERSION__" : {
         "message" : "Versió"

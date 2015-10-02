@@ -38,15 +38,32 @@ function populate_options(){
 	var uni = get_uni();
 	var interval = get_interval();
 	var critical = get_critical();
-	var notitication = get_notification();
+	var notify = get_notification();
 	$('#username').val(user_save.username);
 	$('#pwd').val(user_save.password);
 	$('#uni').val(uni);
 	$('#check_interval').val(interval);
 	$('#critical').val(critical);
-	if(notification){
+	if (notify) {
 		$('#notification').attr('checked','checked');
 	}
+
+	$('#uni').on('change', function(){
+		save_uni($(this).val());
+	});
+
+	$('#check_interval').on('change', function(){
+		save_interval($(this).val());
+	});
+
+	$('#critical').on('change', function(){
+		save_critical($(this).val());
+	});
+
+	$('#notification').on('click', function(){
+		var ischecked = $('#notification').is(':checked');
+		save_notification(ischecked);
+	});
 }
 
 function save_options(){

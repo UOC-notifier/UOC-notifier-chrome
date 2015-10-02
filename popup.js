@@ -493,8 +493,6 @@ function buildUI(){
 
 	setTimeout( handleEvents, 100);
 
-
-
 	$('.details').collapse({toggle: false});
 	$('.button_details').click( function () {
 		var val = this.value;
@@ -516,6 +514,10 @@ $(document).ready(function(){
 		if(!session){
 			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__WAITING_TO_LOGIN__')+'</div></div>');
 			check_messages(buildUI);
+
+			$('#options').click( function() {
+				open_new_tab("options.html");
+			});
 			return;
 		}
 		buildUI();

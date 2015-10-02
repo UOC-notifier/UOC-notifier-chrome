@@ -6,6 +6,9 @@
         "message" : "UOC notifier for Google Chrome"
     },
     //Options
+    "__LOGIN__" : {
+        "message" : "Log in"
+    },
     "__OPTIONS__" : {
         "message" : "Options"
     },
@@ -34,7 +37,7 @@
         "message" : "Save"
     },
     "__CLASS_NOTIFY__" : {
-        "message" : "Classrooms to notify"
+        "message" : "Classrooms to show and notify"
     },
     "__MINUTES__" : {
         "message" : "minutes"
