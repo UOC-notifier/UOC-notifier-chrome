@@ -45,6 +45,18 @@ function isBeforeToday(date) {
     return dsplit[2] < y;
 }
 
+function compareDates(dateA, dateB) {
+    var asplit = dateA.split("/");
+    var bsplit = dateB.split("/");
+    if (bsplit[2] != asplit[2]) {
+        return asplit[2] - bsplit[2];
+    }
+    if (bsplit[1] != asplit[1]) {
+        return asplit[1] - bsplit[1];
+    }
+    return asplit[0] - bsplit[0];
+}
+
 function get_url_attr(url, attr){
     if(url.indexOf(attr) == -1){
         return false;
@@ -96,8 +108,6 @@ function get_url_base(url) {
         return url;
     }
 }
-
-
 
 function uri_data(map){
     var str = "";

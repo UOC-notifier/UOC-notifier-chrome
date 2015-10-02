@@ -162,11 +162,11 @@ function parse_classroom_old(classr){
 				title = sp[0].trim();
 				var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
 				classroom.aula = classr.codi_tercers;
-				if (sp.lenght > 1) {
+				if (sp.length > 1) {
 					classroom.consultor = sp[1].trim();
 				}
 				sp = classr.code.split('_');
-				if (sp.lenght > 1) {
+				if (sp.length > 1) {
 					classroom.consultormail = sp[1].trim()+'@uoc.edu';
 				}
 				break;
@@ -278,6 +278,7 @@ function retrieve_news(){
 	}
 
 	enqueue_request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
+		resp = resp.replace(/<img/gi, '<noload');
 		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
 		if (news != undefined) {
 			$('#detail_news').html(news);

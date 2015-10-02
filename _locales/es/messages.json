@@ -6,6 +6,9 @@
         "message" : "Notificador de la UOC para Google Chrome"
     },
     //Options
+    "__OPTIONS__" : {
+        "message" : "Opciones"
+    },
     "__USER__" : {
         "message" : "Usuario"
     },
@@ -38,6 +41,9 @@
     },
     "__SAVED_OPTIONS__" : {
         "message" : "Opciones guardadas. Espera a que se actualizen las aulas..."
+    },
+    "__VERSION__" : {
+        "message" : "Versión"
     },
 
     //Popup
@@ -113,6 +119,9 @@
     "__LINKS_TO_CAMPUS__" : {
         "message" : "Enlaces del campus"
     },
+    "__ASSIGNMENTS__" : {
+        "message" : "Prácticas"
+    },
     "__UPDATE__" : {
         "message" : "Actualizar"
     },
@@ -121,6 +130,9 @@
     },
     "__MAIL__" : {
         "message" : "Correo"
+    },
+    "__SUBJECT__" : {
+        "message" : "Asignatura"
     },
     "__VIEWED_LAST_TIME__" : {
         "message" : "Visto por última vez: $date$ a las $time$",

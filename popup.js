@@ -1,48 +1,120 @@
 function buildUI_tools(){
-	var session = get_session();
+	if($('#detail_campus').html() == "") {
+		var session = get_session();
 
-    var uni =  get_uni();
-    if(uni == 'UOCi'){
-        gat = 'EXPIB';
-    } else {
-        gat = 'EXP';
-    }
-    var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
+	    var uni =  get_uni();
+	    if(uni == 'UOCi'){
+	        gat = 'EXPIB';
+	    } else {
+	        gat = 'EXP';
+	    }
+	    var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
 
-    var urls = new Array();
-    //urls.push({url: '.INFCONSULTA/inici', title: _('Expediente antiguo (no funciona)')});
-    //urls.push({url: '.NOTESAVAL/rac.rac&tipus=1', title: _('REC antiguo (no funciona)')});
-    urls.push({url: '.NOTESAVAL/NotesEstudiant.inici', title: _('__GRADE_RESUME__')});
-    urls.push({url: '.EXASOLREVISION/consrevision.consrevision', title: _('__EXAM_REVISION__')});
-    urls.push({url: '.PAPERETES/paperetes.paperetes', title: _('__FINAL_GRADES__')});
-    urls.push({url: '.ESTADNOTES/estadis.inici', title: _('__STATS__')});
-    urls.push({url: '.MATPREMATRICULA/inici', title: _('__ENROLL_PROP__')});
-    urls.push({url: '.MATMATRICULA/inici', title: _('__ENROLL__')});
-    urls.push({url: '.NOTAS_SMS', title: _('__GRADES_SMS__')});
+	    var urls = new Array();
+	    //urls.push({url: '.INFCONSULTA/inici', title: _('Expediente antiguo (no funciona)')});
+	    //urls.push({url: '.NOTESAVAL/rac.rac&tipus=1', title: _('REC antiguo (no funciona)')});
+	    urls.push({url: '.NOTESAVAL/NotesEstudiant.inici', title: _('__GRADE_RESUME__')});
+	    urls.push({url: '.EXASOLREVISION/consrevision.consrevision', title: _('__EXAM_REVISION__')});
+	    urls.push({url: '.PAPERETES/paperetes.paperetes', title: _('__FINAL_GRADES__')});
+	    urls.push({url: '.ESTADNOTES/estadis.inici', title: _('__STATS__')});
+	    urls.push({url: '.MATPREMATRICULA/inici', title: _('__ENROLL_PROP__')});
+	    urls.push({url: '.MATMATRICULA/inici', title: _('__ENROLL__')});
+	    urls.push({url: '.NOTAS_SMS', title: _('__GRADES_SMS__')});
 
-    var text = '<div class="container-fluid resources">';
-    var par = -1;
-    var link;
-    for (var x in urls) {
-        link = root_url_gate + urls[x].url + '&s=';
-		text += get_general_link(link, urls[x].title, par);
+	    var text = '<div class="container-fluid resources">';
+	    var par = -1;
+	    var link;
+	    for (var x in urls) {
+	        link = root_url_gate + urls[x].url + '&s=';
+			text += get_general_link(link, urls[x].title, par);
+			par = -par;
+	    }
+	    // New expedient
+		link = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
+		text += get_general_link(link, _('__EXPEDIENT__'), par);
 		par = -par;
-    }
-    // New expedient
-	link = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
-	text += get_general_link(link, _('__EXPEDIENT__'), par);
-	par = -par;
 
-	link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont&s='
-	text += get_general_link(link, _('__OLD_AGENDA__'), par);
-	par = -par;
+		link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont&s='
+		text += get_general_link(link, _('__OLD_AGENDA__'), par);
+		par = -par;
 
-	link = root_url + '/app/guaita/calendari?perfil=estudiant&s='
-	text += get_general_link(link, _('__NEW_AGENDA__'), par);
-	par = -par;
+		link = root_url + '/app/guaita/calendari?perfil=estudiant&s='
+		text += get_general_link(link, _('__NEW_AGENDA__'), par);
+		par = -par;
 
-    text += '</div>';
-    return text;
+	    text += '</div>';
+	    $('#detail_campus').html(text);
+	}
+}
+
+function buildUI_pacs() {
+	if($('#detail_pacs').html() == "") {
+		var text = "";
+
+		var classrooms = Classes.get_notified();
+		var events = new Array();
+		for(var i in classrooms){
+			var classroom = classrooms[i];
+			if (classroom.events.length > 0 ) {
+				for(var j in classroom.events){
+					classroom.events[j].subject = classroom.get_acronym();
+					events.push(classroom.events[j]);
+				}
+			}
+		}
+
+
+		if (events.length > 0) {
+			events.sort(function(a, b){
+				return compareDates(a.start, b.start);
+			});
+
+			text = '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
+				<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th></tr></thead>\
+				<tbody>';
+			for (var i in events) {
+				text += buildUI_pacs_events(events[i]);
+			}
+			text += '</tbody></table>';
+		}
+	   	$('#detail_pacs').html(text);
+
+	   	$('.linkEvent').unbind( "click" );
+		$('.linkEvent').click(function(){
+			var link = $(this).parents('.event').attr('link');
+			if(link && link != 'undefined'){
+				var url = link;
+				var data = {};
+				open_tab(url, data);
+			}
+		});
+	}
+}
+
+function buildUI_pacs_events(ev) {
+	if(ev.link != 'undefined'){
+		var link = 'link="'+ev.link+'"';
+	}
+
+	var eventstate = "";
+	if (ev.has_started()) {
+		if (ev.has_ended()) {
+			return "";
+		} else {
+			eventstate = ' warning';
+		}
+	}
+	var dstart = buildUI_eventdate(ev.start, "");
+
+	if (ev.committed && !ev.has_ended()) {
+		var dend = buildUI_eventdate(ev.end, "end", '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>');
+	} else if (!ev.committed && ev.has_ended()) {
+		var dend = buildUI_eventtext('<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>', "text-danger");
+	} else {
+		var dend = buildUI_eventdate(ev.end, "end");
+	}
+	return '<tr class="event'+eventstate+'" '+link+'"> \
+				<td class="name"><a href="#" class="linkEvent">'+ev.subject+' - '+ev.name+'</a></td>'+dstart+dend+'</tr>';
 }
 
 function get_general_link(link, title, par){
@@ -95,7 +167,7 @@ function buildUI_classroom_events(classroom) {
 	}
 	var events_html = '';
 	for(var j in classroom.events){
-		events_html += buildUI_event(classroom.events[j], classroom.code);
+		events_html += buildUI_event(classroom.events[j]);
 	}
 	return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
 			<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
@@ -103,7 +175,7 @@ function buildUI_classroom_events(classroom) {
 		</table>';
 }
 
-function buildUI_event(ev, classroom_code){
+function buildUI_event(ev){
 	if(ev.link != 'undefined'){
 		var link = 'link="'+ev.link+'"';
 	}
@@ -249,11 +321,11 @@ function buildUI_badge(messages, classes, allmessages, title){
 	var badge = get_badge(messages);
 	if (!isNaN(allmessages)) {
 		return '<div class="btn-group btn-group-justified btn-group-xs ' + classes + '" role="group"> \
-					<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details" title="'+title+'">' + messages + '</button></div> \
-		  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+' button_details" title="'+title+'">' + allmessages + '</button></div> \
+					<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+'" title="'+title+'">' + messages + '</button></div> \
+		  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+'" title="'+title+'">' + allmessages + '</button></div> \
 				</div>';
 	} else {
-		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' button_details btn-group-justified" title="'+title+'">'+messages+'</button>';
+		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' btn-group-justified" title="'+title+'">'+messages+'</button>';
 	}
 }
 
@@ -396,29 +468,32 @@ function buildUI(){
 		class_html += buildUI_classroom(classrooms[i]);
 		visibles++;
 	}
-	$('#classrooms').html(class_html);
-
-	var tools_html = buildUI_tools();
-	$('#detail_campus').html(tools_html);
+	if (!visibles) {
+		$('#classrooms').html("<div class='alert'><h4>"+_('__ATTENTION__')+"</h4>"+_('__NO_CLASSROOMS__')+"</div>")
+	} else {
+		$('#classrooms').html(class_html);
+	}
 
 	$('#button_news').click(buildUI_news);
 	$('#button_agenda').click(buildUI_agenda);
+	$('#button_campus').click(buildUI_tools);
+	$('#button_pacs').click(buildUI_pacs);
 	$('#button_mail').click(function() {
 		var url = root_url + '/WebMail/listMails.do';
 		open_tab(url);
 	});
 
-	setTimeout( handleEvents, 100);
-
-	$('.update').click( function() {
+	$('#update').click( function() {
 		check_messages(buildUI);
 	});
 
+	$('#options').click( function() {
+		open_new_tab("options.html");
+	});
 
-	if( !visibles ){
-		$('#classrooms').html("<div class='alert'><h4>"+_('__ATTENTION__')+"</h4>"+_('__NO_CLASSROOMS__')+"</div>")
-		return;
-	}
+	setTimeout( handleEvents, 100);
+
+
 
 	$('.details').collapse({toggle: false});
 	$('.button_details').click( function () {
