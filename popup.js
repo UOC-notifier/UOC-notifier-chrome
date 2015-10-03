@@ -1,5 +1,5 @@
 function buildUI_tools(){
-	if($('#detail_campus').html() == "") {
+	if ($('#detail_campus').html() == "") {
 		var session = get_session();
 
 	    var uni =  get_uni();
@@ -44,6 +44,20 @@ function buildUI_tools(){
 
 	    text += '</div>';
 	    $('#detail_campus').html(text);
+
+	    $('.linkResource').unbind( "click" );
+		$('.linkResource').click(function(){
+			var link = $(this).parents('.resource').attr('link');
+			if(link && link != 'undefined'){
+				var url = link;
+				var data = {};
+			} else {
+				var code = $(this).parents('.resource').attr('resource');
+				var url = root_url + '/webapps/bustiaca/listMails.do';
+				var data = {l: code};
+			}
+			open_tab(url, data);
+		});
 	}
 }
 
