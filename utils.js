@@ -2,23 +2,24 @@ var root_url = 'http://cv.uoc.edu';
 var root_url_ssl = 'https://cv.uoc.edu';
 
 function getDate(date) {
-    var d = new Date(date);
-    var month = d.getMonth() + 1;
-    var day = d.getDate();
-    if (month <= 9) {
-        return day +'/0'+month;
+    var sp = date.split('T');
+    sp = sp[0].split('-');
+    if (sp.length <= 2) {
+        return "";
     }
-    return day +'/'+month;
+    return sp[2]+"/"+sp[1];
 }
 
 function getTime(date) {
-    var d = new Date(date);
-    var h = d.getHours();
-    var m = d.getMinutes();
-    if (m <= 9) {
-        return h +':0'+m;
+    var sp = date.split('T');
+    if (sp.length <= 1) {
+        return "";
     }
-    return h +':'+m;
+    sp = sp[1].split(':');
+    if (sp.length <= 1) {
+        return "";
+    }
+    return sp[0]+":"+sp[1];
 }
 
 function isToday(date) {
