@@ -118,13 +118,17 @@ function uri_data(map){
     return str.slice(0,-1);
 }
 
-function get_real_url(url){
+function get_real_url(url) {
     if(url.indexOf('/') == 0){
         return root_url + url;
     } else if(url.indexOf('http://') == -1 && url.indexOf('https://') == -1){
         return root_url + '/' + url;
     }
     return url;
+}
+
+function get_url_with_data(url, data) {
+    var uri = get_real_url(url) + '?' + uri_data(data);
 }
 
 function ajax_do(session, url, data, type, handler_succ, handler_err){

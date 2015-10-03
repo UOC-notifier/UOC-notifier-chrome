@@ -34,7 +34,15 @@ function buildUI_tools(){
 		text += get_general_link(link, _('__EXPEDIENT__'), par);
 		par = -par;
 
-		link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont&s='
+		var domainId = "";
+		var classrooms = Classes.get_notified();
+		for(var i in classrooms){
+			if (classrooms[i].domain) {
+				domainId = "&domainId=" + classrooms[i].domain;
+				break;
+			}
+		}
+		link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s='
 		text += get_general_link(link, _('__OLD_AGENDA__'), par);
 		par = -par;
 
