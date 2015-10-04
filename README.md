@@ -3,6 +3,8 @@ UOC-notifier
 
 UOC notifier for Google Chrome
 
+https://chrome.google.com/webstore/detail/uoc-notifier/beiebnelcljchfoehaogncobmpelndgh
+
 Authors:
 
 * Pau Ferrer Ocaña
