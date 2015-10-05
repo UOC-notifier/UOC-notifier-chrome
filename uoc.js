@@ -90,9 +90,14 @@ function parse_classroom(classr) {
 	classroom.set_color(classr.color);
 	classroom.any = classr.anyAcademic;
 	classroom.aula = classr.numeralAula;
-	classroom.consultor = classr.widget.consultor.nomComplert;
+
+	var consultor = false;
+	if (classr.widget.consultor != undefined && classr.widget.consultor.nomComplert != undefined) {
+		consultor = classr.widget.consultor.nomComplert;
+	}
 	for (var x in classr.widget.referenceUsers) {
-		if (classr.widget.referenceUsers[x].fullName == classroom.consultor) {
+		if (!consultor || classr.widget.referenceUsers[x].fullName == consultor) {
+			classroom.consultor = classr.widget.referenceUsers[x].fullName;
 			classroom.consultormail = classr.widget.referenceUsers[x].email;
 			classroom.consultorlastviewed = classr.widget.referenceUsers[x].lastLoginTime;
 			break;
@@ -224,7 +229,7 @@ function retrieve_gradeinfo(classroom) {
 						if (evnt.graded != grade) {
 							evnt.graded = grade;
 							classroom.add_event(evnt);
-							notify(_('__PRACT_GRADE__', [grade, ev.name, classrooms.get_acronym()]));
+							notify(_('__PRACT_GRADE__', [grade, evnt.name, classrooms.get_acronym()]));
 						}
 						break;
 					}
