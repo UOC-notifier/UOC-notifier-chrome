@@ -143,114 +143,96 @@ function get_url_with_data(url, data) {
     var uri = get_real_url(url) + '?' + uri_data(data);
 }
 
-function ajax_do(session, url, data, type, handler_succ, handler_err){
-    if(!data) {
-        data = {};
-    }
-    data.s = session;
-    url = root_url + url;
-    if (type == 'GET') {
-        url += '?'+uri_data(data);
-        var args = false;
-    } else {
-        var args = uri_data(data);
-    }
 
-    $.ajax({
-        type: type,
-        url: url,
-        data: args,
-        processData: false
-    })
-    .done(function(resp) {
-        if (handler_succ) {
-            handler_succ(resp, data);
-        }
-    })
-    .fail(function(resp) {
-        console.error('ERROR: Cannot fetch '+url);
-        if (handler_err) {
-            handler_err(resp);
-        }
-    })
-    .always(function() {
-        executing = false;
-        run_requests();
-    });
-}
+var Queue = new function(){
+    var queue = Array();
+    var after_function = false;
+    var executing = false;
 
-function ajax_uoc_login(url, data, type, handler_succ){
-    url = root_url + url;
-    $.ajax({
-        type: type,
-        beforeSend: function (request){
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        },
-        xhrFields: {
-            withCredentials: true
-        },
-        url: url,
-        data: uri_data(data),
-        processData: false
-    })
-    .done(handler_succ)
-    .fail(function() {
-        console.error('ERROR: Cannot fetch '+url);
-    })
-    .always(function() {
-        set_retrieving(false);
-    });
-}
-
-var queue = Array();
-var after_queue_function = false;
-var executing = false;
-function enqueue_request(url, data, type, handler_succ, handler_err) {
-    if (url) {
-        var pet = {
-            url: url,
-            data: data,
-            type: type,
-            success: handler_succ,
-            error: handler_err
-        };
-        queue.push(pet);
-        console.log('Queued ' + url);
-        run_requests();
-    }
-}
-
-function set_after_queue_function(fnc){
-    after_queue_function = fnc;
-}
-
-function run_requests() {
-    var session = get_session();
-    if (session) {
-        if (!executing) {
-            if (queue.length > 0) {
-                executing = true;
-                var pet = queue.shift();
-                console.log('Run ' + pet.url);
-                ajax_do(session, pet.url, pet.data, pet.type, pet.success, pet.error);
-            } else {
-                console.log('End of queue');
-                Classes.save();
-                if (after_queue_function) {
-                    after_queue_function();
+    var run = this.run = function() {
+        var session = Session.get();
+        if (session) {
+            if (!executing) {
+                if (queue.length > 0) {
+                    executing = true;
+                    var pet = queue.shift();
+                    console.log('Run ' + pet.url);
+                    ajax_do(session, pet.url, pet.data, pet.type, pet.success, pet.error);
+                } else {
+                    console.log('End of queue');
+                    Classes.save();
+                    if (after_function) {
+                        after_function();
+                    }
                 }
             }
+        } else {
+            Session.retrieve();
         }
-    } else {
-        retrieve_session();
     }
-}
+
+    this.request = function(url, data, type, handler_succ, handler_err) {
+        if (url) {
+            var pet = {
+                url: url,
+                data: data,
+                type: type,
+                success: handler_succ,
+                error: handler_err
+            };
+            queue.push(pet);
+            console.log('Queued ' + url);
+            run();
+        }
+    }
+
+    this.set_after_function = function(fnc){
+        after_function = fnc;
+    }
+
+    function ajax_do(session, url, data, type, handler_succ, handler_err){
+        if(!data) {
+            data = {};
+        }
+        data.s = session;
+        url = root_url + url;
+        if (type == 'GET') {
+            url += '?'+uri_data(data);
+            var args = false;
+        } else {
+            var args = uri_data(data);
+        }
+
+        $.ajax({
+            type: type,
+            url: url,
+            data: args,
+            processData: false
+        })
+        .done(function(resp) {
+            if (handler_succ) {
+                handler_succ(resp, data);
+            }
+        })
+        .fail(function(resp) {
+            console.error('ERROR: Cannot fetch '+url);
+            if (handler_err) {
+                handler_err(resp);
+            }
+        })
+        .always(function() {
+            executing = false;
+            run();
+        });
+    }
+};
 
 function _(str, params) {
     var st = translate(str, params);
     if (st) {
         return st;
     }
+    // Not found
     console.log(str);
     return str;
 }

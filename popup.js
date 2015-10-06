@@ -1,7 +1,5 @@
 function buildUI_tools(){
 	if ($('#detail_campus').html() == "") {
-		var session = get_session();
-
 	    var uni =  get_uni();
 	    if(uni == 'UOCi'){
 	        gat = 'EXPIB';
@@ -265,8 +263,8 @@ function buildUI_eventtext(text, clas, append) {
 
 function buildUI_news(){
 	if($('#detail_news').html() == "") {
-		/*session = get_session();
-		if(!session) {
+		/*
+		if(!Session.get()) {
 			return false;
 		}
 
@@ -279,7 +277,7 @@ function buildUI_news(){
 
 function buildUI_agenda(){
 	if($('#detail_agenda iframe').length == 0) {
-		session = get_session();
+		session = Session.get();
 		if(!session) {
 			return;
 		}
@@ -478,7 +476,7 @@ function handleEvents(){
 }
 
 function open_tab(url, data){
-	var session = get_session();
+	var session = Session.get();
 	if(session){
 		if(url.indexOf('?') == -1){
 			if(!data) data = {};
@@ -543,10 +541,9 @@ function buildUI(){
 	});
 }
 
-$(document).ready(function(){
-	var user_save = get_user();
-	if(user_save.username && user_save.password){
-		session = get_session();
+$(document).ready(function() {
+	if (has_username_password()) {
+		session = Session.get();
 		if(!session){
 			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__WAITING_TO_LOGIN__')+'</div></div>');
 			check_messages(buildUI);

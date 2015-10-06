@@ -1,5 +1,5 @@
 function check_messages(after_check_fnc){
-	set_after_queue_function(after_check_fnc);
+	Queue.set_after_function(after_check_fnc);
 
 	// Get the new aulas
 	var args = {
@@ -7,7 +7,7 @@ function check_messages(after_check_fnc){
 		setLng : get_lang(),
 		format: 'json'
 	}
-	enqueue_request('/app/guaita/calendari', args, "GET", function(data) {
+	Queue.request('/app/guaita/calendari', args, "GET", function(data) {
 		for (x in data.classrooms) {
 			classroom = parse_classroom(data.classrooms[x]);
 		}
@@ -17,7 +17,7 @@ function check_messages(after_check_fnc){
 			newStartingPage:0,
 			language:"b"
 		}
-		enqueue_request('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
+		Queue.request('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
 			var index = resp.indexOf("aulas = ");
 			if (index != -1) {
 				var lastPage = resp.substring(index + 8);
@@ -203,7 +203,7 @@ function retrieve_gradeinfo(classroom) {
 	var args = {
 		domainId: classroom.domain
 	}
-	enqueue_request('/webapps/rac/listEstudiant.action', args, 'GET', function(data, args) {
+	Queue.request('/webapps/rac/listEstudiant.action', args, 'GET', function(data, args) {
 		data = data.replace(/<img/gi, '<noload');
 		data = $(data).filter('.TablaNotas');
 		$(data).find("td a[href*='viewPrac']").each(function() {
@@ -248,7 +248,7 @@ function retrieve_resource(classroom, resource){
 		subjectId: classroom.domain,
 		resourceId: resource.code
 	};
-	enqueue_request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
+	Queue.request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
         var num_msg_pendents = Math.max(data.resource.newItems, 0);
         var num_msg_totals = data.resource.totalItems;
 		resource.set_messages(num_msg_pendents, num_msg_totals);
@@ -282,7 +282,7 @@ function retrieve_news(){
 		//hp_theme: 'false'
 	}
 
-	enqueue_request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
+	Queue.request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
 		resp = resp.replace(/<img/gi, '<noload');
 		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
 		if (news != undefined) {
@@ -291,40 +291,73 @@ function retrieve_news(){
 	});
 }
 
-function retrieve_session() {
-	var user_save = get_user();
-	if(user_save.username && user_save.password) {
-		if (!is_retrieving()) {
-			set_retrieving(true);
-			console.log('Retrieving session...');
-			var data = {
-				l:user_save.username,
-				p:user_save.password,
-				appid:"WUOC",
-				nil:"XXXXXX",
-				lb:"a",
-				url:root_url,
-				x:"13",
-				y:"2"
-			};
-			ajax_uoc_login("/cgi-bin/uoc", data, "POST", function(resp) {
-				var iSs = resp.indexOf("?s=");
-				if( iSs != -1 ){
-					var	iSf = resp.indexOf("\";", iSs);
-					var	iSf2 = resp.indexOf("&", iSs);
-					if (iSf2 < iSf && iSf2 > 0) {
-						iSf = iSf2;
+var Session = new function(){
+	var retrieving = false;
+	var session = false;
+
+	this.get = function() {
+		if (!session) {
+			session = get_session();
+		}
+		return session;
+	}
+
+	this.retrieve = function() {
+		var user_save = get_user();
+		if(user_save.username && user_save.password) {
+			if (!retrieving) {
+				console.log('Retrieving session...');
+				retrieving = true;
+
+				var data = {
+					l: user_save.username,
+					p: user_save.password,
+					appid: "WUOC",
+					nil: "XXXXXX",
+					lb: "a",
+					url: root_url,
+					x: "13",
+					y: "2"
+				};
+
+			    url = root_url + "/cgi-bin/uoc";
+			    $.ajax({
+			        type: 'POST',
+			        beforeSend: function (request){
+			            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			        },
+			        xhrFields: {
+			            withCredentials: true
+			        },
+			        url: url,
+			        data: uri_data(data),
+			        processData: false
+			    })
+			    .done(function(resp) {
+			    	var iSs = resp.indexOf("?s=");
+					if( iSs != -1 ){
+						var	iSf = resp.indexOf("\";", iSs);
+						var	iSf2 = resp.indexOf("&", iSs);
+						if (iSf2 < iSf && iSf2 > 0) {
+							iSf = iSf2;
+						}
+						session = resp.substring(iSs + 3, iSf);
+						save_session(session);
+						console.log('Session! '+session);
+						Queue.run();
+					} else {
+						console.error('ERROR: Cannot fetch session');
+						$("#status").text(_("__INCORRECT_USER__"));
+						$(".alert").show();
 					}
-					ses = resp.substring(iSs + 3, iSf);
-					save_session(ses);
-					console.log('Session! '+ses);
-					run_requests();
-				} else {
-					console.error('ERROR: Cannot fetch session');
-					$("#status").text(_("__INCORRECT_USER__"));
-					$(".alert").show();
-				}
-			});
+			    })
+			    .fail(function() {
+			        console.error('ERROR: Cannot fetch '+url);
+			    })
+			    .always(function() {
+			        retrieving = false;
+			    });
+			}
 		}
 	}
 }

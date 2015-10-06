@@ -19,8 +19,7 @@ function onAlarm(alarm) {
 }
 
 function onStartup(alarm){
-	var user_save = get_user();
-	if (user_save.username && user_save.password) {
+	if (has_username_password()) {
 		reset_session();
 		setup_alarm();
 		check_messages(show_PAC_notifications);
@@ -28,8 +27,7 @@ function onStartup(alarm){
 }
 
 function onInstall(alarm){
-	var user_save = get_user();
-	if (user_save.username && user_save.password) {
+	if (has_username_password()) {
 		reset_session();
 		setup_alarm();
 		check_messages(show_PAC_notifications);

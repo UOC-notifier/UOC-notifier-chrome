@@ -1,12 +1,3 @@
-var retrieving = false;
-function is_retrieving() {
-	return retrieving;
-}
-
-function set_retrieving(enabled) {
-	retrieving = enabled;
-}
-
 function get_icon(){
 	return localStorage.getItem("messages_icon") || 0;
 }
@@ -25,6 +16,12 @@ function get_user(){
 	user_save.username = localStorage.getItem("user_username") || "";
 	user_save.password = get_password();
 	return user_save;
+}
+
+function has_username_password(){
+	var username = localStorage.getItem("user_username") || false;
+	var password = localStorage.getItem("user_password") || false;
+	return username && password;
 }
 
 function get_password() {
@@ -89,14 +86,14 @@ function save_critical(messages){
 
 function reset_session(handler){
 	localStorage.removeItem("session");
-	retrieve_session();
+	Session.retrieve();
 	if (handler) {
 		handler();
 	}
 }
 
 function save_session(session){
-	localStorage.setItem("session",session);
+	localStorage.setItem("session", session);
 }
 
 function get_session() {
