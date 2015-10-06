@@ -229,7 +229,7 @@ function retrieve_gradeinfo(classroom) {
 						if (evnt.graded != grade) {
 							evnt.graded = grade;
 							classroom.add_event(evnt);
-							notify(_('__PRACT_GRADE__', [grade, evnt.name, classrooms.get_acronym()]));
+							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
 						}
 						break;
 					}
