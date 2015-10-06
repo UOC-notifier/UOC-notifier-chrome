@@ -52,6 +52,15 @@ function save_notification(notify){
 	localStorage.setItem("notification", notify);
 }
 
+function get_sorting(){
+	var sorting = localStorage.getItem("sorting") || 'start';
+	return sorting;
+}
+
+function save_sorting(sorting){
+	localStorage.setItem("sorting", sorting);
+}
+
 function get_critical(){
 	var critical = localStorage.getItem("critical") || 10;
 	return parseInt(critical);

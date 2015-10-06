@@ -69,8 +69,8 @@ function buildUI_tools(){
 	}
 }
 
-function buildUI_pacs() {
-	if($('#detail_pacs').html() == "") {
+function buildUI_pacs(force) {
+	if(force != undefined || $('#detail_pacs').html() == "") {
 		var text = "";
 
 		var classrooms = Classes.get_notified();
@@ -87,12 +87,19 @@ function buildUI_pacs() {
 
 
 		if (events.length > 0) {
-			events.sort(function(a, b){
-				return compareDates(a.start, b.start);
-			});
+			var sorting = get_sorting();
+			if (sorting == 'end') {
+				events.sort(function(a, b){
+					return compareDates(a.end, b.end);
+				});
+			} else {
+				events.sort(function(a, b){
+					return compareDates(a.start, b.start);
+				});
+			}
 
 			text = '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
-				<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th></tr></thead>\
+				<thead><tr><th></th><th by="start" class="sort_pacs">'+_('__START__')+'</th><th by="end" class="sort_pacs">'+_('__END__')+'</th></tr></thead>\
 				<tbody>';
 			for (var i in events) {
 				text += buildUI_pacs_events(events[i]);
@@ -109,6 +116,13 @@ function buildUI_pacs() {
 				var data = {};
 				open_tab(url, data);
 			}
+		});
+
+		$('.sort_pacs').unbind( "click" );
+		$('.sort_pacs').click(function(){
+			var sorting = $(this).attr('by');
+			save_sorting(sorting);
+			buildUI_pacs(true);
 		});
 	}
 }
