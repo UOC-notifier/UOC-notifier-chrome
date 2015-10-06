@@ -17,14 +17,27 @@ function save_icon(number){
 
 function save_user(username, password){
 	localStorage.setItem("user_username",username);
-	localStorage.setItem("user_password",password);
+	save_password(password);
 }
 
 function get_user(){
 	var user_save = {};
 	user_save.username = localStorage.getItem("user_username") || "";
-	user_save.password = localStorage.getItem("user_password") || "";
+	user_save.password = get_password();
 	return user_save;
+}
+
+function get_password() {
+	var password = localStorage.getItem("user_password") || "";
+	if (password != "") {
+		password = b64_to_utf8(password);
+	}
+	return password;
+}
+
+function save_password(password) {
+	password = utf8_to_b64(password);
+	localStorage.setItem("user_password",password);
 }
 
 function get_interval(){
