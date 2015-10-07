@@ -17,6 +17,22 @@ var Classes = new function(){
 		this.count_messages();
 		set_messages();
 		Debug.print(classes);
+		classes.sort(function(a, b) {
+			if (a.notify != b.notify) {
+				return b.notify - a.notify;
+			}
+			if (a.type != b.type) {
+				if (a.type == 'TUTORIA') {
+					return 1;
+				}
+				if (b.type == 'TUTORIA') {
+					return -1;
+				}
+			}
+			if(a.title < b.title) return -1;
+		    if(a.title > b.title) return 1;
+		    return 0;
+		});
 		Storage.set_option("classes", JSON.stringify(classes));
 	};
 

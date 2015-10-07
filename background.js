@@ -19,16 +19,16 @@ function onAlarm(alarm) {
 }
 
 function onStartup(alarm){
+	reset_session();
 	if (has_username_password()) {
-		reset_session();
 		setup_alarm();
 		check_messages(show_PAC_notifications);
 	}
 }
 
 function onInstall(alarm){
+	reset_session();
 	if (has_username_password()) {
-		reset_session();
 		setup_alarm();
 		check_messages(show_PAC_notifications);
 	} else {

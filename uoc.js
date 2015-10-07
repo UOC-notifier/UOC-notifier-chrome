@@ -37,18 +37,23 @@ function check_messages(after_check_fnc){
 	if (get_check_mail()) {
 		args = {id: 1, method: "MailInterfaceBroker.getTreeFolderExpanded", params: ["-1", "pers"]};
 		Queue.request('/WebMail/JSONRPCServlet?mark=false', args, 'json', function(resp) {
-			var mails = resp.result.folderInfo.totalNewMsgs;
+			var mails = 0;
+			try {
+				for(x in resp.result.folders.list) {
+        			mails += resp.result.folders.list[x].totalNewMsgs;
+        		}
+    		} catch(err) {
+        		Debug.error(err);
+    		}
+
 			var old_mails = get_mails_unread();
 			save_mails_unread(mails);
+			Debug.print("Check mails: "+mails);
 			if (mails > 0 && old_mails < mails && mails >= get_critical()) {
 				notify(_('__NOTIFICATION_MAIL__', [mails]));
 			}
 		});
 	}
-}
-
-function set_mails(mails) {
-
 }
 
 function set_messages() {
@@ -86,6 +91,7 @@ function show_PAC_notifications() {
 
 function notify(str) {
 	if (get_notification() && str.length > 0) {
+		Debug.print(str);
 		popup_notification('UOC Notifier', "/img/logo128.png", str, 3000);
 	}
 }
