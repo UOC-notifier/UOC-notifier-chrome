@@ -508,10 +508,31 @@ function buildUI(){
 		$('#classrooms').html(class_html);
 	}
 
-	$('#button_news').click(buildUI_news);
-	$('#button_agenda').click(buildUI_agenda);
+	if (get_show_news()) {
+		$('#button_news').click(buildUI_news);
+	} else {
+		$('#button_news').remove();
+	}
+
+	if (get_show_agenda()) {
+		$('#button_agenda').click(buildUI_agenda);
+	} else {
+		$('#button_agenda').remove();
+	}
 	$('#button_campus').click(buildUI_tools);
 	$('#button_pacs').click(buildUI_pacs);
+
+
+	var mails = get_mails_unread();
+	if (mails > 0) {
+		$('#button_mail').removeClass('btn-success');
+		$('#button_mail').addClass('btn-danger');
+		$('#button_mail').attr('title', _('__UNREAD_MAIL__', [mails]));
+	} else {
+		$('#button_mail').removeClass('btn-danger');
+		$('#button_mail').addClass('btn-success');
+		$('#button_mail').attr('title', _('__MAIL__'));
+	}
 	$('#button_mail').click(function() {
 		var url = root_url + '/WebMail/listMails.do';
 		open_tab(url);
@@ -563,4 +584,4 @@ $(document).ready(function() {
 
 
 // Disable alerts
-window.alert = function ( text ) { console.log( 'ALERT: ' + text ); return true; };
+window.alert = function ( text ) { Debug.print( 'ALERT: ' + text ); return true; };

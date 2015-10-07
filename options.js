@@ -34,45 +34,69 @@ function populate_classroom(classroom){
 }
 
 function populate_options(){
-	var user_save = get_user();
-	var uni = get_uni();
-	var interval = get_interval();
-	var critical = get_critical();
-	var notify = get_notification();
-	$('#username').val(user_save.username);
-	$('#pwd').val(user_save.password);
-	$('#uni').val(uni);
-	$('#check_interval').val(interval);
-	$('#critical').val(critical);
-	if (notify) {
-		$('#notification').attr('checked','checked');
-	}
+	var option;
 
+	option = get_user();
+	$('#username').val(option.username);
+	$('#pwd').val(option.password);
+
+	option = get_uni();
+	$('#uni').val(option);
 	$('#uni').on('change', function(){
 		save_uni($(this).val());
 	});
 
+	option = get_interval();
+	$('#check_interval').val(option);
 	$('#check_interval').on('change', function(){
 		save_interval($(this).val());
 	});
 
+	option = get_critical();
+	$('#critical').val(option);
 	$('#critical').on('change', function(){
 		save_critical($(this).val());
 	});
 
+	option = get_notification();
+	if (option) {
+		$('#notification').attr('checked','checked');
+	}
 	$('#notification').on('click', function(){
 		var ischecked = $('#notification').is(':checked');
 		save_notification(ischecked);
+	});
+
+	option = get_check_mail();
+	if (option) {
+		$('#check_mail').attr('checked','checked');
+	}
+	$('#check_mail').on('click', function(){
+		var ischecked = $('#check_mail').is(':checked');
+		save_check_mail(ischecked);
+	});
+
+	option = get_show_news();
+	if (option) {
+		$('#show_news').attr('checked','checked');
+	}
+	$('#show_news').on('click', function(){
+		var ischecked = $('#show_news').is(':checked');
+		save_show_news(ischecked);
+	});
+
+	option = get_show_agenda();
+	if (option) {
+		$('#show_agenda').attr('checked','checked');
+	}
+	$('#show_agenda').on('click', function(){
+		var ischecked = $('#show_agenda').is(':checked');
+		save_show_agenda(ischecked);
 	});
 }
 
 function save_options(){
 	save_user($("#username").val(), $("#pwd").val());
-	save_uni($("#uni").val());
-	save_interval($("#check_interval").val());
-	save_critical($("#critical").val());
-	var notitication = $("#notification").is(':checked');
-	save_notification(notitication);
 
 	//populate_classrooms();
 	reset_session(after_save_options);

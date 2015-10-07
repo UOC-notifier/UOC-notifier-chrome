@@ -42,6 +42,12 @@
     "__MINUTES__" : {
         "message" : "minutes"
     },
+    "__CHECK_MAIL__" : {
+        "message" : "Check mail"
+    },
+    "__SHOW__" : {
+        "message" : "Show"
+    },
     "__SAVED_OPTIONS__" : {
         "message" : "Options saved. Wait to the classrooms to be updated..."
     },
@@ -134,6 +140,14 @@
     "__MAIL__" : {
         "message" : "Mail"
     },
+    "__UNREAD_MAIL__" : {
+        "message" : "Pending mails: $messages$",
+        "placeholders": {
+          "messages": {
+            "content": "$1"
+          }
+        }
+    },
     "__SUBJECT__" : {
         "message" : "Subject"
     },
@@ -150,6 +164,14 @@
     },
     "__NOTIFICATION_UNREAD__" : {
         "message" : "You have $messages$ messages to read",
+        "placeholders": {
+          "messages": {
+            "content": "$1"
+          }
+        }
+    },
+    "__NOTIFICATION_MAIL__" : {
+        "message" : "You have $messages$ mails to read",
         "placeholders": {
           "messages": {
             "content": "$1"

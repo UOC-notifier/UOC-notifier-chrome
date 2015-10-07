@@ -16,8 +16,8 @@ var Classes = new function(){
 	this.save = function(){
 		this.count_messages();
 		set_messages();
-		console.log(classes);
-		localStorage.setItem("classes", JSON.stringify(classes));
+		Debug.print(classes);
+		Storage.set_option("classes", JSON.stringify(classes));
 	};
 
 	this.search_code = function(code){
@@ -89,8 +89,8 @@ var Classes = new function(){
 	};
 
 	this.load = function (){
-		var classroom = localStorage.getItem("classes");
-		if(classroom){
+		var classroom = Storage.get_option("classes", false);
+		if (classroom) {
 			classes = [];
 			this.messages = 0;
 			this.notified_messages = 0;

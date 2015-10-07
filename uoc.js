@@ -33,6 +33,22 @@ function check_messages(after_check_fnc){
 	function(data) {
 		reset_session();
 	});
+
+	if (get_check_mail()) {
+		args = {id: 1, method: "MailInterfaceBroker.getTreeFolderExpanded", params: ["-1", "pers"]};
+		Queue.request('/WebMail/JSONRPCServlet?mark=false', args, 'json', function(resp) {
+			var mails = resp.result.folderInfo.totalNewMsgs;
+			var old_mails = get_mails_unread();
+			save_mails_unread(mails);
+			if (mails > 0 && old_mails < mails && mails >= get_critical()) {
+				notify(_('__NOTIFICATION_MAIL__', [mails]));
+			}
+		});
+	}
+}
+
+function set_mails(mails) {
+
 }
 
 function set_messages() {
@@ -51,7 +67,7 @@ function set_messages() {
 		setBadge("");
 	}
 
-	console.log("Check messages: Old "+old_messages+" New "+messages);
+	Debug.print("Check messages: Old "+old_messages+" New "+messages);
 }
 
 function show_PAC_notifications() {
@@ -306,7 +322,7 @@ var Session = new function(){
 		var user_save = get_user();
 		if(user_save.username && user_save.password) {
 			if (!retrieving) {
-				console.log('Retrieving session...');
+				Debug.print('Retrieving session...');
 				retrieving = true;
 
 				var data = {
@@ -334,6 +350,7 @@ var Session = new function(){
 			        processData: false
 			    })
 			    .done(function(resp) {
+			    	Debug.log(resp);
 			    	var iSs = resp.indexOf("?s=");
 					if( iSs != -1 ){
 						var	iSf = resp.indexOf("\";", iSs);
@@ -343,16 +360,16 @@ var Session = new function(){
 						}
 						session = resp.substring(iSs + 3, iSf);
 						save_session(session);
-						console.log('Session! '+session);
+						Debug.print('Session! '+session);
 						Queue.run();
 					} else {
-						console.error('ERROR: Cannot fetch session');
+						Debug.error('ERROR: Cannot fetch session');
 						$("#status").text(_("__INCORRECT_USER__"));
 						$(".alert").show();
 					}
 			    })
 			    .fail(function() {
-			        console.error('ERROR: Cannot fetch '+url);
+			        Debug.error('ERROR: Cannot fetch '+url);
 			    })
 			    .always(function() {
 			        retrieving = false;

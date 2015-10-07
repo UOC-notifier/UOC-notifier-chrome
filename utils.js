@@ -143,6 +143,30 @@ function get_url_with_data(url, data) {
     var uri = get_real_url(url) + '?' + uri_data(data);
 }
 
+var Debug = new function(){
+    var show = get_debug();
+
+    this.log = function(message) {
+        if (show) {
+            console.log(message);
+        }
+    }
+
+    this.function = function(func) {
+        if (show) {
+            func();
+        }
+    }
+
+    this.print = function(message) {
+        console.log(message);
+    }
+
+    this.error = function(message) {
+        console.error(message);
+    }
+}
+
 
 var Queue = new function(){
     var queue = Array();
@@ -156,10 +180,10 @@ var Queue = new function(){
                 if (queue.length > 0) {
                     executing = true;
                     var pet = queue.shift();
-                    console.log('Run ' + pet.url);
+                    Debug.print('Run ' + pet.url);
                     ajax_do(session, pet.url, pet.data, pet.type, pet.success, pet.error);
                 } else {
-                    console.log('End of queue');
+                    Debug.print('End of queue');
                     Classes.save();
                     if (after_function) {
                         after_function();
@@ -178,10 +202,10 @@ var Queue = new function(){
                 data: data,
                 type: type,
                 success: handler_succ,
-                error: handler_err
+                error: handler_err,
             };
             queue.push(pet);
-            console.log('Queued ' + url);
+            Debug.print('Queued ' + url);
             run();
         }
     }
@@ -191,31 +215,40 @@ var Queue = new function(){
     }
 
     function ajax_do(session, url, data, type, handler_succ, handler_err){
-        if(!data) {
+        if (!data) {
             data = {};
         }
         data.s = session;
         url = root_url + url;
+
+        var ajax_request = {
+            type: type
+        };
+
         if (type == 'GET') {
             url += '?'+uri_data(data);
-            var args = false;
+            ajax_request.data = false;
+        } else if (type == 'json') {
+            ajax_request.type = 'POST';
+            ajax_request.dataType = 'json';
+            ajax_request.contentType = 'application/json';
+            ajax_request.processData = false;
+            ajax_request.data = JSON.stringify(data);
         } else {
-            var args = uri_data(data);
+            ajax_request.data = data;
         }
+        ajax_request.url = url;
 
-        $.ajax({
-            type: type,
-            url: url,
-            data: args,
-            processData: false
-        })
+        $.ajax(ajax_request)
         .done(function(resp) {
+            Debug.log(resp);
             if (handler_succ) {
                 handler_succ(resp, data);
             }
         })
         .fail(function(resp) {
-            console.error('ERROR: Cannot fetch '+url);
+            Debug.error('ERROR: Cannot fetch '+url);
+            Debug.log(resp);
             if (handler_err) {
                 handler_err(resp);
             }
@@ -233,7 +266,7 @@ function _(str, params) {
         return st;
     }
     // Not found
-    console.log(str);
+    Debug.error('String not translated: '+str);
     return str;
 }
 
