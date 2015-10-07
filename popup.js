@@ -345,10 +345,14 @@ function buildUI_resource(resource, classroom_code){
 	if(resource.link != 'undefined'){
 		var link = 'link="'+resource.link+'"';
 	}
-	return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
-				<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
-				<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages, _('__GOTO_RES__')) + '</div> \
-			</li>';
+	if (resource.has_message_count()) {
+		return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
+					<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
+					<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages, _('__GOTO_RES__')) + '</div> \
+				</li>';
+	} else {
+		return '<li class="resource" '+link+' resource="'+resource.code+'"><a href="#" class="linkResource">'+resource.title+'</a></li>';
+	}
 }
 
 function buildUI_badge(messages, classes, allmessages, title){

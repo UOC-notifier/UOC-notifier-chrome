@@ -33,6 +33,13 @@ var Classes = new function(){
 		    if(a.title > b.title) return 1;
 		    return 0;
 		});
+
+		for(i in classes){
+			if (classes[i].notify) {
+				classes[i].sort_resources();
+			}
+		}
+
 		Storage.set_option("classes", JSON.stringify(classes));
 	};
 
@@ -253,6 +260,20 @@ function Classroom(title, code, domain, type, template){
 		}
 	};
 
+	this.sort_resources = function() {
+		this.resources.sort(function(a, b) {
+			if(a.has_message_count() != b.has_message_count()) {
+				if (a.has_message_count()) {
+					return -1;
+				}
+				return 1;
+			}
+			if(a.title < b.title) return -1;
+		    if(a.title > b.title) return 1;
+		    return 0;
+		});
+	}
+
 	this.get_index = function(code, lcode){
 		for(i in this.resources){
 			if(this.resources[i].code == code) {
@@ -327,6 +348,10 @@ function Resource(title, code){
 	this.messages =  '-';
 	this.all_messages =  '-';
 	this.link =  "";
+
+	this.has_message_count = function() {
+		return !isNaN(this.all_messages);
+	}
 
 	this.set_messages = function(messages, all_messages){
 		messages = parseInt(messages);
