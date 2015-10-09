@@ -9,7 +9,7 @@ function get_user(){
 	return user_save;
 }
 
-function save_user(username, password){
+function save_user(username, password) {
 	Storage.set_option("user_username", username);
 	password = utf8_to_b64(password);
 	Storage.set_option("user_password",password);
@@ -184,7 +184,11 @@ var Storage = new function(){
 
 	this.get_option_int = function(option_name, default_value) {
 		var value = this.get_option(option_name, default_value);
-		return parseInt(value);
+		value = parseInt(value);
+		if (isNaN(value)) {
+			return default_value;
+		}
+		return value;
 	}
 
 	this.set_option = function(option_name, value) {

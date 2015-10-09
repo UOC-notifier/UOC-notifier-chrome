@@ -53,12 +53,7 @@ var Classes = new function(){
 	};
 
 	this.purge_old = function() {
-		var max_any = 0;
-		for(x in classes) {
-			if (classes[x].any && parseInt(classes[x].any) > max_any) {
-				max_any = parseInt(classes[x].any);
-			}
-		}
+		var max_any = this.get_max_any();
 		if (max_any > 0) {
 			for(x in classes) {
 				if (classes[x].any && parseInt(classes[x].any) < max_any) {
@@ -66,6 +61,16 @@ var Classes = new function(){
 				}
 			}
 		}
+	}
+
+	this.get_max_any = function() {
+		var max_any = 0;
+		for(x in classes) {
+			if (classes[x].any && parseInt(classes[x].any) > max_any) {
+				max_any = parseInt(classes[x].any);
+			}
+		}
+		return max_any;
 	}
 
 	this.purge_all = function() {
@@ -336,6 +341,15 @@ function Classroom(title, code, domain, type, template){
 			}
 		}
 		return -1;
+	};
+
+	this.all_events_graded = function(name){
+		for(i in this.events){
+			if (!this.events[i].graded) {
+				return false;
+			}
+		}
+		return true;
 	};
 
 	this.event_merge = function(idx, ev) {

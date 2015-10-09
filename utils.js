@@ -195,6 +195,10 @@ var Queue = new function(){
         }
     }
 
+    this.clear = function() {
+        queue = Array();
+    }
+
     this.request = function(url, data, type, handler_succ, handler_err) {
         if (url) {
             var pet = {

@@ -31,6 +31,7 @@ function check_messages(after_check_fnc){
 		});
 	},
 	function(data) {
+		Queue.clear();
 		reset_session();
 	});
 
@@ -231,37 +232,55 @@ function retrieve_gradeinfo(classroom) {
 	Queue.request('/webapps/rac/listEstudiant.action', args, 'GET', function(data, args) {
 		data = data.replace(/<img/gi, '<noload');
 		data = $(data).filter('.TablaNotas');
-		$(data).find("td a[href*='viewPrac']").each(function() {
-			var name = $(this).parent('td').siblings('.PacEstudiant').text().trim();
-			for(var x in classroom.events) {
-				var s = name.search(classroom.events[x].name);
-				if (s > 0 && s < 6) {
-					var evnt = classroom.events[x];
+		parse_gradeinfo(classroom, data);
+	});
+}
+
+function parse_gradeinfo(classroom, data) {
+	var x = 0;
+	$(data).find("td.PacEstudiant").parent('tr').each(function() {
+		var nota = $(this).find('td.Nota');
+		var ispac = nota.next().text().trim();
+		var grade = nota.text().trim();
+		if (ispac) {
+			if (classroom.events[x] != undefined) {
+				var evnt = classroom.events[x];
+
+				var find_committed = $(this).find("td a[href*='viewPrac']");
+				if (find_committed.length) {
 					evnt.committed = true;
 					classroom.add_event(evnt);
-					break;
 				}
-			}
-		});
-		$(data).find('.Nota').each(function() {
-			var grade = $(this).text().trim();
-			if (grade.length > 0 && grade != '-') {
-				var name = $(this).siblings('.PacEstudiant').text().trim();
-				for(var x in classroom.events) {
-					var s = name.search(classroom.events[x].name);
-					if (s > 0 && s < 6) {
-						var evnt = classroom.events[x];
-						if (evnt.graded != grade) {
-							evnt.graded = grade;
-							classroom.add_event(evnt);
-							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
-						}
-						break;
+
+				if (grade.length > 0 && grade != '-') {
+					if (evnt.graded != grade) {
+						evnt.graded = grade;
+						classroom.add_event(evnt);
+						notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
 					}
 				}
+				x++;
 			}
-		});
+		} else {
+			if (grade.length > 0 && grade != '-') {
+				var name = $(this).find('td.PacEstudiant').text().trim();
+				switch (name) {
+					case 'Qualificació final d\'activitats pràctiques':
+						name = 'P';
+						break;
+					case 'Qualificació d\'avaluació contínua':
+						name = 'C';
+						break;
+					case 'Qualificació final d\'avaluació contínua':
+						name = 'FC';
+						break;
+				}
+				//TODO: save it and show it
+				//console.log(name, grade);
+			}
+		}
 	});
+
 }
 
 function retrieve_resource(classroom, resource){
