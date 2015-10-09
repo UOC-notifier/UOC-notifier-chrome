@@ -271,15 +271,21 @@ function retrieve_resource(classroom, resource){
 		resourceId: resource.code
 	};
 	Queue.request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
-        var num_msg_pendents = Math.max(data.resource.newItems, 0);
-        var num_msg_totals = data.resource.totalItems;
-		resource.set_messages(num_msg_pendents, num_msg_totals);
+		try {
+			var num_msg_pendents = data.resource.newItems;
+	        var num_msg_totals = data.resource.totalItems;
+			resource.set_messages(num_msg_pendents, num_msg_totals);
+			resource.set_pos(data.resource.pos);
+		} catch(err) {
+    		Debug.error(err);
+		}
 		classroom.add_resource(resource);
     },
     function(data) {
      	//On Error
-    	resource.set_messages(0, 0);
-    	classroom.add_resource(resource);
+    	/*resource.set_messages(0, 0);
+    	resource.set_pos(false);
+    	classroom.add_resource(resource);*/
     });
 }
 

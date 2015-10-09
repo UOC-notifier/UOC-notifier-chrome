@@ -134,6 +134,7 @@ var Classes = new function(){
 						var resourcel = classl.resources[j];
 						var resource = new Resource(resourcel.title, resourcel.code);
 						resource.set_messages(resourcel.messages, resourcel.all_messages);
+						resource.set_pos(resourcel.pos);
 						resource.set_link(resourcel.link);
 						classr.add_resource(resource);
 					}
@@ -268,6 +269,13 @@ function Classroom(title, code, domain, type, template){
 				}
 				return 1;
 			}
+
+			if (isNaN(b.pos)) {
+				return -1;
+			}
+			if(a.pos < b.pos) return -1;
+		    if(a.pos > b.pos) return 1;
+
 			if(a.title < b.title) return -1;
 		    if(a.title > b.title) return 1;
 		    return 0;
@@ -301,6 +309,7 @@ function Classroom(title, code, domain, type, template){
 			this.messages -= this.resources[idx].messages;
 		}
 		this.resources[idx].set_messages(resource.messages, resource.all_messages);
+		this.resources[idx].set_pos(resource.pos);
 		this.resources[idx].link = resource.link;
 		this.resources[idx].code = resource.code;
 		this.resources[idx].lcode = resource.lcode;
@@ -348,12 +357,13 @@ function Resource(title, code){
 	this.messages =  '-';
 	this.all_messages =  '-';
 	this.link =  "";
+	this.pos = false;
 
 	this.has_message_count = function() {
 		return !isNaN(this.all_messages);
 	}
 
-	this.set_messages = function(messages, all_messages){
+	this.set_messages = function(messages, all_messages) {
 		messages = parseInt(messages);
 		all_messages = parseInt(all_messages);
 
@@ -361,7 +371,7 @@ function Resource(title, code){
 			this.all_messages = all_messages;
 		}
 		if (!isNaN(messages) &&  messages >= 0) {
-			this.messages = messages;
+			this.messages = Math.max(messages, 0);
 		}
 		if (this.all_messages == 0) {
 			this.messages = '-';
@@ -373,13 +383,17 @@ function Resource(title, code){
 			this.messages = 0;
 			this.all_messages = 0;
 		}
-
-
-		if(this.messages == '-') {
-			return 0;
-		}
-		return this.messages;
 	};
+
+	this.set_pos = function(pos) {
+		if (pos) {
+			console.log(pos);
+			this.pos = parseInt(pos);
+		} else {
+			this.pos = false;
+		}
+	};
+
 
 	this.set_link = function(link){
 		var url = get_url_attr(link, 'redirectUrl');
