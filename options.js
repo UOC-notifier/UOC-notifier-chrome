@@ -50,6 +50,7 @@ function populate_options(){
 	$('#check_interval').val(option);
 	$('#check_interval').on('change', function(){
 		save_interval($(this).val());
+		reset_alarm();
 	});
 
 	option = get_critical();
@@ -100,7 +101,6 @@ function save_options(){
 
 	//populate_classrooms();
 	reset_session(after_save_options);
-	reset_alarm();
 
 	$("#status").text(_("__SAVED_OPTIONS__"));
 	$(".alert").show();

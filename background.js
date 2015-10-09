@@ -18,27 +18,40 @@ function onAlarm(alarm) {
 	}
 }
 
-function onStartup(alarm){
-	reset_session();
-	if (has_username_password()) {
-		setup_alarm();
-		check_messages(show_PAC_notifications);
+var Start = new function() {
+	var started = false;
+
+	this.onStart = function(alarm) {
+		if (started) return;
+		startup();
+	}
+
+	this.onInstall = function(alarm) {
+		if (started) return;
+		if (!startup()) {
+			chrome.tabs.create({ url: "options.html" });
+		}
+	}
+
+	function startup() {
+		started = true;
+		reset_session();
+		if (has_username_password()) {
+			setup_alarm();
+			check_messages(show_PAC_notifications);
+			return true;
+		}
+		return false;
 	}
 }
 
-function onInstall(alarm){
-	reset_session();
-	if (has_username_password()) {
-		setup_alarm();
-		check_messages(show_PAC_notifications);
-	} else {
-		chrome.tabs.create({ url: "options.html" });
+if (chrome.runtime) {
+	if (chrome.runtime.onStartup) {
+		chrome.runtime.onStartup.addListener(Start.onStart);
+	}
+	if (chrome.runtime.onInstalled) {
+		chrome.runtime.onInstalled.addListener(Start.onInstall);
 	}
 }
 
-if (chrome.runtime && chrome.runtime.onStartup) {
-	chrome.runtime.onStartup.addListener(onStartup);
-}
-
-chrome.runtime.onInstalled.addListener(onInstall);
 chrome.alarms.onAlarm.addListener(onAlarm);

@@ -387,7 +387,6 @@ function Resource(title, code){
 
 	this.set_pos = function(pos) {
 		if (pos) {
-			console.log(pos);
 			this.pos = parseInt(pos);
 		} else {
 			this.pos = false;

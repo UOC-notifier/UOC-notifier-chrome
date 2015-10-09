@@ -89,10 +89,13 @@ function show_PAC_notifications() {
 	}
 }
 
-function notify(str) {
+function notify(str, time) {
 	if (get_notification() && str.length > 0) {
+		if (time == undefined) {
+			time = 3000;
+		}
 		Debug.print(str);
-		popup_notification('UOC Notifier', "/img/logo128.png", str, 3000);
+		popup_notification('UOC Notifier', "/img/logo128.png", str, time);
 	}
 }
 
