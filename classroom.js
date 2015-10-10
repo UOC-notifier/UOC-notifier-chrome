@@ -34,7 +34,7 @@ var Classes = new function(){
 		    return 0;
 		});
 
-		for(i in classes){
+		for(var i in classes){
 			if (classes[i].notify) {
 				classes[i].sort_resources();
 			}
@@ -44,7 +44,7 @@ var Classes = new function(){
 	};
 
 	this.search_code = function(code){
-		for(i in classes){
+		for(var i in classes){
 			if(classes[i].code == code){
 				return classes[i];
 			}
@@ -52,10 +52,21 @@ var Classes = new function(){
 		return false;
 	};
 
+	this.get_class_by_event = function(eventid) {
+		for(var i in classes) {
+			if (classes[i].notify) {
+				if (classes[i].get_event_idx(eventid) >= 0) {
+					return classes[i];
+				}
+			}
+		}
+		return false;
+	}
+
 	this.purge_old = function() {
 		var max_any = this.get_max_any();
 		if (max_any > 0) {
-			for(x in classes) {
+			for(var x in classes) {
 				if (classes[x].any && parseInt(classes[x].any) < max_any) {
 					classes.splice(x, 1);
 				}
@@ -65,7 +76,7 @@ var Classes = new function(){
 
 	this.get_max_any = function() {
 		var max_any = 0;
-		for(x in classes) {
+		for(var x in classes) {
 			if (classes[x].any && parseInt(classes[x].any) > max_any) {
 				max_any = parseInt(classes[x].any);
 			}
@@ -81,7 +92,7 @@ var Classes = new function(){
 	}
 
 	this.get_index = function(code){
-		for(i in classes){
+		for(var i in classes){
 			if(classes[i].code == code){
 				return i;
 			}
@@ -99,7 +110,7 @@ var Classes = new function(){
 	}
 
 	this.search_domain = function(domain){
-		for(i in classes){
+		for(var i in classes){
 			if(classes[i].domain == domain){
 				return classes[i];
 			}
@@ -108,7 +119,7 @@ var Classes = new function(){
 	};
 
 	this.search_domainassig = function(domain){
-		for(i in classes){
+		for(var i in classes){
 			if(classes[i].domainassig == domain){
 				return classes[i];
 			}
@@ -123,7 +134,7 @@ var Classes = new function(){
 			this.messages = 0;
 			this.notified_messages = 0;
 			var classesl = JSON.parse(classroom);
-			for(i in classesl){
+			for(var i in classesl){
 				var classl = classesl[i];
 				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type, classl.template);
 				classr.domainassig = classl.domainassig;
@@ -135,7 +146,7 @@ var Classes = new function(){
 				classr.consultorlastviewed = classl.consultorlastviewed;
 				classr.set_notify(classl.notify);
 				if(classl.notify) {
-					for(j in classl.resources){
+					for(var j in classl.resources){
 						var resourcel = classl.resources[j];
 						var resource = new Resource(resourcel.title, resourcel.code);
 						resource.set_messages(resourcel.messages, resourcel.all_messages);
@@ -143,9 +154,9 @@ var Classes = new function(){
 						resource.set_link(resourcel.link);
 						classr.add_resource(resource);
 					}
-					for(j in classl.events){
+					for(var j in classl.events){
 						var evl = classl.events[j];
-						var ev = new Event(evl.name);
+						var ev = new Event(evl.name, evl.eventId);
 						ev.start = evl.start;
 						ev.end = evl.end;
 						ev.grading = evl.grading;
@@ -168,7 +179,7 @@ var Classes = new function(){
 
 	this.get_notified = function (){
 		var classrooms = [];
-		for(i in classes){
+		for(var i in classes){
 			if(classes[i].notify){
 				classrooms.push(classes[i]);
 			}
@@ -180,7 +191,7 @@ var Classes = new function(){
 		var classrooms = this.get_all();
 		this.notified_messages = 0;
 		this.messages = 0;
-		for(i in classrooms){
+		for(var i in classrooms){
 			if(classrooms[i].notify){
 				this.notified_messages += classrooms[i].messages;
 			}
@@ -288,7 +299,7 @@ function Classroom(title, code, domain, type, template){
 	}
 
 	this.get_index = function(code, lcode){
-		for(i in this.resources){
+		for(var i in this.resources){
 			if(this.resources[i].code == code) {
 				return i;
 			}
@@ -326,7 +337,7 @@ function Classroom(title, code, domain, type, template){
 
 
 	this.add_event = function(ev){
-		var idx = this.get_event(ev.name);
+		var idx = this.get_event_idx(ev.eventId);
 		if(idx >= 0){
 			this.event_merge(idx, ev);
 		} else {
@@ -334,9 +345,17 @@ function Classroom(title, code, domain, type, template){
 		}
 	};
 
-	this.get_event = function(name){
-		for(i in this.events){
-			if(this.events[i].name == name) {
+	this.get_event = function(id){
+		var idx = this.get_event_idx(id);
+		if (idx >= 0) {
+			return this.events[idx];
+		}
+		return false;
+	};
+
+	this.get_event_idx = function(id){
+		for(var i in this.events){
+			if(this.events[i].eventId == id) {
 				return i;
 			}
 		}
@@ -344,7 +363,7 @@ function Classroom(title, code, domain, type, template){
 	};
 
 	this.all_events_graded = function(name){
-		for(i in this.events){
+		for(var i in this.events){
 			if (!this.events[i].graded) {
 				return false;
 			}
@@ -354,6 +373,7 @@ function Classroom(title, code, domain, type, template){
 
 	this.event_merge = function(idx, ev) {
 		this.events[idx].name = ev.name;
+		this.events[idx].eventId = ev.eventId;
 		if (ev.link) this.events[idx].link = ev.link;
 		if (ev.start) this.events[idx].start = ev.start;
 		if (ev.end) this.events[idx].end = ev.end;
@@ -361,6 +381,7 @@ function Classroom(title, code, domain, type, template){
 		if (ev.solution) this.events[idx].solution = ev.solution;
 		if (ev.graded) this.events[idx].graded = ev.graded;
 		if (ev.committed) this.events[idx].committed = ev.committed;
+
 	};
 }
 
@@ -438,7 +459,7 @@ function Resource(title, code){
 	};
 }
 
-function Event(name) {
+function Event(name, id) {
 	this.name = name;
 	this.start = false;
 	this.end = false;
@@ -447,6 +468,7 @@ function Event(name) {
 	this.graded = false;
 	this.committed = false;
 	this.link = "";
+	this.eventId = id;
 
 	this.has_started = function(){
 		return isBeforeToday(this.start) || isToday(this.start);

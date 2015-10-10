@@ -10,15 +10,29 @@ function get_user(){
 }
 
 function save_user(username, password) {
+	var oldusername = Storage.get_option("user_username", "");
 	Storage.set_option("user_username", username);
 	password = utf8_to_b64(password);
 	Storage.set_option("user_password",password);
+
+	// Username changed
+	if (oldusername != username) {
+		Classes.purge_all();
+	}
 }
 
 function has_username_password(){
 	var username = Storage.get_option("user_username", false);
 	var password = Storage.get_option("user_password", false);
 	return username && password;
+}
+
+function get_idp(){
+	return Storage.get_option_int("idp", false);
+}
+
+function save_idp(idp){
+	Storage.set_option("idp", idp);
 }
 
 // OPTIONS - UNIVERSITY

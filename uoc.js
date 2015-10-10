@@ -8,6 +8,7 @@ function check_messages(after_check_fnc){
 		format: 'json'
 	}
 	Queue.request('/app/guaita/calendari', args, "GET", function(data) {
+		save_idp(data.idp);
 		for (x in data.classrooms) {
 			classroom = parse_classroom(data.classrooms[x]);
 		}
@@ -29,6 +30,8 @@ function check_messages(after_check_fnc){
 				}
 			}
 		});
+
+		retrieve_gradeinfo();
 	},
 	function(data) {
 		Queue.clear();
@@ -40,7 +43,7 @@ function check_messages(after_check_fnc){
 		Queue.request('/WebMail/JSONRPCServlet?mark=false', args, 'json', function(resp) {
 			var mails = 0;
 			try {
-				for(x in resp.result.folders.list) {
+				for(var x in resp.result.folders.list) {
         			mails += resp.result.folders.list[x].totalNewMsgs;
         		}
     		} catch(err) {
@@ -150,7 +153,7 @@ function parse_classroom(classr) {
 	if (classr.activitats.length > 0) {
 		for (y in classr.activitats) {
 			var act = classr.activitats[y];
-			var evnt = new Event(act.name);
+			var evnt = new Event(act.name, act.eventId);
 
 			var args = {};
 			if (classr.presentation == "AULACA") {
@@ -178,9 +181,6 @@ function parse_classroom(classr) {
 			evnt.grading = act.qualificationDateStr;
 			classroom.add_event(evnt);
 		}
-
-		// Parse Grades
-		retrieve_gradeinfo(classroom);
 	}
 }
 
@@ -225,62 +225,82 @@ function parse_classroom_old(classr){
 	}
 }
 
-function retrieve_gradeinfo(classroom) {
-	var args = {
-		domainId: classroom.domain
-	}
-	Queue.request('/webapps/rac/listEstudiant.action', args, 'GET', function(data, args) {
-		data = data.replace(/<img/gi, '<noload');
-		data = $(data).filter('.TablaNotas');
-		parse_gradeinfo(classroom, data);
-	});
-}
+function retrieve_gradeinfo() {
+	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', function(data, args) {
+		$(data).find('asignatura>asignatura').each(function() {
+			var classroom = false;
 
-function parse_gradeinfo(classroom, data) {
-	var x = 0;
-	$(data).find("td.PacEstudiant").parent('tr').each(function() {
-		var nota = $(this).find('td.Nota');
-		var ispac = nota.next().text().trim();
-		var grade = nota.text().trim();
-		if (ispac) {
-			if (classroom.events[x] != undefined) {
-				var evnt = classroom.events[x];
-
-				var find_committed = $(this).find("td a[href*='viewPrac']");
-				if (find_committed.length) {
-					evnt.committed = true;
-					classroom.add_event(evnt);
-				}
-
-				if (grade.length > 0 && grade != '-') {
-					if (evnt.graded != grade) {
-						evnt.graded = grade;
-						classroom.add_event(evnt);
-						notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
+			$(this).find('actividad>actividad').each(function() {
+				var eventid = $(this).find('pacId').text().trim();
+				if (!classroom) {
+					classroom = Classes.get_class_by_event(eventid);
+					if (!classroom) {
+						return;
 					}
 				}
-				x++;
-			}
-		} else {
-			if (grade.length > 0 && grade != '-') {
-				var name = $(this).find('td.PacEstudiant').text().trim();
-				switch (name) {
-					case 'Qualificació final d\'activitats pràctiques':
-						name = 'P';
-						break;
-					case 'Qualificació d\'avaluació contínua':
-						name = 'C';
-						break;
-					case 'Qualificació final d\'avaluació contínua':
-						name = 'FC';
-						break;
-				}
-				//TODO: save it and show it
-				//console.log(name, grade);
-			}
-		}
-	});
 
+				var evnt = classroom.get_event(eventid);
+				if (evnt) {
+					var committed = $(this).find('listaEntregas>entrega').length > 0;
+					var changed = false;
+					if (committed) {
+						evnt.committed = true;
+						classroom.add_event(evnt);
+						changed = true;
+					}
+
+					var grade = $(this).find('nota').text().trim();
+					if (grade.length > 0 && grade != '-') {
+						if (evnt.graded != grade) {
+							evnt.graded = grade;
+							changed = true;
+							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
+						}
+					}
+					if (changed) {
+						classroom.add_event(evnt);
+					}
+				} else {
+					var grade = $(this).find('nota').text().trim();
+					if (grade.length > 0 && grade != '-') {
+						var name = $(this).find('descripcion').text().trim();
+						switch (name) {
+							case 'Nota final activitats pràctiques':
+								name = 'P';
+								break;
+							case 'Qualificació d\'avaluació continuada':
+								name = 'C';
+								break;
+							case 'Qualificació final d\'avaluació contínua':
+								name = 'FC';
+								break;
+						}
+						// TODO Save final grades
+						/*if (evnt.graded != grade) {
+							evnt.graded = grade;
+							changed = true;
+							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
+						}*/
+						//console.log(name, grade);
+					}
+				}
+			});
+
+			if (classroom) {
+				// TODO: save final grades
+				var finalgrade = $(this).find('notaFinal').text().trim();
+				if (finalgrade.length > 0 && finalgrade != '-') {
+					//Save final grade
+					//console.log(finalgrade);
+				}
+				var finalac = $(this).find('notaFinalContinuada').text().trim();
+				if (finalac.length > 0 && finalac != '-') {
+					//Save final grade
+					//console.log(finalac);
+				}
+			}
+		});
+	});
 }
 
 function retrieve_resource(classroom, resource){
