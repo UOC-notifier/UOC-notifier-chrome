@@ -241,8 +241,9 @@ function retrieve_gradeinfo() {
 
 				var evnt = classroom.get_event(eventid);
 				if (evnt) {
-					var committed = $(this).find('listaEntregas>entrega').length > 0;
 					var changed = false;
+
+					var committed = $(this).find('listaEntregas>entrega').length > 0;
 					if (committed) {
 						evnt.committed = true;
 						classroom.add_event(evnt);
