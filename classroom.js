@@ -40,12 +40,6 @@ var Classes = new function(){
 			}
 		}
 
-		for(var i in classes){
-			if (classes[i].notify) {
-				classes[i].clean_events();
-			}
-		}
-
 		Storage.set_option("classes", JSON.stringify(classes));
 	};
 
@@ -364,6 +358,9 @@ function Classroom(title, code, domain, type, template){
 
 
 	this.add_event = function(ev){
+		if (ev.eventId == undefined) {
+			return;
+		}
 		var idx = this.get_event_idx(ev.eventId);
 		if(idx >= 0){
 			this.event_merge(idx, ev);
@@ -409,14 +406,6 @@ function Classroom(title, code, domain, type, template){
 		if (ev.graded) this.events[idx].graded = ev.graded;
 		if (ev.committed) this.events[idx].committed = ev.committed;
 	};
-
-	this.clean_events = function() {
-		for(var i in this.events){
-			if (this.events[i].eventId == undefined) {
-				this.events.splice(i, 1);
-			}
-		}
-	}
 }
 
 function Resource(title, code){
