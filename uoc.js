@@ -30,33 +30,65 @@ function check_messages(after_check_fnc){
 				}
 			}
 		});
-
-		retrieve_gradeinfo();
 	},
 	function(data) {
 		Queue.clear();
 		reset_session();
 	});
 
-	if (get_check_mail()) {
-		args = {id: 1, method: "MailInterfaceBroker.getTreeFolderExpanded", params: ["-1", "pers"]};
-		Queue.request('/WebMail/JSONRPCServlet?mark=false', args, 'json', function(resp) {
-			var mails = 0;
-			try {
-				for(var x in resp.result.folders.list) {
-        			mails += resp.result.folders.list[x].totalNewMsgs;
-        		}
-    		} catch(err) {
-        		Debug.error(err);
-    		}
-
-			var old_mails = get_mails_unread();
-			save_mails_unread(mails);
-			Debug.print("Check mails: "+mails);
-			if (mails > 0 && old_mails < mails && mails >= get_critical()) {
-				notify(_('__NOTIFICATION_MAIL__', [mails]));
+	/*var args = {
+		'app:mobile': true,
+		'app:cache': false,
+		'app:only' : 'aules'
+	}
+	Queue.request('/rb/inici/grid.rss', args, 'GET', function(resp) {
+		var domainCode = false;
+		$(resp).find('item').each(function() {
+			var cat = $(this).find('category').first().text();
+			var sp = cat.split('-');
+			domainCode = sp[0];
+			var type = sp[sp.length-1];
+			switch(type) {
+				case 'AULA_DOCENT_RESOURCES':
+				case 'AULA_TUTOR_RESOURCES':
+					var title = $(this).find('title').text();
+					title = $('<textarea />').html(title).text();
+					var description = $(this).find('description').text();
+					console.log(domainCode,title, description);
+					break;
+				case 'AULA_TUTOR_DEFINITION':
+					console.log('TUTOR', $(this).html());
+					break;
 			}
 		});
+
+	});*/
+
+	var args = {
+		'app:mobile': true,
+		'app:cache': false,
+		'app:only' : 'bustia'
+	}
+	Queue.request('/rb/inici/grid.rss', args, 'GET', function(resp) {
+		$(resp).find('item').each(function() {
+    		var description = $(this).find('description').first().text();
+    		var matches = description.match(/:([0-9]+):([0-9]+)$/);
+			if(matches && matches[1]) {
+				save_mail(matches[1]);
+			}
+		});
+
+	});
+
+	retrieve_gradeinfo();
+}
+
+function save_mail(mails) {
+	var old_mails = get_mails_unread();
+	save_mails_unread(mails);
+	Debug.print("Check mails: "+mails);
+	if (mails > 0 && old_mails < mails && mails >= get_critical()) {
+		notify(_('__NOTIFICATION_MAIL__', [mails]));
 	}
 }
 
@@ -255,7 +287,7 @@ function retrieve_gradeinfo() {
 						if (evnt.graded != grade) {
 							evnt.graded = grade;
 							changed = true;
-							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
+							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]), 0);
 						}
 					}
 					if (changed) {
@@ -265,7 +297,9 @@ function retrieve_gradeinfo() {
 					var grade = $(this).find('nota').text().trim();
 					if (grade.length > 0 && grade != '-') {
 						var name = $(this).find('descripcion').text().trim();
-						classroom.add_grade(name, grade);
+						if (classroom.add_grade(name, grade)) {
+							notify(_('__FINAL_GRADE__', [grade, name, classroom.get_acronym()]), 0);
+						}
 					}
 				}
 			});
@@ -273,11 +307,15 @@ function retrieve_gradeinfo() {
 			if (classroom) {
 				var finalgrade = $(this).find('notaFinal').text().trim();
 				if (finalgrade.length > 0 && finalgrade != '-') {
-					classroom.add_grade('FA', grade);
+					if (classroom.add_grade('FA', grade)) {
+						notify(_('__FINAL_GRADE__', [grade, name, classroom.get_acronym()]), 0);
+					}
 				}
 				var finalac = $(this).find('notaFinalContinuada').text().trim();
 				if (finalac.length > 0 && finalac != '-') {
-					classroom.add_grade('FC', grade);
+					if (classroom.add_grade('FC', grade)) {
+						notify(_('__FINAL_GRADE__', [grade, name, classroom.get_acronym()]), 0);
+					}
 				}
 			}
 		});

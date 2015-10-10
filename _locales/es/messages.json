@@ -42,9 +42,6 @@
     "__MINUTES__" : {
         "message" : "minutos"
     },
-    "__CHECK_MAIL__" : {
-        "message" : "Comprueba el correo"
-    },
     "__SHOW__" : {
         "message" : "Mostrar"
     },

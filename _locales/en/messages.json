@@ -42,9 +42,6 @@
     "__MINUTES__" : {
         "message" : "minutes"
     },
-    "__CHECK_MAIL__" : {
-        "message" : "Check mail"
-    },
     "__SHOW__" : {
         "message" : "Show"
     },

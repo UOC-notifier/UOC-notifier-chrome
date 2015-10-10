@@ -87,20 +87,6 @@ function save_notification(notify){
 	Storage.set_option("notification", notify);
 }
 
-//OPTIONS - CHECK MAIL
-function get_check_mail(){
-	var mails = get_mails_unread();
-	return mails >= 0;
-}
-
-function save_check_mail(check) {
-	if (check) {
-		save_mails_unread(0);
-	} else {
-		save_mails_unread(-1);
-	}
-}
-
 //OPTIONS - SHOW NEWS
 function get_show_news(){
 	return Storage.get_option_bool("show_news", true);

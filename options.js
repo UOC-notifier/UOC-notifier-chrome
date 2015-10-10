@@ -68,15 +68,6 @@ function populate_options(){
 		save_notification(ischecked);
 	});
 
-	option = get_check_mail();
-	if (option) {
-		$('#check_mail').attr('checked','checked');
-	}
-	$('#check_mail').on('click', function(){
-		var ischecked = $('#check_mail').is(':checked');
-		save_check_mail(ischecked);
-	});
-
 	option = get_show_news();
 	if (option) {
 		$('#show_news').attr('checked','checked');
