@@ -379,51 +379,68 @@ var Session = new function(){
 				Debug.print('Retrieving session...');
 				retrieving = true;
 
-				var data = {
-					l: user_save.username,
-					p: user_save.password,
-					appid: "WUOC",
-					nil: "XXXXXX",
-					lb: "a",
-					url: root_url,
-					x: "13",
-					y: "2"
-				};
+				$.ajax({
+					type: 'GET',
+					url: root_url_ssl + "/webapps/cas/login",
+				})
+				.done(function(resp) {
+					if(resp.match(/name="lt" value="([^"]+)"/)) {
+						var lt = resp.match(/name="lt" value="([^"]+)"/)[1];
+						var execution = resp.match(/name="execution" value="([^"]+)"/)[1];
+						Debug.print('No session, logging in');
 
-			    url = root_url + "/cgi-bin/uoc";
-			    $.ajax({
-			        type: 'POST',
-			        beforeSend: function (request){
-			            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-			        },
-			        xhrFields: {
-			            withCredentials: true
-			        },
-			        url: url,
-			        data: uri_data(data),
-			        processData: false
-			    })
-			    .done(function(resp) {
-			    	Debug.log(resp);
-			    	var iSs = resp.indexOf("?s=");
-					if( iSs != -1 ){
-						var	iSf = resp.indexOf("\";", iSs);
-						var	iSf2 = resp.indexOf("&", iSs);
-						if (iSf2 < iSf && iSf2 > 0) {
-							iSf = iSf2;
-						}
-						session = resp.substring(iSs + 3, iSf);
-						save_session(session);
-						Debug.print('Session! '+session);
-						Queue.run();
+						var data = {
+							username: user_save.username,
+							password: user_save.password,
+							lt: lt,
+							execution: execution,
+							_eventId: 'submit'
+						};
+					    url = root_url_ssl + "/webapps/cas/login";
+					    $.ajax({
+					        type: 'POST',
+					        beforeSend: function (request){
+					            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+					        },
+					        xhrFields: {
+					            withCredentials: true
+					        },
+					        url: url,
+					        data: uri_data(data),
+					        processData: false
+					    })
+					    .done(function(resp) {
+					    	Debug.log(resp);
+					    	var matchs = resp.match(/campusSessionId = ([^\n]*)/);
+							if (matchs) {
+								var session = matchs[1];
+								save_session(session);
+								Debug.print('Session! '+session);
+								Queue.run();
+							} else {
+								Debug.error('ERROR: Cannot fetch session');
+								$("#status").text(_("__INCORRECT_USER__"));
+								$(".alert").show();
+							}
+					    })
+					    .fail(function() {
+					        Debug.error('ERROR: Cannot login');
+					    })
+					    .always(function() {
+					        retrieving = false;
+					    });
 					} else {
-						Debug.error('ERROR: Cannot fetch session');
-						$("#status").text(_("__INCORRECT_USER__"));
-						$(".alert").show();
+						var matchs = resp.match(/campusSessionId = ([^\n]*)/);
+						if (matchs) {
+							var session = matchs[1];
+							save_session(session);
+							Debug.print('Session! '+session);
+							Queue.run();
+						}
 					}
-			    })
-			    .fail(function() {
-			        Debug.error('ERROR: Cannot fetch '+url);
+				})
+				.fail(function() {
+			        Debug.error('ERROR: Cannot renew session');
 			    })
 			    .always(function() {
 			        retrieving = false;
