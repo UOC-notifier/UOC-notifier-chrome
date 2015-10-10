@@ -265,39 +265,19 @@ function retrieve_gradeinfo() {
 					var grade = $(this).find('nota').text().trim();
 					if (grade.length > 0 && grade != '-') {
 						var name = $(this).find('descripcion').text().trim();
-						switch (name) {
-							case 'Nota final activitats pràctiques':
-								name = 'P';
-								break;
-							case 'Qualificació d\'avaluació continuada':
-								name = 'C';
-								break;
-							case 'Qualificació final d\'avaluació contínua':
-								name = 'FC';
-								break;
-						}
-						// TODO Save final grades
-						/*if (evnt.graded != grade) {
-							evnt.graded = grade;
-							changed = true;
-							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]));
-						}*/
-						//console.log(name, grade);
+						classroom.add_grade(name, grade);
 					}
 				}
 			});
 
 			if (classroom) {
-				// TODO: save final grades
 				var finalgrade = $(this).find('notaFinal').text().trim();
 				if (finalgrade.length > 0 && finalgrade != '-') {
-					//Save final grade
-					//console.log(finalgrade);
+					classroom.add_grade('FA', grade);
 				}
 				var finalac = $(this).find('notaFinalContinuada').text().trim();
 				if (finalac.length > 0 && finalac != '-') {
-					//Save final grade
-					//console.log(finalac);
+					classroom.add_grade('FC', grade);
 				}
 			}
 		});

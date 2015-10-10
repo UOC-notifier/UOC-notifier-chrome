@@ -172,6 +172,10 @@ var Classes = new function(){
 						ev.committed = evl.committed;
 						classr.add_event(ev);
 					}
+					for(var j in classl.grades){
+						var g = classl.grades[j];
+						classr.add_grade(g.name, g.grade);
+					}
 				}
 				this.add(classr);
 			}
@@ -227,6 +231,7 @@ function Classroom(title, code, domain, type, template){
 	this.messages = 0;
 	this.resources = [];
 	this.events = [];
+	this.grades = [];
 
 	this.set_color = function(color){
 		if(color && color != 'undefined' && color != 'false'){
@@ -268,6 +273,22 @@ function Classroom(title, code, domain, type, template){
 	this.reset_messages = function(){
 		this.messages = 0;
 	};
+
+	// Adds a final grade returning if it changed
+	this.add_grade = function(name, grade) {
+		for(var i in this.grades){
+			if (this.grades[i].name = name) {
+				if (this.grades[i].grade != grade) {
+					this.grades[i].grade = grade;
+					return true;
+				}
+				return false;
+			}
+		}
+		var g = new Grade(name, grade);
+		this.grades.push(g);
+		return true;
+	}
 
 	this.add_resource = function(resource){
 		if(!this.notify) return;
@@ -470,6 +491,27 @@ function Resource(title, code){
 		}
 		this.link = link;
 	};
+}
+
+function Grade(name, grade) {
+	this.name = name;
+	this.grade = grade;
+
+	switch (name) {
+		case 'Nota final activitats pràctiques':
+			this.code = 'P';
+			break;
+		case 'Qualificació d\'avaluació continuada':
+			this.code = 'C';
+			break;
+		case 'FC':
+			this.code = 'FC';
+			break;
+		case 'FA':
+			this.code = 'FA';
+			break;
+	}
+	console.log(this);
 }
 
 function Event(name, id) {
