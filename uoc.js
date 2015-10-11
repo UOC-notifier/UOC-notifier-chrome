@@ -114,7 +114,9 @@ function parse_classroom(classr) {
 		var classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId, classr.ptTemplate);
 		classroom.domainassig = classr.domainFatherId;
 	} else {
-		classroom.title = title;
+		if (!classroom.title) {
+			classroom.title = title;
+		}
 		classroom.code = classr.domainCode;
 		classroom.domain = classr.domainId;
 		classroom.type = classr.domainTypeId;
@@ -280,27 +282,30 @@ function retrieve_gradeinfo() {
 						classroom.add_event(evnt);
 					}
 				} else {
-					var grade = $(this).find('nota').text().trim();
-					if (grade.length > 0 && grade != '-') {
+					var nota = $(this).find('nota').text().trim();
+					if (nota.length > 0 && nota != '-') {
 						var name = $(this).find('descripcion').text().trim();
-						if (classroom.add_grade(name, grade)) {
-							notify(_('__FINAL_GRADE__', [grade, name, classroom.get_acronym()]), 0);
+						var grade = classroom.add_grade(name, nota);
+						if (grade) {
+							notify(_('__FINAL_GRADE__', [grade.grade, grade.get_title(), classroom.get_acronym()]), 0);
 						}
 					}
 				}
 			});
 
 			if (classroom) {
-				var finalgrade = $(this).find('notaFinal').text().trim();
-				if (finalgrade.length > 0 && finalgrade != '-') {
-					if (classroom.add_grade('FA', grade)) {
-						notify(_('__FINAL_GRADE__', [grade, name, classroom.get_acronym()]), 0);
+				var nota = $(this).find('notaFinal').text().trim();
+				if (nota.length > 0 && nota != '-') {
+					var grade = classroom.add_grade('FA', nota);
+					if (grade) {
+						notify(_('__FINAL_GRADE__', [grade.grade, grade.get_title(), classroom.get_acronym()]), 0);
 					}
 				}
-				var finalac = $(this).find('notaFinalContinuada').text().trim();
-				if (finalac.length > 0 && finalac != '-') {
-					if (classroom.add_grade('FC', grade)) {
-						notify(_('__FINAL_GRADE__', [grade, name, classroom.get_acronym()]), 0);
+				var nota = $(this).find('notaFinalContinuada').text().trim();
+				if (nota.length > 0 && nota != '-') {
+					var grade = classroom.add_grade('FC', nota);
+					if (grade) {
+						notify(_('__FINAL_GRADE__', [grade.grade, grade.get_title(), classroom.get_acronym()]), 0);
 					}
 				}
 			}
@@ -327,12 +332,6 @@ function retrieve_resource(classroom, resource){
     		Debug.error(err);
 		}
 		classroom.add_resource(resource);
-    },
-    function(data) {
-     	//On Error
-    	/*resource.set_messages(0, 0);
-    	resource.set_pos(false);
-    	classroom.add_resource(resource);*/
     });
 }
 

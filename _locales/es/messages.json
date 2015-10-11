@@ -214,6 +214,20 @@
           }
         }
     },
+    "__FINAL_GRADE__" : {
+        "message" : "Has sacado una $grade$ en $final$ de $class$",
+        "placeholders": {
+          "grade": {
+            "content": "$1"
+          },
+          "final": {
+            "content": "$2"
+          },
+          "class": {
+            "content": "$3"
+          }
+        }
+    },
     "__INCORRECT_USER__" : {
         "message" : "El usuario/password no es correcto"
     },
@@ -231,5 +245,32 @@
     },
     "__FAQ_LINK__": {
         "message" : "Tienes problemas? Visita las"
+    },
+    "__C__": {
+        "message" : "Calificación de Evaluación Continuada"
+    },
+    "__P__": {
+        "message" : "Calificación final de actividades prácticas"
+    },
+    "__FC__": {
+        "message" : "Calificación final de Evaluación continuada"
+    },
+    "__PS__": {
+        "message" : "Prueba de Síntesis"
+    },
+    "__PV__": {
+        "message" : "Prueba de Validación"
+    },
+    "__EX__": {
+        "message" : "Exámen"
+    },
+    "__PF__": {
+        "message" : "Prueba Final"
+    },
+    "__FE__": {
+        "message" : "Calificación final de Exámenes (P+EX)"
+    },
+    "__FA__": {
+        "message" : "Calificación final de la Asignatura"
     }
 }

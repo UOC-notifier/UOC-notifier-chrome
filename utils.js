@@ -223,7 +223,7 @@ var Queue = new function(){
             data = {};
         }
         data.s = session;
-        url = root_url + url;
+        url = root_url_ssl + url;
 
         var ajax_request = {
             type: type

@@ -36,9 +36,10 @@ var Classes = new function(){
 
 		for(var i in classes){
 			if (classes[i].notify) {
-				classes[i].sort_resources();
+				classes[i].sort_resources_grades();
 			}
 		}
+
 
 		Storage.set_option("classes", JSON.stringify(classes));
 	};
@@ -270,18 +271,18 @@ function Classroom(title, code, domain, type, template){
 
 	// Adds a final grade returning if it changed
 	this.add_grade = function(name, grade) {
+		var g = new Grade(name, grade);
 		for(var i in this.grades){
-			if (this.grades[i].name = name) {
-				if (this.grades[i].grade != grade) {
+			if (this.grades[i].code = g.code) {
+				if (this.grades[i].grade != g.grade) {
 					this.grades[i].grade = grade;
-					return true;
+					return this.grades[i];
 				}
 				return false;
 			}
 		}
-		var g = new Grade(name, grade);
 		this.grades.push(g);
-		return true;
+		return g;
 	}
 
 	this.add_resource = function(resource){
@@ -298,7 +299,7 @@ function Classroom(title, code, domain, type, template){
 		}
 	};
 
-	this.sort_resources = function() {
+	this.sort_resources_grades = function() {
 		this.resources.sort(function(a, b) {
 			if(a.has_message_count() != b.has_message_count()) {
 				if (a.has_message_count()) {
@@ -315,6 +316,15 @@ function Classroom(title, code, domain, type, template){
 
 			if(a.title < b.title) return -1;
 		    if(a.title > b.title) return 1;
+		    return 0;
+		});
+
+		this.grades.sort(function(a, b) {
+			if(a.pos < b.pos) return -1;
+		    if(a.pos > b.pos) return 1;
+
+			if(a.name < b.name) return -1;
+		    if(a.name > b.name) return 1;
 		    return 0;
 		});
 	}
@@ -487,20 +497,56 @@ function Grade(name, grade) {
 	this.grade = grade;
 
 	switch (name) {
-		case 'Nota final activitats pràctiques':
-			this.code = 'P';
-			break;
 		case 'Qualificació d\'avaluació continuada':
+		case 'C':
 			this.code = 'C';
+			this.pos = 1;
+			break;
+		case 'Nota final activitats pràctiques':
+		case 'P':
+			this.code = 'P';
+			this.pos = 2;
 			break;
 		case 'FC':
 			this.code = 'FC';
+			this.pos = 3;
+			break;
+		case 'PS':
+			this.code = 'PS';
+			this.pos = 4;
+			break;
+		case 'PV':
+			this.code = 'PV';
+			this.pos = 5;
+			break;
+		case 'EX':
+			this.code = 'EX';
+			this.pos = 6;
+			break;
+		case 'PF':
+			this.code = 'PF';
+			this.pos = 7;
+			break;
+		case 'FE':
+			this.code = 'FE';
+			this.pos = 8;
 			break;
 		case 'FA':
 			this.code = 'FA';
+			this.pos = 9;
 			break;
+		default:
+			this.code = false;
+			this.pos = 10;
+			Debug.error('Grade type not recognized: '+name);
 	}
-	console.log(this);
+
+	this.get_title = function(){
+		if (this.code) {
+			return _('__'+this.code+'__');
+		}
+		return this.name;
+	}
 }
 
 function Event(name, id) {

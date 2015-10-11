@@ -197,17 +197,34 @@ function buildUI_classroom_resources(classroom) {
 }
 
 function buildUI_classroom_events(classroom) {
-	if (classroom.events.length == 0) {
+	if (classroom.events.length == 0 && classroom.grades.length == 0) {
 		return "";
 	}
 	var events_html = '';
-	for(var j in classroom.events){
-		events_html += buildUI_event(classroom.events[j]);
+
+	if (classroom.all_events_graded()) {
+		for(var j in classroom.events){
+			events_html += buildUI_event_grade(classroom.events[j]);
+		}
+		for(var j in classroom.grades){
+			events_html += buildUI_grade(classroom.grades[j], 1);
+		}
+		return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
+				<thead><tr><th></th><th>'+_('__GRADE__')+'</th></tr></thead>\
+				<tbody>' + events_html + ' </tbody>\
+			</table>';
+	} else {
+		for(var j in classroom.events){
+			events_html += buildUI_event(classroom.events[j]);
+		}
+		for(var j in classroom.grades){
+			events_html += buildUI_grade(classroom.grades[j], 4);
+		}
+		return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
+				<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
+				<tbody>' + events_html + ' </tbody>\
+			</table>';
 	}
-	return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
-			<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
-			<tbody>' + events_html + ' </tbody>\
-		</table>';
 }
 
 function buildUI_event(ev){
@@ -236,6 +253,26 @@ function buildUI_event(ev){
 	}
 	return '<tr class="event'+eventstate+'" '+link+'"> \
 				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
+}
+
+function buildUI_event_grade(ev){
+	if(ev.link != 'undefined'){
+		var link = 'link="'+ev.link+'"';
+	}
+	var dgrade = buildUI_eventtext(ev.graded, "graded");
+
+	var title = ev.name;
+	if (ev.committed) {
+		title += ' <span class="glyphicon glyphicon-ok  text-success" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>';
+	} else if(ev.has_ended()){
+		title += ' <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" title="'+_('__NOT_COMMITTED__')+'"></span>';
+	}
+	return '<tr class="event success" '+link+'"> \
+				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
+}
+
+function buildUI_grade(grade, colspan) {
+	return '<tr class="event bg-primary"><td class="name" colspan="'+colspan+'">'+ grade.get_title()+'</td><td class="graded">'+grade.grade+'</td></tr>';
 }
 
 function buildUI_eventdate(d, clas) {

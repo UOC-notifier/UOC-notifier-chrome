@@ -214,6 +214,20 @@
           }
         }
     },
+    "__FINAL_GRADE__" : {
+        "message" : "You've got a $grade$ in $final$ of $class$",
+        "placeholders": {
+          "grade": {
+            "content": "$1"
+          },
+          "final": {
+            "content": "$2"
+          },
+          "class": {
+            "content": "$3"
+          }
+        }
+    },
     "__INCORRECT_USER__" : {
         "message" : "User/password incorrect"
     },
@@ -231,5 +245,32 @@
     },
     "__FAQ_LINK__": {
         "message" : "Any problem? Visit the"
+    },
+    "__C__": {
+        "message" : "Grade of Continuous Assessment"
+    },
+    "__P__": {
+        "message" : "Final Grade of Practical Activities"
+    },
+    "__FC__": {
+        "message" : "Final Grade of Continuous Assessment"
+    },
+    "__PS__": {
+        "message" : "Synthesis Test"
+    },
+    "__PV__": {
+        "message" : "Validation Test"
+    },
+    "__EX__": {
+        "message" : "Exam"
+    },
+    "__PF__": {
+        "message" : "Final"
+    },
+    "__FE__": {
+        "message" : "Final Greade of Exams (P+EX)"
+    },
+    "__FA__": {
+        "message" : "Final Grade of the Subject"
     }
 }
