@@ -36,34 +36,6 @@ function check_messages(after_check_fnc){
 		reset_session();
 	});
 
-	/*var args = {
-		'app:mobile': true,
-		'app:cache': false,
-		'app:only' : 'aules'
-	}
-	Queue.request('/rb/inici/grid.rss', args, 'GET', function(resp) {
-		var domainCode = false;
-		$(resp).find('item').each(function() {
-			var cat = $(this).find('category').first().text();
-			var sp = cat.split('-');
-			domainCode = sp[0];
-			var type = sp[sp.length-1];
-			switch(type) {
-				case 'AULA_DOCENT_RESOURCES':
-				case 'AULA_TUTOR_RESOURCES':
-					var title = $(this).find('title').text();
-					title = $('<textarea />').html(title).text();
-					var description = $(this).find('description').text();
-					console.log(domainCode,title, description);
-					break;
-				case 'AULA_TUTOR_DEFINITION':
-					console.log('TUTOR', $(this).html());
-					break;
-			}
-		});
-
-	});*/
-
 	var args = {
 		'app:mobile': true,
 		'app:cache': false,
@@ -145,7 +117,7 @@ function parse_classroom(classr) {
 		classroom.title = title;
 		classroom.code = classr.domainCode;
 		classroom.domain = classr.domainId;
-		classroom.type = classr.domaintypeid;
+		classroom.type = classr.domainTypeId;
 		classroom.template = classr.ptTemplate;
 	}
 	classroom.set_color(classr.color);
@@ -221,9 +193,20 @@ function parse_classroom_old(classr){
 		var title = classr.shortname ? classr.shortname : classr.title;
 		switch (classr.domaintypeid) {
 			case 'TUTORIA':
+				var classroom = Classes.search_domainassig(classr.domainid);
 				var sp = title.split(classr.codi_tercers);
 				title = sp[0].trim();
-				var classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
+				if (!classroom) {
+					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
+				} else {
+					classroom.title = title;
+					classroom.code = classr.code;
+					classroom.domain = classr.domainid;
+					classroom.domainassig = classr.domainid;
+					classroom.type = classr.domaintypeid;
+					classroom.template = classr.pt_template
+				}
+
 				classroom.aula = classr.codi_tercers;
 				if (sp.length > 1) {
 					classroom.consultor = sp[1].trim();
@@ -236,24 +219,27 @@ function parse_classroom_old(classr){
 			case 'ASSIGNATURA':
 				// Override title
 				var classroom = Classes.search_domainassig(classr.domainid);
-				classroom.title = title;
+				if (classroom) {
+					classroom.title = title;
+				}
 				return;
 			case 'AULA':
 				return;
 
 		}
-
-		if(Classes.get_notify(classroom.code)) {
-			for(var j in classr.resources){
-				var resourcel = classr.resources[j];
-				if(resourcel.title){
-					var resource = new Resource(resourcel.title, resourcel.code);
-					resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
-					classroom.add_resource(resource);
+		if (classroom) {
+			if(Classes.get_notify(classroom.code)) {
+				for(var j in classr.resources){
+					var resourcel = classr.resources[j];
+					if(resourcel.title){
+						var resource = new Resource(resourcel.title, resourcel.code);
+						resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
+						classroom.add_resource(resource);
+					}
 				}
 			}
+			Classes.add(classroom);
 		}
-		Classes.add(classroom);
 	}
 }
 
