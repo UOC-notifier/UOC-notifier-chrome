@@ -91,7 +91,10 @@ function buildUI_pacs(force) {
 					return compareDates(a.end, b.end);
 				});
 			} else {
-				events.sort(function(a, b){
+				events.sort(function(a, b) {
+					if (a.has_started() && b.has_started()) {
+						return compareDates(a.end, b.end);
+					}
 					return compareDates(a.start, b.start);
 				});
 			}
@@ -139,16 +142,14 @@ function buildUI_pacs_events(ev) {
 		}
 	}
 	var dstart = buildUI_eventdate(ev.start, "");
-
-	if (ev.committed && !ev.has_ended()) {
-		var dend = buildUI_eventdate(ev.end, "end", '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>');
-	} else if (!ev.committed && ev.has_ended()) {
-		var dend = buildUI_eventtext('<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>', "text-danger");
-	} else {
-		var dend = buildUI_eventdate(ev.end, "end");
+	var dend = buildUI_eventdate(ev.end, "end");
+	var title = ev.subject + ' - ' + ev.name;
+	if (ev.committed) {
+		title += ' <span class="glyphicon glyphicon-ok text-success" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>';
 	}
+
 	return '<tr class="event'+eventstate+'" '+link+'"> \
-				<td class="name"><a href="#" class="linkEvent">'+ev.subject+' - '+ev.name+'</a></td>'+dstart+dend+'</tr>';
+				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+'</tr>';
 }
 
 function get_general_link(link, title, par){
@@ -223,23 +224,24 @@ function buildUI_event(ev){
 		}
 	}
 	var dstart = buildUI_eventdate(ev.start, "");
-
-	if (ev.committed && !ev.has_ended()) {
-		var dend = buildUI_eventdate(ev.end, "end", '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>');
-	} else if (!ev.committed && ev.has_ended()) {
-		var dend = buildUI_eventtext('<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>', "text-danger");
-	} else {
-		var dend = buildUI_eventdate(ev.end, "end");
-	}
-	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded"): buildUI_eventdate(ev.grading, "");
+	var dend = buildUI_eventdate(ev.end, "end");
+	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded", ev.grading): buildUI_eventdate(ev.grading, "");
 	var dsol = buildUI_eventdate(ev.solution, "");
+
+	var title = ev.name;
+	if (ev.committed) {
+		title += ' <span class="glyphicon glyphicon-ok  text-success" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>';
+	} else if(ev.has_ended()){
+		title += ' <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" title="'+_('__NOT_COMMITTED__')+'"></span>';
+	}
 	return '<tr class="event'+eventstate+'" '+link+'"> \
-				<td class="name"><a href="#" class="linkEvent">'+ev.name+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
+				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
 }
 
-function buildUI_eventdate(d, clas, append) {
+function buildUI_eventdate(d, clas) {
+	var fdate;
 	if (d) {
-		dsplit = d.split('/');
+		var dsplit = d.split('/');
 		fdate = dsplit[0]+'/'+dsplit[1];
 		if (isBeforeToday(d)) {
 			clas += " text-success";
@@ -250,14 +252,18 @@ function buildUI_eventdate(d, clas, append) {
 	} else {
 		fdate = '-';
 	}
-	return buildUI_eventtext(fdate, clas, append);
+	return buildUI_eventtext(fdate, clas);
 }
 
-function buildUI_eventtext(text, clas, append) {
-	if (!append) {
-		append = "";
+function buildUI_eventtext(text, clas, title) {
+	if (title == undefined) {
+		title = "";
+	} else {
+		var dsplit = title.split('/');
+		title = dsplit[0]+'/'+dsplit[1];
+		title = ' title="'+title+'"';
 	}
-	return '<td><a href="#" class="linkEvent '+clas+'">'+text+append+'</a></td>';
+	return '<td><a href="#" class="linkEvent '+clas+'"'+title+'>'+text+'</a></td>';
 }
 
 

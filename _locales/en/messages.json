@@ -86,6 +86,9 @@
     "__COMMITTED__" : {
         "message" : "Committed"
     },
+    "__NOT_COMMITTED__" : {
+        "message" : "Not committed"
+    },
     "__EQUIPMENT__" : {
         "message" : "Equipment"
     },
