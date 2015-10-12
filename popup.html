@@ -65,9 +65,21 @@ body {
 	border-radius: 3px;
 }
 
-.event.warning .name, .event.warning .end {
+.event.running .name, .event.running .end{
 	color: #a94442;
 	font-weight: bold;
+}
+
+.event.success .name a{
+	color: #3c763d;
+}
+
+.event.warning .name a{
+	color: #8a6d3b;
+}
+
+.event.danger .name a{
+	color: #a94442;
 }
 
 .events td, .events th{
@@ -88,6 +100,7 @@ body {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
 </style>
 </head>
 <body>

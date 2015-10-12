@@ -137,15 +137,17 @@ function buildUI_pacs_events(ev) {
 	if (ev.has_started()) {
 		if (ev.has_ended()) {
 			return "";
+		} if (ev.committed) {
+			eventstate = ' warning running';
 		} else {
-			eventstate = ' warning';
+			eventstate = ' danger running';
 		}
 	}
 	var dstart = buildUI_eventdate(ev.start, "");
 	var dend = buildUI_eventdate(ev.end, "end");
 	var title = ev.subject + ' - ' + ev.name;
 	if (ev.committed) {
-		title += ' <span class="glyphicon glyphicon-ok text-success" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>';
+		title += print_check(_('__COMMITTED__'));
 	}
 
 	return '<tr class="event'+eventstate+'" '+link+'"> \
@@ -162,6 +164,14 @@ function get_general_link(link, title, par){
 		ret += '</div>';
 	}
 	return ret;
+}
+
+function print_check(title) {
+	return ' <span class="glyphicon glyphicon-ok text-success" aria-hidden="true" title="'+title+'"></span>';
+}
+
+function print_nocheck(title) {
+	return ' <span class="glyphicon glyphicon-remove text-warning" aria-hidden="true" title="'+title+'"></span>';
 }
 
 
@@ -236,23 +246,24 @@ function buildUI_event(ev){
 	if (ev.has_started()) {
 		if (ev.has_ended()) {
 			eventstate = ' success';
+		} else if (ev.committed) {
+			eventstate = ' warning running';
 		} else {
-			eventstate = ' warning';
+			eventstate = ' danger running';
 		}
 	}
 	var dstart = buildUI_eventdate(ev.start, "");
 	var dend = buildUI_eventdate(ev.end, "end");
-	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded", ev.grading): buildUI_eventdate(ev.grading, "");
 	var dsol = buildUI_eventdate(ev.solution, "");
+	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded", ev.grading): buildUI_eventdate(ev.grading, "");
 
 	var title = ev.name;
 	if (ev.committed) {
-		title += ' <span class="glyphicon glyphicon-ok  text-success" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>';
+		title += print_check(_('__COMMITTED__'));
 	} else if(ev.has_ended()){
-		title += ' <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" title="'+_('__NOT_COMMITTED__')+'"></span>';
+		title += print_nocheck(_('__NOT_COMMITTED__'));
 	}
-	return '<tr class="event'+eventstate+'" '+link+'"> \
-				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
+	return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
 }
 
 function buildUI_event_grade(ev){
@@ -263,12 +274,11 @@ function buildUI_event_grade(ev){
 
 	var title = ev.name;
 	if (ev.committed) {
-		title += ' <span class="glyphicon glyphicon-ok  text-success" aria-hidden="true" title="'+_('__COMMITTED__')+'"></span>';
+		title += print_check(_('__COMMITTED__'));
 	} else if(ev.has_ended()){
-		title += ' <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" title="'+_('__NOT_COMMITTED__')+'"></span>';
+		title += print_nocheck(_('__NOT_COMMITTED__'));
 	}
-	return '<tr class="event success" '+link+'"> \
-				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
+	return '<tr class="event success" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
 }
 
 function buildUI_grade(grade, colspan) {
@@ -282,7 +292,7 @@ function buildUI_eventdate(d, clas) {
 		fdate = dsplit[0]+'/'+dsplit[1];
 		if (isBeforeToday(d)) {
 			clas += " text-success";
-			fdate = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'+fdate+'"></span>';
+			fdate = print_check(fdate);
 		} else if (isToday(d)) {
 			clas += " today";
 		}
