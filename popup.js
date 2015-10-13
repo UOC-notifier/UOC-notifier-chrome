@@ -287,6 +287,7 @@ function buildUI_grade(grade, colspan) {
 
 function buildUI_eventdate(d, clas) {
 	var fdate;
+	var title = "";
 	if (d) {
 		var dsplit = d.split('/');
 		fdate = dsplit[0]+'/'+dsplit[1];
@@ -295,11 +296,13 @@ function buildUI_eventdate(d, clas) {
 			fdate = print_check(fdate);
 		} else if (isToday(d)) {
 			clas += " today";
+			title = fdate;
+			fdate = _('__TODAY__');
 		}
 	} else {
 		fdate = '-';
 	}
-	return buildUI_eventtext(fdate, clas);
+	return buildUI_eventtext(fdate, clas, title);
 }
 
 function buildUI_eventtext(text, clas, title) {
@@ -307,8 +310,11 @@ function buildUI_eventtext(text, clas, title) {
 		title = "";
 	} else {
 		var dsplit = title.split('/');
-		title = dsplit[0]+'/'+dsplit[1];
+		if (dsplit.length >= 2) {
+			title = dsplit[0]+'/'+dsplit[1];
+		}
 		title = ' title="'+title+'"';
+
 	}
 	return '<td><a href="#" class="linkEvent '+clas+'"'+title+'>'+text+'</a></td>';
 }

@@ -134,6 +134,9 @@
     "__UPDATE__" : {
         "message" : "Actualizar"
     },
+    "__TODAY__" : {
+        "message" : "Hoy"
+    },
     "__TEACHER__" : {
         "message" : "Consultor/a"
     },
