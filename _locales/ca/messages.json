@@ -86,6 +86,17 @@
     "__COMMITTED__" : {
         "message" : "Entregat"
     },
+    "__COMMITTED_VIEWED__" : {
+        "message" : "Entregat i vist pel consultor: $date$ a les $time$",
+        "placeholders": {
+          "date": {
+            "content": "$1"
+          },
+          "time": {
+            "content": "$2"
+          }
+        }
+    },
     "__NOT_COMMITTED__" : {
         "message" : "No entregat"
     },

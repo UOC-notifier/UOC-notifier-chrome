@@ -147,7 +147,11 @@ function buildUI_pacs_events(ev) {
 	var dend = buildUI_eventdate(ev.end, "end");
 	var title = ev.subject + ' - ' + ev.name;
 	if (ev.committed) {
-		title += print_check(_('__COMMITTED__'));
+		if (ev.viewed) {
+			title += print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+		} else {
+			title += print_icon(_('__COMMITTED__'), 'save');
+		}
 	}
 
 	return '<tr class="event'+eventstate+'" '+link+'"> \
@@ -166,12 +170,8 @@ function get_general_link(link, title, par){
 	return ret;
 }
 
-function print_check(title) {
-	return ' <span class="glyphicon glyphicon-ok text-success" aria-hidden="true" title="'+title+'"></span>';
-}
-
-function print_nocheck(title) {
-	return ' <span class="glyphicon glyphicon-remove text-warning" aria-hidden="true" title="'+title+'"></span>';
+function print_icon(title, type) {
+	return ' <span class="glyphicon glyphicon-'+type+' text-success" aria-hidden="true" title="'+title+'"></span>';
 }
 
 
@@ -259,9 +259,13 @@ function buildUI_event(ev){
 
 	var title = ev.name;
 	if (ev.committed) {
-		title += print_check(_('__COMMITTED__'));
+		if (ev.viewed) {
+			title += print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+		} else {
+			title += print_icon(_('__COMMITTED__'), 'save');
+		}
 	} else if(ev.has_ended()){
-		title += print_nocheck(_('__NOT_COMMITTED__'));
+		title += print_icon(_('__NOT_COMMITTED__'), 'remove');
 	}
 	return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
 }
@@ -274,9 +278,13 @@ function buildUI_event_grade(ev){
 
 	var title = ev.name;
 	if (ev.committed) {
-		title += print_check(_('__COMMITTED__'));
+		if (ev.viewed) {
+			title += print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+		} else {
+			title += print_icon(_('__COMMITTED__'), 'save');
+		}
 	} else if(ev.has_ended()){
-		title += print_nocheck(_('__NOT_COMMITTED__'));
+		title += print_icon(_('__NOT_COMMITTED__'), 'remove');
 	}
 	return '<tr class="event success" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
 }
@@ -293,7 +301,7 @@ function buildUI_eventdate(d, clas) {
 		fdate = dsplit[0]+'/'+dsplit[1];
 		if (isBeforeToday(d)) {
 			clas += " text-success";
-			fdate = print_check(fdate);
+			fdate = print_icon(fdate, 'ok');
 		} else if (isToday(d)) {
 			clas += " today";
 			title = fdate;

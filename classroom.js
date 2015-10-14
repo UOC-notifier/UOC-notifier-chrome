@@ -165,6 +165,7 @@ var Classes = new function(){
 						ev.link = evl.link;
 						ev.graded = evl.graded;
 						ev.committed = evl.committed;
+						ev.viewed = evl.viewed;
 						classr.add_event(ev);
 					}
 					for(var j in classl.grades){
@@ -415,6 +416,7 @@ function Classroom(title, code, domain, type, template){
 		if (ev.solution) this.events[idx].solution = ev.solution;
 		if (ev.graded) this.events[idx].graded = ev.graded;
 		if (ev.committed) this.events[idx].committed = ev.committed;
+		if (ev.viewed) this.events[idx].viewed = ev.viewed;
 	};
 }
 
@@ -557,6 +559,7 @@ function Event(name, id) {
 	this.solution = false;
 	this.graded = false;
 	this.committed = false;
+	this.viewed = false;
 	this.link = "";
 	this.eventId = id;
 

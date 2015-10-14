@@ -89,16 +89,10 @@ function populate_options(){
 
 function save_options(){
 	save_user($("#username").val(), $("#pwd").val());
-
-	//populate_classrooms();
-	reset_session(after_save_options);
+	check_messages(after_check_messages);
 
 	$("#status").text(_("__SAVED_OPTIONS__"));
 	$(".alert").show();
-}
-
-function after_save_options() {
-	check_messages(after_check_messages);
 }
 
 function after_check_messages() {

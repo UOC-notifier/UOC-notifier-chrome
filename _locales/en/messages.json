@@ -86,6 +86,17 @@
     "__COMMITTED__" : {
         "message" : "Committed"
     },
+    "__COMMITTED_VIEWED__" : {
+        "message" : "Committed and seen by the teacher: $date$ at $time$",
+        "placeholders": {
+          "date": {
+            "content": "$1"
+          },
+          "time": {
+            "content": "$2"
+          }
+        }
+    },
     "__NOT_COMMITTED__" : {
         "message" : "Not committed"
     },

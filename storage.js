@@ -18,6 +18,7 @@ function save_user(username, password) {
 	// Username changed
 	if (oldusername != username) {
 		Classes.purge_all();
+		reset_session();
 	}
 }
 
@@ -50,6 +51,14 @@ function get_lang() {
         return 'es';
     }
     return 'ca';
+}
+
+function get_lang_code() {
+	var uni =  get_uni();
+    if(uni == 'UOCi'){
+        return 'b';
+    }
+    return 'a';
 }
 
 // OPTIONS - CHECK INTERVAL
@@ -136,12 +145,9 @@ function save_session(session){
 	Storage.set_option("session", session);
 }
 
-function reset_session(handler){
+function reset_session(){
 	Storage.unset_option("session");
 	Session.retrieve();
-	if (handler) {
-		handler();
-	}
 }
 
 // RUNNING - TOTAL MESSAGES

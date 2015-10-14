@@ -16,7 +16,7 @@ function check_messages(after_check_fnc){
 
 		var args = {
 			newStartingPage:0,
-			language:"b"
+			language: get_lang_code()
 		}
 		Queue.request('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
 			var index = resp.indexOf("aulas = ");
@@ -173,7 +173,7 @@ function parse_classroom(classr) {
 				args.domainId = act.domainId;
 				var aux = classr.domainCode.split('_');
 				args.domainTemplate = 'uoc_'+aux[0]+'_'+classr.codi;
-				args.idLang = 'a';
+				args.idLang =  get_lang_code();
 				args.eventsId = act.eventId;
 				args.opId = 'view';
 				args.userTypeId = 'ESTUDIANT';
@@ -210,13 +210,6 @@ function parse_classroom_old(classr){
 				}
 
 				classroom.aula = classr.codi_tercers;
-				if (sp.length > 1) {
-					classroom.consultor = sp[1].trim();
-				}
-				sp = classr.code.split('_');
-				if (sp.length > 1) {
-					classroom.consultormail = sp[1].trim()+'@uoc.edu';
-				}
 				break;
 			case 'ASSIGNATURA':
 				// Override title
@@ -231,6 +224,8 @@ function parse_classroom_old(classr){
 		}
 		if (classroom) {
 			if(Classes.get_notify(classroom.code)) {
+				retrieve_users(classroom);
+
 				for(var j in classr.resources){
 					var resourcel = classr.resources[j];
 					if(resourcel.title){
@@ -266,6 +261,8 @@ function retrieve_gradeinfo() {
 					var committed = $(this).find('listaEntregas>entrega').length > 0;
 					if (committed) {
 						evnt.committed = true;
+						var viewed = $(this).find('listaEntregas>entrega').last().find('fechaDescargaConsultor').html();
+						evnt.viewed = viewed && viewed.length ? viewed: false;
 						classroom.add_event(evnt);
 						changed = true;
 					}
@@ -319,7 +316,7 @@ function retrieve_resource(classroom, resource){
 		pageSize : 0,
 		pageCount: 0,
 		classroomId: classroom.domain,
-		subjectId: classroom.domain,
+		subjectId: classroom.domainassig,
 		resourceId: resource.code
 	};
 	Queue.request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
@@ -332,6 +329,33 @@ function retrieve_resource(classroom, resource){
     		Debug.error(err);
 		}
 		classroom.add_resource(resource);
+    });
+}
+
+function retrieve_users(classroom){
+	var args = {
+		classroomId : classroom.domain,
+		subjectId : classroom.domainassig
+	};
+	Queue.request('/webapps/aulaca/classroom/UsersList.action', args, 'GET', function(data) {
+		try {
+			if (data.tutorUsers[0]) {
+				var user = data.tutorUsers[0];
+				classroom.consultor = user.fullName;
+				classroom.consultormail = user.email;
+				classroom.consultorlastviewed = user.lastLoginTime;
+				return;
+			}
+			if (data.referenceUsers[0]) {
+				var user = data.referenceUsers[0];
+				classroom.consultor = user.fullName;
+				classroom.consultormail = user.email;
+				classroom.consultorlastviewed = user.lastLoginTime;
+			}
+		} catch(err) {
+    		Debug.error(err);
+		}
+		console.log(data);
     });
 }
 
@@ -383,9 +407,15 @@ var Session = new function(){
 				Debug.print('Retrieving session...');
 				retrieving = true;
 
+				var url = '/webapps/cas/login';
+				var s = this.get();
+				if (!s || s.length <= 0) {
+					url += '?renew=true';
+				}
+
 				$.ajax({
 					type: 'GET',
-					url: root_url_ssl + "/webapps/cas/login",
+					url: root_url_ssl + url,
 				})
 				.done(function(resp) {
 					if(resp.match(/name="lt" value="([^"]+)"/)) {
