@@ -151,9 +151,9 @@ function save_session(session){
 }
 
 function reset_session(){
-	Debug.print('Resetting session...');
+	Debug.print('Session resetted');
 	Storage.unset_option("session");
-	Session.retrieve();
+	Session.reset_retrieve();
 }
 
 // RUNNING - TOTAL MESSAGES

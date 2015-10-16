@@ -255,8 +255,9 @@
         }
     },
     "__INCORRECT_USER__" : {
-        "message" : "L'usuari/contrasenya no és correcte"
+        "message" : "L'usuari/contrasenya no és correcte.<br>Si aquest error persisteix, fes login <a href=\"https://cv.uoc.edu/webapps/cas/login?renew=true\" target=\"_blank\">aquí</a>"
     },
+
     "__NO_USER_PASSWORD__" : {
         "message" : "No hi ha usuari i password..."
     },

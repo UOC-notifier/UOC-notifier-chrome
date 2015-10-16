@@ -359,7 +359,6 @@ function retrieve_users(classroom){
 		} catch(err) {
     		Debug.error(err);
 		}
-		console.log(data);
     });
 }
 
@@ -402,6 +401,11 @@ var Session = new function(){
 			session = get_session();
 		}
 		return session;
+	}
+
+	this.reset_retrieve = function() {
+		session = false;
+		this.retrieve();
 	}
 
 	this.retrieve = function() {
@@ -455,10 +459,14 @@ var Session = new function(){
 								save_session(session);
 								Debug.print('Session! '+session);
 								Queue.run();
+								if (typeof login_success == 'function') {
+									login_success();
+								}
 							} else {
 								Debug.error('ERROR: Cannot fetch session');
-								$("#status").text(_("__INCORRECT_USER__"));
-								$(".alert").show();
+								if (typeof login_failed == 'function') {
+									login_failed();
+								}
 							}
 					    })
 					    .fail(function() {
@@ -474,6 +482,14 @@ var Session = new function(){
 							save_session(session);
 							Debug.print('Session! '+session);
 							Queue.run();
+							if (typeof login_success == 'function') {
+								login_success();
+							}
+						} else {
+							Debug.error('ERROR: Cannot fetch session');
+							if (typeof login_failed == 'function') {
+								login_failed();
+							}
 						}
 					}
 				})

@@ -255,7 +255,7 @@
         }
     },
     "__INCORRECT_USER__" : {
-        "message" : "User/password incorrect"
+        "message" : "User/password incorrect<br>If this error persists, please login <a href=\"https://cv.uoc.edu/webapps/cas/login?renew=true\" target=\"_blank\">here</a>"
     },
     "__NO_USER_PASSWORD__" : {
         "message" : "Empty user or password..."

@@ -92,10 +92,26 @@ function save_options(){
 	check_messages(after_check_messages);
 
 	$("#status").text(_("__SAVED_OPTIONS__"));
-	$(".alert").show();
+	$("#alertstatus").removeClass('alert-danger');
+	$("#alertstatus").addClass('alert-success');
+	$("#alertstatus").show();
 }
 
 function after_check_messages() {
 	$(".alert").hide();
 	populate_classrooms();
+}
+
+function login_success() {
+	$(".login").addClass('has-success');
+	$(".login").removeClass('has-error');
+}
+
+function login_failed() {
+	$("#status").html(_("__INCORRECT_USER__"));
+	$("#alertstatus").addClass('alert-danger');
+	$("#alertstatus").removeClass('alert-success');
+	$("#alertstatus").show();
+	$(".login").removeClass('has-success');
+	$(".login").addClass('has-error');
 }
