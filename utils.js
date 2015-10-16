@@ -181,7 +181,7 @@ var Queue = new function(){
                     executing = true;
                     var pet = queue.shift();
                     Debug.print('Run ' + pet.url);
-                    ajax_do(session, pet.url, pet.data, pet.type, pet.success, pet.error);
+                    ajax_do(session, pet.url, pet.data, pet.type, pet.reset, pet.success);
                 } else {
                     Debug.print('End of queue');
                     Classes.save();
@@ -199,14 +199,14 @@ var Queue = new function(){
         queue = Array();
     }
 
-    this.request = function(url, data, type, handler_succ, handler_err) {
+    this.request = function(url, data, type, reset_on_fail, handler) {
         if (url) {
             var pet = {
                 url: url,
                 data: data,
                 type: type,
-                success: handler_succ,
-                error: handler_err,
+                reset: reset_on_fail,
+                success: handler
             };
             queue.push(pet);
             Debug.print('Queued ' + url);
@@ -218,7 +218,7 @@ var Queue = new function(){
         after_function = fnc;
     }
 
-    function ajax_do(session, url, data, type, handler_succ, handler_err){
+    function ajax_do(session, url, data, type, reset_on_fail, handler){
         if (!data) {
             data = {};
         }
@@ -246,15 +246,15 @@ var Queue = new function(){
         $.ajax(ajax_request)
         .done(function(resp) {
             Debug.log(resp);
-            if (handler_succ) {
-                handler_succ(resp, data);
+            if (handler) {
+                handler(resp, data);
             }
         })
         .fail(function(resp) {
-            Debug.error('ERROR: Cannot fetch '+url);
+            Debug.error('ERROR: Cannot fetch ' + url + ' resetting session');
             Debug.log(resp);
-            if (handler_err) {
-                handler_err(resp);
+            if (reset_on_fail) {
+                reset_session();
             }
         })
         .always(function() {

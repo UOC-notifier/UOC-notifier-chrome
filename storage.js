@@ -11,14 +11,19 @@ function get_user(){
 
 function save_user(username, password) {
 	var oldusername = Storage.get_option("user_username", "");
+	var oldpassword = Storage.get_option("user_password", "");
 	Storage.set_option("user_username", username);
 	password = utf8_to_b64(password);
 	Storage.set_option("user_password",password);
 
-	// Username changed
-	if (oldusername != username) {
-		Classes.purge_all();
+	// Username or password changed
+	if (oldusername != username || oldpassword != password) {
+		// Username changed
+		if (oldusername != username) {
+			Classes.purge_all();
+		}
 		reset_session();
+		reset_alarm();
 	}
 }
 
@@ -146,6 +151,7 @@ function save_session(session){
 }
 
 function reset_session(){
+	Debug.print('Resetting session...');
 	Storage.unset_option("session");
 	Session.retrieve();
 }

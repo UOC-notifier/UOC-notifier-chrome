@@ -7,41 +7,28 @@ function check_messages(after_check_fnc){
 		setLng : get_lang(),
 		format: 'json'
 	}
-	Queue.request('/app/guaita/calendari', args, "GET", function(data) {
+	Queue.request('/app/guaita/calendari', args, "GET", true, function(data) {
 		save_idp(data.idp);
 		for (x in data.classrooms) {
 			classroom = parse_classroom(data.classrooms[x]);
 		}
 		Classes.purge_old();
 
-		var args = {
-			newStartingPage:0,
-			language: get_lang_code()
-		}
-		Queue.request('/UOC2000/b/cgi-bin/hola', args, 'GET', function(resp) {
-			var index = resp.indexOf("aulas = ");
-			if (index != -1) {
-				var lastPage = resp.substring(index + 8);
-				var last = lastPage.indexOf(";");
-				lastPage = lastPage.substring(0,last);
-				var classrooms = eval(lastPage);
-				for(var i in classrooms){
-					parse_classroom_old(classrooms[i]);
-				}
-			}
-		});
-	},
-	function(data) {
-		Queue.clear();
-		reset_session();
+		retrieve_old_classrooms();
 	});
 
+	retrieve_mail();
+
+	retrieve_gradeinfo();
+}
+
+function retrieve_mail() {
 	var args = {
 		'app:mobile': true,
 		'app:cache': false,
 		'app:only' : 'bustia'
 	}
-	Queue.request('/rb/inici/grid.rss', args, 'GET', function(resp) {
+	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
 		$(resp).find('item').each(function() {
     		var description = $(this).find('description').first().text();
     		var matches = description.match(/:([0-9]+):([0-9]+)$/);
@@ -51,8 +38,6 @@ function check_messages(after_check_fnc){
 		});
 
 	});
-
-	retrieve_gradeinfo();
 }
 
 function save_mail(mails) {
@@ -190,6 +175,25 @@ function parse_classroom(classr) {
 	}
 }
 
+function retrieve_old_classrooms(){
+	var args = {
+		newStartingPage:0,
+		language: get_lang_code()
+	}
+	Queue.request('/UOC2000/b/cgi-bin/hola', args, 'GET', false, function(resp) {
+		var index = resp.indexOf("aulas = ");
+		if (index != -1) {
+			var lastPage = resp.substring(index + 8);
+			var last = lastPage.indexOf(";");
+			lastPage = lastPage.substring(0,last);
+			var classrooms = eval(lastPage);
+			for(var i in classrooms){
+				parse_classroom_old(classrooms[i]);
+			}
+		}
+	});
+}
+
 function parse_classroom_old(classr){
 	if(classr.title) {
 		var title = classr.shortname ? classr.shortname : classr.title;
@@ -241,7 +245,7 @@ function parse_classroom_old(classr){
 }
 
 function retrieve_gradeinfo() {
-	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', function(data, args) {
+	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', false, function(data, args) {
 		$(data).find('asignatura>asignatura').each(function() {
 			var classroom = false;
 
@@ -319,7 +323,7 @@ function retrieve_resource(classroom, resource){
 		subjectId: classroom.domainassig,
 		resourceId: resource.code
 	};
-	Queue.request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', function(data) {
+	Queue.request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', false, function(data) {
 		try {
 			var num_msg_pendents = data.resource.newItems;
 	        var num_msg_totals = data.resource.totalItems;
@@ -337,7 +341,7 @@ function retrieve_users(classroom){
 		classroomId : classroom.domain,
 		subjectId : classroom.domainassig
 	};
-	Queue.request('/webapps/aulaca/classroom/UsersList.action', args, 'GET', function(data) {
+	Queue.request('/webapps/aulaca/classroom/UsersList.action', args, 'GET', false, function(data) {
 		try {
 			if (data.tutorUsers[0]) {
 				var user = data.tutorUsers[0];
@@ -380,7 +384,7 @@ function retrieve_news(){
 		//hp_theme: 'false'
 	}
 
-	Queue.request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', function(resp) {
+	Queue.request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', false, function(resp) {
 		resp = resp.replace(/<img/gi, '<noload');
 		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
 		if (news != undefined) {
