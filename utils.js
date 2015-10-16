@@ -251,7 +251,7 @@ var Queue = new function(){
             }
         })
         .fail(function(resp) {
-            Debug.error('ERROR: Cannot fetch ' + url + ' resetting session');
+            Debug.error('ERROR: Cannot fetch ' + url);
             Debug.log(resp);
             if (reset_on_fail) {
                 reset_session();

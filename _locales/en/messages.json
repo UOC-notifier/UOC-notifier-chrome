@@ -77,11 +77,23 @@
     "__EXPEDIENT__" : {
         "message" : "Expedient"
     },
+    "__PERSONAL__" : {
+        "message" : "Personal"
+    },
     "__OLD_AGENDA__" : {
         "message" : "Old agenda"
     },
     "__NEW_AGENDA__" : {
         "message" : "New agenda"
+    },
+    "__PERSONAL_AGENDA__" : {
+        "message" : "Personal agenda"
+    },
+    "__FILES__" : {
+        "message" : "File area"
+    },
+    "__WORKING_GROUPS__" : {
+        "message" : "Working groups"
     },
     "__COMMITTED__" : {
         "message" : "Committed"

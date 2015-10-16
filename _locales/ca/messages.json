@@ -66,7 +66,7 @@
         "message" : "Estadístiques"
     },
     "__ENROLL_PROP__" : {
-        "message" : "Prop. Matric"
+        "message" : "Proposta Matrícula"
     },
     "__ENROLL__" : {
         "message" : "Matrícula"
@@ -77,11 +77,23 @@
     "__EXPEDIENT__" : {
         "message" : "Expedient"
     },
+    "__PERSONAL__" : {
+        "message" : "Personal"
+    },
     "__OLD_AGENDA__" : {
         "message" : "Agenda antiga"
     },
     "__NEW_AGENDA__" : {
         "message" : "Agenda nova"
+    },
+    "__PERSONAL_AGENDA__" : {
+        "message" : "Agenda personal"
+    },
+    "__FILES__" : {
+        "message" : "Àrea de fitxers"
+    },
+    "__WORKING_GROUPS__" : {
+        "message" : "Grups de treball"
     },
     "__COMMITTED__" : {
         "message" : "Entregat"

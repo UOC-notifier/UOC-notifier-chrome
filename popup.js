@@ -8,30 +8,27 @@ function buildUI_tools(){
 	    }
 	    var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
 
-	    var urls = new Array();
-	    //urls.push({url: '.INFCONSULTA/inici', title: _('Expediente antiguo (no funciona)')});
-	    //urls.push({url: '.NOTESAVAL/rac.rac&tipus=1', title: _('REC antiguo (no funciona)')});
-	    urls.push({url: '.NOTESAVAL/NotesEstudiant.inici', title: _('__GRADE_RESUME__')});
-	    urls.push({url: '.EXASOLREVISION/consrevision.consrevision', title: _('__EXAM_REVISION__')});
-	    urls.push({url: '.PAPERETES/paperetes.paperetes', title: _('__FINAL_GRADES__')});
-	    urls.push({url: '.ESTADNOTES/estadis.inici', title: _('__STATS__')});
-	    urls.push({url: '.MATPREMATRICULA/inici', title: _('__ENROLL_PROP__')});
-	    urls.push({url: '.MATMATRICULA/inici', title: _('__ENROLL__')});
-	    urls.push({url: '.NOTAS_SMS', title: _('__GRADES_SMS__')});
+	    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
+	    text += '<div class="row-fluid clearfix">';
+	    text += get_general_link(root_url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
+	    text += get_general_link(root_url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
+	    text += get_general_link(root_url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
+	    text += get_general_link(root_url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
+	    text += get_general_link(root_url + '/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
+	    text += get_general_link(root_url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);
+		//text += get_general_link(root_url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
+		//text += get_general_link(root_url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
+	    text += '</div>';
 
-	    var text = '<div class="container-fluid resources">';
-	    var par = -1;
-	    var link;
-	    for (var x in urls) {
-	        link = root_url_gate + urls[x].url + '&s=';
-			text += get_general_link(link, urls[x].title, par);
-			par = -par;
-	    }
-	    // New expedient
-		link = root_url + '/webapps/seleccioexpedient/cerca.html?s=';
-		text += get_general_link(link, _('__EXPEDIENT__'), par);
-		par = -par;
+		text += '<div class="row-fluid clearfix"><strong>'+_('__ENROLL__')+'</strong></div>';
+		text += '<div class="row-fluid clearfix">';
+		text += get_general_link(root_url_gate+'.MATPREMATRICULA/inici&s=', _('__ENROLL_PROP__'));
+		text += get_general_link(root_url_gate+'.MATMATRICULA/inici&s=', _('__ENROLL__'));
+		text += '</div>';
 
+		text += '<div class="row-fluid clearfix"><strong>'+_('__PERSONAL__')+'</strong></div>';
+		text += '<div class="row-fluid clearfix">';
+		text += get_general_link(root_url_ssl + '/app/guaita/calendari?perfil=estudiant&s=', _('__NEW_AGENDA__'));
 		var domainId = "";
 		var classrooms = Classes.get_notified();
 		for(var i in classrooms){
@@ -40,15 +37,14 @@ function buildUI_tools(){
 				break;
 			}
 		}
-		link = root_url + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s='
-		text += get_general_link(link, _('__OLD_AGENDA__'), par);
-		par = -par;
+		var link = root_url_ssl + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s='
+		text += get_general_link(link, _('__OLD_AGENDA__'));
+		text += get_general_link(root_url_ssl + '/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
+		text += get_general_link(root_url_ssl + '/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
+		text += get_general_link(root_url_ssl + '/cgibin/hola?t=grups_tb/grups.tmpl&domainFather=grc&s=', _('__WORKING_GROUPS__'));
 
-		link = root_url + '/app/guaita/calendari?perfil=estudiant&s='
-		text += get_general_link(link, _('__NEW_AGENDA__'), par);
-		par = -par;
+		text += '</div>';
 
-	    text += '</div>';
 	    $('#detail_campus').html(text);
 
 	    $('.linkResource').unbind( "click" );
@@ -158,16 +154,8 @@ function buildUI_pacs_events(ev) {
 				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+'</tr>';
 }
 
-function get_general_link(link, title, par){
-	var ret = "";
-	if(par == -1){
-    	ret += '<div class="row">';
-    }
-	ret += '<div class="col-xs-6 resource" link="'+link+'"><a href="#" class="linkResource">'+title+'</a></div>';
-	if(par == 1){
-		ret += '</div>';
-	}
-	return ret;
+function get_general_link(link, title){
+	return '<div class="col-xs-6 resource" link="'+link+'"><a href="#" class="linkResource">'+title+'</a></div>';
 }
 
 function print_icon(title, type) {
