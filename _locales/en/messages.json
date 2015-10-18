@@ -151,8 +151,20 @@
     "__LINKS_TO_CAMPUS__" : {
         "message" : "Links to campus"
     },
+    "__STUDY_GUIDE__" : {
+        "message" : "Study guide"
+    },
+    "__MODULE__" : {
+        "message" : "Module"
+    },
+    "__ASSIGNMENT__" : {
+        "message" : "Assignment"
+    },
     "__ASSIGNMENTS__" : {
         "message" : "Assignments"
+    },
+    "__SHOW_MODULE_DATES__" : {
+        "message" : "Module dates"
     },
     "__UPDATE__" : {
         "message" : "Update"

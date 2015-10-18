@@ -15,11 +15,13 @@ function check_messages(after_check_fnc){
 		Classes.purge_old();
 
 		retrieve_old_classrooms();
+
+		retrieve_agenda();
 	});
 
-	retrieve_mail();
-
 	retrieve_gradeinfo();
+
+	retrieve_mail();
 }
 
 function retrieve_mail() {
@@ -73,10 +75,12 @@ function show_PAC_notifications() {
 	for(var i in classrooms) {
 		for(var x in classrooms[i].events) {
 			var ev = classrooms[i].events[x];
-			if (ev.ends_today()) {
-				notify(_('__PRACT_END__', [ev.name, classrooms[i].get_acronym()]));
-			} else if (ev.starts_today()) {
-				notify(_('__PRACT_START__', [ev.name, classrooms[i].get_acronym()]));
+			if (ev.is_assignment()) {
+				if (ev.ends_today()) {
+					notify(_('__PRACT_END__', [ev.name, classrooms[i].get_acronym()]));
+				} else if (ev.starts_today()) {
+					notify(_('__PRACT_START__', [ev.name, classrooms[i].get_acronym()]));
+				}
 			}
 		}
 	}
@@ -144,7 +148,7 @@ function parse_classroom(classr) {
 	if (classr.activitats.length > 0) {
 		for (y in classr.activitats) {
 			var act = classr.activitats[y];
-			var evnt = new Event(act.name, act.eventId);
+			var evnt = new Event(act.name, act.eventId, 'ASSIGNMENT');
 
 			var args = {};
 			if (classr.presentation == "AULACA") {
@@ -259,7 +263,7 @@ function retrieve_gradeinfo() {
 				}
 
 				var evnt = classroom.get_event(eventid);
-				if (evnt) {
+				if (evnt && evnt.is_assignment()) {
 					var changed = false;
 
 					var committed = $(this).find('listaEntregas>entrega').length > 0;
@@ -361,6 +365,81 @@ function retrieve_users(classroom){
 		}
     });
 }
+
+function retrieve_agenda() {
+	var args = {
+		'app:mobile': false,
+		'app:cache': false,
+		'app:only' : 'agenda',
+		'app:Delta' : 1
+	}
+	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
+		var items = $(resp).find('item category:contains(\'CALENDAR\')').parents('item');
+		if (items.length > 0) {
+			var q = new Date();
+			items.each(function() {
+				var json = rssitem_to_json(this);
+				// Do not update old events
+				if (isBeforeToday_date(json.pubDate)) {
+					/*if (parseInt(json.EVENT_TYPE) == 16) {
+						var title = json.title + ' ' + json.description;
+						var evnt = new Event(title, json.guid, 'GNRAL');
+						agenda.push(evnt);
+						//console.log(ev, json);
+						return;
+					}*/
+
+					var id = json.guid.split('_');
+					var classroom = Classes.get_class_by_event(id[0]);
+					if (!classroom) {
+						var acronym = get_acronym(json.description);
+						classroom = Classes.get_class_by_acronym(acronym);
+					}
+					if (!classroom) {
+						Debug.print('Classroom not found');
+						Debug.print(json);
+						return;
+					}
+
+					var evnt = false;
+					evnt = classroom.get_event(id[0]);
+					if (evnt && evnt.is_assignment()) {
+						// The Assignments are processed in other parts
+						return;
+					}
+
+					var title = json.title.split('[');
+					title = title[0].trim();
+					if (!evnt) {
+						var evnt = new Event(title, id[0], 'MODULE');
+					}
+					var date =  getDate_hyphen(json.pubDate);
+					switch (parseInt(json.EVENT_TYPE)) {
+						case 22:
+						case 26:
+							evnt.type = 'MODULE';
+							evnt.start = date;
+							break;
+						case 23:
+							evnt.type = 'STUDY_GUIDE';
+							evnt.start = date;
+							break;
+						case 29:
+							evnt.end = date;
+							break;
+						default:
+							Debug.print('Unknown event type ' + json.EVENT_TYPE);
+							Debug.print(json);
+							return;
+					}
+					evnt.link = json.link+'&s=';
+					classroom.add_event(evnt);
+				}
+			});
+		}
+	});
+}
+
 
 function retrieve_news(){
 	var args = {

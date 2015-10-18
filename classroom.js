@@ -36,10 +36,9 @@ var Classes = new function(){
 
 		for(var i in classes){
 			if (classes[i].notify) {
-				classes[i].sort_resources_grades();
+				classes[i].sort_things();
 			}
 		}
-
 
 		Storage.set_option("classes", JSON.stringify(classes));
 	};
@@ -57,6 +56,17 @@ var Classes = new function(){
 		for(var i in classes) {
 			if (classes[i].notify) {
 				if (classes[i].get_event_idx(eventid) >= 0) {
+					return classes[i];
+				}
+			}
+		}
+		return false;
+	}
+
+	this.get_class_by_acronym = function(acronym) {
+		for(var i in classes) {
+			if (classes[i].notify) {
+				if (classes[i].get_acronym() == acronym) {
 					return classes[i];
 				}
 			}
@@ -157,7 +167,7 @@ var Classes = new function(){
 					}
 					for(var j in classl.events){
 						var evl = classl.events[j];
-						var ev = new Event(evl.name, evl.eventId);
+						var ev = new Event(evl.name, evl.eventId, evl.type);
 						ev.start = evl.start;
 						ev.end = evl.end;
 						ev.grading = evl.grading;
@@ -222,6 +232,7 @@ function Classroom(title, code, domain, type, template){
 	this.consultor = false;
 	this.consultormail = false;
 	this.consultorlastviewed = false;
+	this.acronym = false;
 
 	this.notify = true;
 	this.messages = 0;
@@ -236,22 +247,14 @@ function Classroom(title, code, domain, type, template){
 	};
 
 	this.get_acronym = function() {
-		if(this.type == 'TUTORIA'){
-			return 'TUT'+this.aula;
+		if (this.acronym == false) {
+			this.set_acronym();
 		}
-		var words = this.title.split(/[\s, ':\(\)\-]+/);
-    	var acronym = "";
-    	var nowords = new Array('de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd');
-    	for (var x in words) {
-    		if (nowords.indexOf(words[x].toLowerCase()) < 0) {
-    			if (words[x] == words[x].toUpperCase()) {
-					acronym += words[x];
-    			} else {
-            		acronym += words[x].charAt(0);
-            	}
-            }
-	    }
-    	return acronym.toUpperCase();
+		return this.acronym;
+	}
+
+	this.set_acronym = function() {
+		this.acronym =  this.type == 'TUTORIA' ? 'TUT'+this.aula : get_acronym(this.title);
 	}
 
 	this.get_subject_code = function(){
@@ -300,7 +303,7 @@ function Classroom(title, code, domain, type, template){
 		}
 	};
 
-	this.sort_resources_grades = function() {
+	this.sort_things = function() {
 		this.resources.sort(function(a, b) {
 			if(a.has_message_count() != b.has_message_count()) {
 				if (a.has_message_count()) {
@@ -327,6 +330,13 @@ function Classroom(title, code, domain, type, template){
 			if(a.name < b.name) return -1;
 		    if(a.name > b.name) return 1;
 		    return 0;
+		});
+
+		this.events.sort(function(a, b) {
+			if (a.has_started() && b.has_started()) {
+				return compareDates(a.end, b.end);
+			}
+			return compareDates(a.start, b.start);
 		});
 	}
 
@@ -409,6 +419,7 @@ function Classroom(title, code, domain, type, template){
 	this.event_merge = function(idx, ev) {
 		this.events[idx].name = ev.name;
 		this.events[idx].eventId = ev.eventId;
+		if (ev.type)  this.events[idx].type = ev.type;
 		if (ev.link) this.events[idx].link = ev.link;
 		if (ev.start) this.events[idx].start = ev.start;
 		if (ev.end) this.events[idx].end = ev.end;
@@ -551,7 +562,7 @@ function Grade(name, grade) {
 	}
 }
 
-function Event(name, id) {
+function Event(name, id, type) {
 	this.name = name;
 	this.start = false;
 	this.end = false;
@@ -562,20 +573,37 @@ function Event(name, id) {
 	this.viewed = false;
 	this.link = "";
 	this.eventId = id;
+	this.type = type;
 
 	this.has_started = function(){
+		if (!this.start) {
+			return true;
+		}
 		return isBeforeToday(this.start) || isToday(this.start);
 	}
 
 	this.has_ended = function(){
+		if (!this.end) {
+			return isBeforeToday(this.start);
+		}
 		return isBeforeToday(this.end);
 	}
 
 	this.starts_today = function(){
+		if (!this.start) {
+			return false;
+		}
 		return isToday(this.start);
 	}
 
 	this.ends_today = function(){
+		if (!this.start) {
+			return isToday(this.start);
+		}
 		return isToday(this.end);
+	}
+
+	this.is_assignment = function(){
+		return (this.type == 'ASSIGNMENT' || this.type == undefined);
 	}
 }

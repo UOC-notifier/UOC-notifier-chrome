@@ -85,6 +85,15 @@ function populate_options(){
 		var ischecked = $('#show_agenda').is(':checked');
 		save_show_agenda(ischecked);
 	});
+
+	option = get_show_module_dates();
+	if (option) {
+		$('#show_module_dates').attr('checked','checked');
+	}
+	$('#show_module_dates').on('click', function(){
+		var ischecked = $('#show_module_dates').is(':checked');
+		save_show_module_dates(ischecked);
+	});
 }
 
 function save_options(){

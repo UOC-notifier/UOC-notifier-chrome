@@ -13,6 +13,14 @@ function b64_to_utf8(str) {
     }
 }
 
+function getDate_hyphen(date) {
+    var sp = date.split('-');
+    if (sp.length <= 2) {
+        return "";
+    }
+    return sp[2]+"/"+sp[1]+"/"+(sp[0] - 2000);
+}
+
 function getDate(date) {
     var sp = date.split('T');
     sp = sp[0].split('-');
@@ -58,7 +66,20 @@ function isBeforeToday(date) {
     return dsplit[2] < y;
 }
 
+function isBeforeToday_date(date) {
+    var q = new Date();
+    q = new Date(q.getFullYear(), q.getMonth(), q.getDate());
+    var d = new Date(date);
+    return q <= d;
+}
+
 function compareDates(dateA, dateB) {
+    if (!dateB) {
+        return 1;
+    }
+    if (!dateA) {
+        return -1;
+    }
     var asplit = dateA.split("/");
     var bsplit = dateB.split("/");
     if (bsplit[2] != asplit[2]) {
@@ -141,6 +162,57 @@ function get_real_url(url) {
 
 function get_url_with_data(url, data) {
     var uri = get_real_url(url) + '?' + uri_data(data);
+}
+
+function get_acronym(text) {
+    var words = text.split(/[\s, '´:\(\)\-]+/);
+    var acronym = "";
+    var nowords = new Array('de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd');
+    for (var x in words) {
+        if (nowords.indexOf(words[x].toLowerCase()) < 0) {
+            if (words[x] == words[x].toUpperCase()) {
+                acronym += words[x];
+            } else {
+                acronym += words[x].charAt(0);
+            }
+        }
+    }
+    return acronym.toUpperCase();
+}
+
+function get_html_realtext(text) {
+    return $('<textarea />').html(text).text();
+}
+
+function rssitem_to_json(item) {
+  try {
+    var obj = {};
+    $(item).children().each(function() {
+        var tagname = $(this).prop("tagName");
+        var element = $(this).text();
+        if (tagname == 'category') {
+            tagname = $(this).attr('domain');
+        } else {
+            /*
+            var element = {};
+            element['inner'] = $(this).html();
+            $(this).each(function() {
+              $.each(this.attributes, function() {
+                // this.attributes is not a plain object, but an array
+                // of attribute nodes, which contain both the name and value
+                if(this.specified) {
+                  element[this.name] = this.value;
+                }
+              });
+            });*/
+        }
+        obj[tagname] = element;
+    });
+
+    return obj;
+  } catch (e) {
+      Debug.log(e.message);
+  }
 }
 
 var Debug = new function(){

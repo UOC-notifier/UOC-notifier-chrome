@@ -119,6 +119,15 @@ function save_show_agenda(show){
 	Storage.set_option("show_agenda", show);
 }
 
+//OPTIONS - SHOW MODULE DATES
+function get_show_module_dates(){
+	return Storage.get_option_bool("show_module_dates", true);
+}
+
+function save_show_module_dates(show){
+	Storage.set_option("show_module_dates", show);
+}
+
 // OPTIONS  - SHOW CLASSROOMS
 function save_notify_classroom(code, notify){
 	var classroom = Classes.search_code(code);

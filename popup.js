@@ -73,8 +73,11 @@ function buildUI_pacs(force) {
 			var classroom = classrooms[i];
 			if (classroom.events.length > 0 ) {
 				for(var j in classroom.events){
-					classroom.events[j].subject = classroom.get_acronym();
-					events.push(classroom.events[j]);
+					if (classroom.events[j].is_assignment()) {
+						classroom.events[j].subject = classroom.get_acronym();
+						classroom.events[j].color = classroom.color;
+						events.push(classroom.events[j]);
+					}
 				}
 			}
 		}
@@ -141,15 +144,20 @@ function buildUI_pacs_events(ev) {
 	}
 	var dstart = buildUI_eventdate(ev.start, "");
 	var dend = buildUI_eventdate(ev.end, "end");
-	var title = ev.subject + ' - ' + ev.name;
+
+	var title = "";
 	if (ev.committed) {
 		if (ev.viewed) {
-			title += print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+			title = print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
 		} else {
-			title += print_icon(_('__COMMITTED__'), 'save');
+			title = print_icon(_('__COMMITTED__'), 'save');
 		}
+	} else if(ev.has_ended()){
+		title = print_icon(_('__NOT_COMMITTED__'), 'remove');
+	} else {
+		title = print_icon_color(_('__'+ev.type+'__'), 'certificate', '');
 	}
-
+	title += ev.subject + ' - ' + ev.name;
 	return '<tr class="event'+eventstate+'" '+link+'"> \
 				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+'</tr>';
 }
@@ -159,7 +167,11 @@ function get_general_link(link, title){
 }
 
 function print_icon(title, type) {
-	return ' <span class="glyphicon glyphicon-'+type+' text-success" aria-hidden="true" title="'+title+'"></span>';
+	return '<span class="glyphicon glyphicon-'+type+' text-success" aria-hidden="true" title="'+title+'"></span> ';
+}
+
+function print_icon_color(title, type, color) {
+	return '<span class="glyphicon glyphicon-'+type+'" style="color:#'+color+';"  aria-hidden="true" title="'+title+'"></span> ';
 }
 
 
@@ -199,10 +211,15 @@ function buildUI_classroom_events(classroom) {
 		return "";
 	}
 	var events_html = '';
-
+	var show_module_dates = get_show_module_dates();
 	if (classroom.all_events_graded()) {
 		for(var j in classroom.events){
-			events_html += buildUI_event_grade(classroom.events[j]);
+			var ev = classroom.events[j];
+			if (show_module_dates || ev.is_assignment()) {
+				if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
+					events_html += buildUI_event_grade(ev);
+				}
+			}
 		}
 		for(var j in classroom.grades){
 			events_html += buildUI_grade(classroom.grades[j], 1);
@@ -212,8 +229,13 @@ function buildUI_classroom_events(classroom) {
 				<tbody>' + events_html + ' </tbody>\
 			</table>';
 	} else {
-		for(var j in classroom.events){
-			events_html += buildUI_event(classroom.events[j]);
+		for(var j in classroom.events) {
+			var ev = classroom.events[j];
+			if (show_module_dates || ev.is_assignment()) {
+				if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
+					events_html += buildUI_event(ev);
+				}
+			}
 		}
 		for(var j in classroom.grades){
 			events_html += buildUI_grade(classroom.grades[j], 4);
@@ -234,7 +256,7 @@ function buildUI_event(ev){
 	if (ev.has_started()) {
 		if (ev.has_ended()) {
 			eventstate = ' success';
-		} else if (ev.committed) {
+		} else if (ev.committed || !ev.is_assignment()) {
 			eventstate = ' warning running';
 		} else {
 			eventstate = ' danger running';
@@ -245,16 +267,23 @@ function buildUI_event(ev){
 	var dsol = buildUI_eventdate(ev.solution, "");
 	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded", ev.grading): buildUI_eventdate(ev.grading, "");
 
-	var title = ev.name;
-	if (ev.committed) {
-		if (ev.viewed) {
-			title += print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+	var title = "";
+	if (ev.is_assignment()) {
+		if (ev.committed) {
+			if (ev.viewed) {
+				title = print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+			} else {
+				title = print_icon(_('__COMMITTED__'), 'save');
+			}
+		} else if(ev.has_ended()){
+			title = print_icon(_('__NOT_COMMITTED__'), 'remove');
 		} else {
-			title += print_icon(_('__COMMITTED__'), 'save');
+			title = print_icon_color(_('__'+ev.type+'__'), 'certificate', '');
 		}
-	} else if(ev.has_ended()){
-		title += print_icon(_('__NOT_COMMITTED__'), 'remove');
+	} else {
+		title = print_icon_color(_('__'+ev.type+'__'), 'triangle-right', '');
 	}
+	title += ev.name;
 	return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
 }
 
@@ -264,16 +293,23 @@ function buildUI_event_grade(ev){
 	}
 	var dgrade = buildUI_eventtext(ev.graded, "graded");
 
-	var title = ev.name;
-	if (ev.committed) {
-		if (ev.viewed) {
-			title += print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+	var title = "";
+	if (ev.is_assignment()) {
+		if (ev.committed) {
+			if (ev.viewed) {
+				title = print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+			} else {
+				title = print_icon(_('__COMMITTED__'), 'save');
+			}
+		} else if(ev.has_ended()){
+			title = print_icon(_('__NOT_COMMITTED__'), 'remove');
 		} else {
-			title += print_icon(_('__COMMITTED__'), 'save');
+			title = print_icon_color(_('__'+ev.type+'__'), 'certificate', '');
 		}
-	} else if(ev.has_ended()){
-		title += print_icon(_('__NOT_COMMITTED__'), 'remove');
+	} else {
+		title = print_icon_color(_('__'+ev.type+'__'), 'triangle-right', '');
 	}
+	title += ev.name;
 	return '<tr class="event success" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
 }
 

@@ -151,8 +151,20 @@
     "__LINKS_TO_CAMPUS__" : {
         "message" : "Enllaços del campus"
     },
+    "__STUDY_GUIDE__" : {
+        "message" : "Guia d'estudi"
+    },
+    "__MODULE__" : {
+        "message" : "Mòdul"
+    },
+    "__ASSIGNMENT__" : {
+        "message" : "Tasca"
+    },
     "__ASSIGNMENTS__" : {
-        "message" : "Pràctiques"
+        "message" : "Tasques"
+    },
+    "__SHOW_MODULE_DATES__" : {
+        "message" : "Dates dels mòduls"
     },
     "__UPDATE__" : {
         "message" : "Actualitzar"
