@@ -66,6 +66,19 @@ function get_lang_code() {
     return 'a';
 }
 
+// OPTIONS - TODAY TAB
+function get_today(){
+	return Storage.get_option_int("today", 7);
+}
+
+function save_today(today){
+	if (today < 0) {
+		today = 0;
+	}
+	Storage.set_option("today", today);
+}
+
+
 // OPTIONS - CHECK INTERVAL
 function get_interval(){
 	return Storage.get_option_int("check_interval", 5);

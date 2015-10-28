@@ -1,53 +1,168 @@
-function buildUI_tools(){
-	if ($('#detail_campus').html() == "") {
-	    var uni =  get_uni();
-	    if(uni == 'UOCi'){
-	        gat = 'EXPIB';
-	    } else {
-	        gat = 'EXP';
-	    }
-	    var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
+var UI = new function() {
+	var classrooms = false;
+	var session = Session.get();
+	var pacs_loaded = false;
 
-	    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
-	    text += '<div class="row-fluid clearfix">';
-	    text += get_general_link(root_url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
-	    text += get_general_link(root_url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
-	    text += get_general_link(root_url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
-	    text += get_general_link(root_url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
-	    text += get_general_link(root_url + '/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
-	    text += get_general_link(root_url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);
-		//text += get_general_link(root_url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
-		//text += get_general_link(root_url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
-	    text += '</div>';
+	this.init = function() {
+		if (has_username_password()) {
+			if(!session){
+				$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__WAITING_TO_LOGIN__')+'</div></div>');
+				check_messages(build);
 
-		text += '<div class="row-fluid clearfix"><strong>'+_('__ENROLL__')+'</strong></div>';
-		text += '<div class="row-fluid clearfix">';
-		text += get_general_link(root_url_gate+'.MATPREMATRICULA/inici&s=', _('__ENROLL_PROP__'));
-		text += get_general_link(root_url_gate+'.MATMATRICULA/inici&s=', _('__ENROLL__'));
-		text += '</div>';
-
-		text += '<div class="row-fluid clearfix"><strong>'+_('__PERSONAL__')+'</strong></div>';
-		text += '<div class="row-fluid clearfix">';
-		text += get_general_link(root_url_ssl + '/app/guaita/calendari?perfil=estudiant&s=', _('__NEW_AGENDA__'));
-		var domainId = "";
-		var classrooms = Classes.get_notified();
-		for(var i in classrooms){
-			if (classrooms[i].domain) {
-				domainId = "&domainId=" + classrooms[i].domain;
-				break;
+				$('#options').click( function() {
+					open_new_tab("options.html");
+				});
+				return;
 			}
+			build();
+			return;
+		} else {
+			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__NO_USER_PASSWORD__')+'</div></div>');
+			open_new_tab("options.html");
 		}
-		var link = root_url_ssl + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s='
-		text += get_general_link(link, _('__OLD_AGENDA__'));
-		text += get_general_link(root_url_ssl + '/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
-		text += get_general_link(root_url_ssl + '/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
-		text += get_general_link(root_url_ssl + '/cgibin/hola?t=grups_tb/grups.tmpl&domainFather=grc&s=', _('__WORKING_GROUPS__'));
+	}
 
-		text += '</div>';
+	function build() {
+		classrooms = Classes.get_notified();
 
-	    $('#detail_campus').html(text);
+		// Total messages
+		$('#total_messages_button').addClass(get_badge_class(Classes.notified_messages))
+		$('#total_messages').html(""+Classes.notified_messages)
 
-	    $('.linkResource').unbind( "click" );
+		var visibles = false;
+		var class_html = "";
+		for(var i in classrooms){
+			var c = new ClassroomUI(classrooms[i])
+			class_html += c.build();
+			visibles = true;
+		}
+
+		if (!visibles) {
+			class_html = '<div class="container-fluid"><div class="alert alert-warning"><h4>'+_('__ATTENTION__')+"</h4>"+_('__NO_CLASSROOMS__')+"</div></div>";
+		}
+		$('#classrooms').html(class_html);
+
+		// Setup News
+		if (get_show_news()) {
+			$('#button_news').click(news);
+		} else {
+			$('#button_news').remove();
+		}
+
+		// Setup agenda
+		if (get_show_agenda()) {
+			$('#button_agenda').click(agenda);
+		} else {
+			$('#button_agenda').remove();
+		}
+
+		$('#button_campus').click(tools);
+
+		$('#button_pacs').click(UI.pacs);
+
+		var mails = get_mails_unread();
+		if (mails > 0) {
+			$('#button_mail').removeClass('btn-success');
+			$('#button_mail').addClass('btn-danger');
+			$('#button_mail').attr('title', _('__UNREAD_MAIL__', [mails]));
+		} else {
+			$('#button_mail').removeClass('btn-danger');
+			$('#button_mail').addClass('btn-success');
+			$('#button_mail').attr('title', _('__MAIL__'));
+		}
+		$('#button_mail').click(function() {
+			var url = root_url + '/WebMail/listMails.do';
+			open_tab(url);
+		});
+
+		$('#update').click( function() {
+			check_messages(this.build);
+		});
+
+		$('#options').click( function() {
+			open_new_tab("options.html");
+		});
+
+		setTimeout( handleEvents, 100);
+
+		$('.details').collapse({toggle: false});
+		$('.button_details').click( function () {
+			var val = this.value;
+			$('.button_details:not(#button_'+val+')').removeClass('active');
+			if ( $(this).hasClass('active') ){
+				// Does not have active class yet
+				$('.details').collapse('hide');
+		   	} else {
+				$('.details:not(#detail_'+val+')').collapse('hide');
+		   		$('#detail_'+val).collapse('show');
+		   	}
+		});
+	}
+
+	function handleEvents(){
+		$('.linkCampus').unbind( "click" );
+		$('.linkCampus').click(function(){
+			var url = root_url + '/cgi-bin/uocapp';
+			open_tab(url);
+		});
+
+		$('.linkAula').unbind( "click" );
+		$('.linkAula').click(function(){
+			var classroom_code = $(this).parents('.classroom').attr('classroom');
+			var classroom = Classes.search_code(classroom_code);
+
+			var url = root_url + '/webapps/classroom/'+classroom.template+'/frameset.jsp';
+			var data = {domainCode: classroom.code};
+			open_tab(url, data);
+		});
+
+		$('.linkNotas').unbind( "click" );
+		$('.linkNotas').click(function(){
+			var classroom_code = $(this).parents('.classroom').attr('classroom');
+			var classroom = Classes.search_code(classroom_code);
+
+			var url = root_url + '/webapps/rac/listEstudiant.action';
+			var data = {domainId: classroom.domain};
+			open_tab(url, data);
+		});
+
+		$('.linkEstads').unbind( "click" );
+		$('.linkEstads').click(function(){
+			var classroom_code = $(this).parents('.classroom').attr('classroom');
+			var classroom = Classes.search_code(classroom_code);
+			var url = root_url + '/tren/trenacc';
+			var data = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
+						assig: classroom.get_subject_code(),
+						pAnyAcademic: classroom.any};
+			open_tab(url, data);
+		});
+
+		$('.linkDocent').unbind( "click" );
+		$('.linkDocent').click(function(){
+			var classroom_code = $(this).parents('.classroom').attr('classroom');
+			var classroom = Classes.search_code(classroom_code);
+			var url = root_url + '/webapps/classroom/download.do';
+			var data = {nav: 'pladocent',
+						domainId: classroom.domain,
+						format: 'html',
+						app: 'aulaca',
+						precarrega: false
+					};
+			open_tab(url, data);
+		});
+
+		$('.linkMaterials').unbind( "click" );
+		$('.linkMaterials').click(function(){
+			var classroom_code = $(this).parents('.classroom').attr('classroom');
+			var classroom = Classes.search_code(classroom_code);
+			var url = root_url + '/webapps/classroom/student.do';
+			var data = {nav: 'recursos-estudiant',
+						domainId: classroom.domain,
+						domainCode: classroom.code};
+			open_tab(url, data);
+		});
+
+		$('.linkResource').unbind( "click" );
 		$('.linkResource').click(function(){
 			var link = $(this).parents('.resource').attr('link');
 			if(link && link != 'undefined'){
@@ -60,55 +175,8 @@ function buildUI_tools(){
 			}
 			open_tab(url, data);
 		});
-	}
-}
 
-function buildUI_pacs(force) {
-	if(force != undefined || $('#detail_pacs').html() == "") {
-		var text = "";
-
-		var classrooms = Classes.get_notified();
-		var events = new Array();
-		for(var i in classrooms){
-			var classroom = classrooms[i];
-			if (classroom.events.length > 0 ) {
-				for(var j in classroom.events){
-					if (classroom.events[j].is_assignment()) {
-						classroom.events[j].subject = classroom.get_acronym();
-						classroom.events[j].color = classroom.color;
-						events.push(classroom.events[j]);
-					}
-				}
-			}
-		}
-
-
-		if (events.length > 0) {
-			var sorting = get_sorting();
-			if (sorting == 'end') {
-				events.sort(function(a, b){
-					return compareDates(a.end, b.end);
-				});
-			} else {
-				events.sort(function(a, b) {
-					if (a.has_started() && b.has_started()) {
-						return compareDates(a.end, b.end);
-					}
-					return compareDates(a.start, b.start);
-				});
-			}
-
-			text = '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
-				<thead><tr><th></th><th by="start" class="sort_pacs">'+_('__START__')+'</th><th by="end" class="sort_pacs">'+_('__END__')+'</th></tr></thead>\
-				<tbody>';
-			for (var i in events) {
-				text += buildUI_pacs_events(events[i]);
-			}
-			text += '</tbody></table>';
-		}
-	   	$('#detail_pacs').html(text);
-
-	   	$('.linkEvent').unbind( "click" );
+		$('.linkEvent').unbind( "click" );
 		$('.linkEvent').click(function(){
 			var link = $(this).parents('.event').attr('link');
 			if(link && link != 'undefined'){
@@ -118,565 +186,614 @@ function buildUI_pacs(force) {
 			}
 		});
 
-		$('.sort_pacs').unbind( "click" );
-		$('.sort_pacs').click(function(){
-			var sorting = $(this).attr('by');
-			save_sorting(sorting);
-			buildUI_pacs(true);
+		$('.linkMail').unbind( "click" );
+		$('.linkMail').click(function(){
+			var mail = $(this).attr('mail');
+			var url = root_url+"/WebMail/writeMail.do";
+			var data = {
+				to: mail
+			};
+			open_tab(url, data);
 		});
 	}
-}
 
-function buildUI_pacs_events(ev) {
-	if(ev.link != 'undefined'){
-		var link = 'link="'+ev.link+'"';
-	}
+	function ClassroomUI(classroom) {
+		var c = classroom;
 
-	var eventstate = "";
-	if (ev.has_started()) {
-		if (ev.has_ended()) {
-			return "";
-		} if (ev.committed) {
-			eventstate = ' warning running';
-		} else {
-			eventstate = ' danger running';
+		this.build = function() {
+			var title = c.title;
+			if (c.aula) {
+				title += ' ('+c.aula+')';
+			}
+
+			var resources_html = "";
+			for(var j in c.resources){
+				resources_html += resource(c.resources[j]);
+			}
+
+			if (resources_html != "") {
+				resources_html = '<ul class="container-fluid resources">' + resources_html + '</ul>';
+			}
+
+			return '<div class="classroom panel panel-warning" classroom="'+c.code+'">  \
+						<div class="panel-heading container-fluid" '+color(c.color)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+c.code+'">	\
+							<div class="row">\
+								<div class="col-xs-9">' + title + '</div> \
+								<div class="col-xs-3">' + badge(c.messages, 'linkAula', '-', _('__GOTO_CLASS__')) + '</div> \
+							</div> \
+						</div>\
+						<div class="panel-body bg-info text-info collapse" id="detail_'+c.code+'">'+ classrooms_buttons() + resources_html + events() + '</div> \
+					</div>';
+			return content;
+		}
+
+		function resource(resource) {
+			if(resource.link != 'undefined'){
+				var link = 'link="'+resource.link+'"';
+			}
+			if (resource.has_message_count()) {
+				return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
+							<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
+							<div class="col-xs-4">'+badge(resource.messages, 'linkResource', resource.all_messages, _('__GOTO_RES__')) + '</div> \
+						</li>';
+			} else {
+				return '<li class="resource" '+link+' resource="'+resource.code+'"><a href="#" class="linkResource">'+resource.title+'</a></li>';
+			}
+		}
+
+		function events() {
+			if (c.events.length == 0 && c.grades.length == 0) {
+				return "";
+			}
+			var events_html = '';
+			var show_module_dates = get_show_module_dates();
+			if (c.all_events_graded()) {
+				for(var j in c.events){
+					var ev = c.events[j];
+					if (show_module_dates || ev.is_assignment()) {
+						if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
+							var e = new EventUI(ev);
+							events_html += e.classroom_event_grade();
+						}
+					}
+				}
+				for(var j in c.grades){
+					events_html += only_grade(c.grades[j], 1);
+				}
+				return '<table class="table table-condensed events" id="events_'+c.code+'">  \
+						<thead><tr><th></th><th>'+_('__GRADE__')+'</th></tr></thead>\
+						<tbody>' + events_html + ' </tbody>\
+					</table>';
+			} else {
+				for(var j in c.events) {
+					var ev = c.events[j];
+					if (show_module_dates || ev.is_assignment()) {
+						if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
+							var e = new EventUI(ev);
+							events_html += e.classroom_event();
+						}
+					}
+				}
+				for(var j in c.grades){
+					events_html += only_grade(c.grades[j], 4);
+				}
+				return '<table class="table table-condensed events" id="events_'+c.code+'">  \
+						<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
+						<tbody>' + events_html + ' </tbody>\
+					</table>';
+			}
+
+			function only_grade(grade, colspan) {
+				return '<tr class="event bg-primary"><td class="name" colspan="'+colspan+'">'+ grade.get_title()+'</td><td class="graded">'+grade.grade+'</td></tr>';
+			}
+
+		}
+
+		function classrooms_buttons(){
+			var buttons = "";
+			var text = "";
+			if(c.type != 'TUTORIA'){
+				buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('__STATS__')+'" title="'+_('__STATS__')+'">\
+			    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>\
+			  	</button>\
+			  	<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
+			    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
+			  	</button>\
+			  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('__TEACHING_PLAN__')+'" title="'+_('__TEACHING_PLAN__')+'">\
+			    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
+			  	</button>';
+			}
+
+			if (c.consultor) {
+				var title = _('__TEACHER__')+': '+c.consultor;
+				if (c.consultorlastviewed) {
+					title += "\n"+_('__VIEWED_LAST_TIME__', [getDate(c.consultorlastviewed), getTime(c.consultorlastviewed)]);
+				}
+				if (c.consultormail) {
+					var img = "envelope";
+					var mail = 'mail="'+c.consultormail+'"';
+				} else {
+					var img = "user";
+					var mail = "";
+				}
+			  	buttons +=  '<button type="button" class="linkMail btn btn-success" '+mail+' aria-label="'+title+'" title="'+title+'">\
+			    	<span class="glyphicon glyphicon-'+img+'" aria-hidden="true"></span>\
+			  	</button>';
+			}
+
+		  	if (buttons.length > 0) {
+		  		text += '<div class="btn-group btn-group-sm pull-left" role="group">'+buttons+'</div>';
+		  	}
+
+		  	if(c.type != 'TUTORIA'){
+				text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
+			    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('__GRADES__') +'</button></div>';
+		    }
+		  	return text;
+		}
+
+		function badge(messages, classes, allmessages, title) {
+			var badge = get_badge_class(messages);
+			if (!isNaN(allmessages)) {
+				return '<div class="btn-group btn-group-justified btn-group-xs ' + classes + '" role="group"> \
+							<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+'" title="'+title+'">' + messages + '</button></div> \
+				  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+'" title="'+title+'">' + allmessages + '</button></div> \
+						</div>';
+			} else {
+				return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' btn-group-justified" title="'+title+'">'+messages+'</button>';
+			}
 		}
 	}
-	var dstart = buildUI_eventdate(ev.start, "");
-	var dend = buildUI_eventdate(ev.end, "end");
 
-	var title = "";
-	if (ev.committed) {
-		if (ev.viewed) {
-			title = print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
-		} else {
-			title = print_icon(_('__COMMITTED__'), 'save');
+	function news() {
+		if($('#detail_news').html() == "") {
+			/*
+			if(!session) {
+				return false;
+			}
+
+			var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js';
+			var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsGetURLNovetatsExternesWithProviderServlet??up_isNoticiesInstitucionals=false&up_title=Novetats%2520i%2520noticies&up_maximized=true&up_maxDestacades=2&up_showImages=true&up_slide=false&up_sortable=true&up_ck=nee&up_rssUrlServiceProviderHTML=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant_widget_nou.js&up_maxAltres=5&up_rssUrlServiceProvider=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js&up_fxml=html&up_target=noticies.jsp&libs='+libs+'&fromCampus=true&lang=ca&country=ES&color=&userType=UOC-ESTUDIANT-gr06-a&hp_theme=false&s='+session;
+			$('#detail_news').html('<iframe src="'+src+'"></iframe>');*/
+			retrieve_news();
 		}
-	} else if(ev.has_ended()){
-		title = print_icon(_('__NOT_COMMITTED__'), 'remove');
-	} else {
-		title = print_icon_color(_('__'+ev.type+'__'), 'certificate', '');
 	}
-	title += ev.subject + ' - ' + ev.name;
-	return '<tr class="event'+eventstate+'" '+link+'"> \
-				<td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+'</tr>';
-}
 
-function get_general_link(link, title){
-	return '<div class="col-xs-6 resource" link="'+link+'"><a href="#" class="linkResource">'+title+'</a></div>';
-}
+	function agenda() {
+		if($('#detail_agenda iframe').length == 0) {
+			if(!session) {
+				return;
+			}
 
-function print_icon(title, type) {
-	return '<span class="glyphicon glyphicon-'+type+' text-success" aria-hidden="true" title="'+title+'"></span> ';
-}
-
-function print_icon_color(title, type, color) {
-	return '<span class="glyphicon glyphicon-'+type+'" style="color:#'+color+';"  aria-hidden="true" title="'+title+'"></span> ';
-}
-
-
-function buildUI_classroom(classroom){
-	var content = '<div class="classroom panel panel-warning" classroom="'+classroom.code+'">  \
-				<div class="panel-heading container-fluid" '+buildUI_color(classroom)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+classroom.code+'">	\
-					<div class="row">';
-
-	var title = classroom.title;
-	if (classroom.aula) {
-		title += ' ('+classroom.aula+')';
+			var api = 'http%253A%252F%252Fcv.uoc.edu%252Fwebapps%252FAgenda%252FAgendaServlet%253Foperacion%253Dical';
+			var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944745.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height';
+			var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsIcalServlet?up_items=7&up_icalUrlServiceAPI='+api+'&up_targetMonth=agMonthlyView.jsp&up_target=agDailyView.jsp&libs='+libs+'&s='+session;
+			$('#detail_agenda').html('<iframe src="'+src+'"></iframe>');
+		}
 	}
-	content += '<div class="col-xs-9">' + title + '</div> \
-						<div class="col-xs-3">' + buildUI_badge(classroom.messages, 'linkAula', '-', _('__GOTO_CLASS__')) + '</div> \
-					</div> \
-				</div>'+ buildUI_classroom_resources(classroom) +' \
-			</div>';
-	return content;
-}
 
-function buildUI_classroom_resources(classroom) {
-	var resources_html = '';
-	for(var j in classroom.resources){
-		resources_html += buildUI_resource(classroom.resources[j], classroom.code);
+	function tools() {
+		if ($('#detail_campus').html() == "") {
+		    var uni =  get_uni();
+		    if(uni == 'UOCi'){
+		        gat = 'EXPIB';
+		    } else {
+		        gat = 'EXP';
+		    }
+		    var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
+
+		    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
+		    text += '<div class="row-fluid clearfix">';
+		    text += get_general_link(root_url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
+		    text += get_general_link(root_url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
+		    text += get_general_link(root_url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
+		    text += get_general_link(root_url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
+		    text += get_general_link(root_url + '/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
+		    text += get_general_link(root_url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);
+			//text += get_general_link(root_url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
+			//text += get_general_link(root_url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
+		    text += '</div>';
+
+			text += '<div class="row-fluid clearfix"><strong>'+_('__ENROLL__')+'</strong></div>';
+			text += '<div class="row-fluid clearfix">';
+			text += get_general_link(root_url_gate+'.MATPREMATRICULA/inici&s=', _('__ENROLL_PROP__'));
+			text += get_general_link(root_url_gate+'.MATMATRICULA/inici&s=', _('__ENROLL__'));
+			text += '</div>';
+
+			text += '<div class="row-fluid clearfix"><strong>'+_('__PERSONAL__')+'</strong></div>';
+			text += '<div class="row-fluid clearfix">';
+			text += get_general_link(root_url_ssl + '/app/guaita/calendari?perfil=estudiant&s=', _('__NEW_AGENDA__'));
+			var domainId = "";
+			var classrooms = Classes.get_notified();
+			for(var i in classrooms){
+				if (classrooms[i].domain) {
+					domainId = "&domainId=" + classrooms[i].domain;
+					break;
+				}
+			}
+			var link = root_url_ssl + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s='
+			text += get_general_link(link, _('__OLD_AGENDA__'));
+			text += get_general_link(root_url_ssl + '/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
+			text += get_general_link(root_url_ssl + '/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
+			text += get_general_link(root_url_ssl + '/cgibin/hola?t=grups_tb/grups.tmpl&domainFather=grc&s=', _('__WORKING_GROUPS__'));
+
+			text += '</div>';
+
+		    $('#detail_campus').html(text);
+
+		    $('.linkResource').unbind( "click" );
+			$('.linkResource').click(function(){
+				var link = $(this).parents('.resource').attr('link');
+				if(link && link != 'undefined'){
+					var url = link;
+					var data = {};
+				} else {
+					var code = $(this).parents('.resource').attr('resource');
+					var url = root_url + '/webapps/bustiaca/listMails.do';
+					var data = {l: code};
+				}
+				open_tab(url, data);
+			});
+		}
+
+		function get_general_link(link, title){
+			return '<div class="col-xs-6 resource" link="'+link+'"><a href="#" class="linkResource">'+title+'</a></div>';
+		}
 	}
-	return '<div class="panel-body bg-info text-info collapse" id="detail_'+classroom.code+'">  \
-				' + buildUI_rac(classroom) + ' \
-				<ul class="container-fluid resources"> \
-					' + resources_html + ' \
-				</ul> \
-				'+ buildUI_classroom_events(classroom) +' \
-		</div>';
-}
 
-function buildUI_classroom_events(classroom) {
-	if (classroom.events.length == 0 && classroom.grades.length == 0) {
+	this.pacs = function(force) {
+		if(force == true || !pacs_loaded) {
+			pacs_loaded = true;
+			var today = get_today();
+
+			var events_pacs = new Array();
+			var events_today = new Array();
+			for (var i in classrooms) {
+				var classroom = classrooms[i];
+				if (classroom.events.length > 0 ) {
+					for(var j in classroom.events){
+						classroom.events[j].subject = classroom.get_acronym();
+						if (classroom.events[j].is_assignment()) {
+							events_pacs.push(classroom.events[j]);
+						}
+						if (today >= 0 && classroom.events[j].is_near(today)) {
+							events_today.push(classroom.events[j]);
+						}
+					}
+				}
+			}
+
+			var gnral_events = Classes.get_general_events();
+			for(var j in gnral_events){
+				if (today >= 0 && gnral_events[j].is_near(today)) {
+					events_today.push(gnral_events[j]);
+				}
+			}
+
+			var content_pacs = "";
+			if (events_pacs.length > 0) {
+				var sorting = get_sorting();
+				if (sorting == 'end') {
+					events_pacs.sort(function(a, b){
+						return compareDates(a.end, b.end);
+					});
+				} else {
+					events_pacs.sort(function(a, b) {
+						if (a.has_started() && b.has_started()) {
+							return compareDates(a.end, b.end);
+						}
+						return compareDates(a.start, b.start);
+					});
+				}
+
+				content_pacs = '<div class="pull-right"><button type="button" class="btn-sm btn btn-primary" id="show_upcomming">\
+			    	<span class="glyphicon glyphicon-road" aria-hidden="true"></span> ' + _('__SHOW_UPCOMMING__') +'</button></div>\
+					<table class="table table-condensed events">  \
+					<thead><tr><th></th><th by="start" class="sort_pacs">'+_('__START__')+'</th><th by="end" class="sort_pacs">'+_('__END__')+'</th></tr></thead>\
+					<tbody>';
+				for (var i in events_pacs) {
+					var e = new EventUI(events_pacs[i])
+					content_pacs += e.pacs_event();
+				}
+				content_pacs += '</tbody></table>';
+			}
+		   	$('#content_pacs').html(content_pacs);
+
+
+			var content_today = "";
+		   	if (events_today.length > 0) {
+				events_today.sort(function(a, b){
+					var comp = compareDates(a.start, b.start);
+					if (comp == 0) {
+						return compareDates(a.end, b.end);
+					}
+					return comp;
+				});
+
+				content_today = '<div class="pull-right"><button type="button" class="btn-sm btn btn-primary" id="assignments">\
+			    	<span class="glyphicon glyphicon-flag" aria-hidden="true"></span> ' + _('__ONLY_ASSIGNMENTS__') +'</button></div>\
+			    	<table class="table table-condensed events">  \
+					<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
+					<tbody>';
+				for (var i in events_today) {
+					var e = new EventUI(events_today[i])
+					content_today += e.today_event();
+				}
+				content_today += '</tbody></table>';
+			}
+			$('#content_today').html(content_today);
+
+			if (content_pacs == "" || content_today == "") {
+				$('#show_upcomming').hide();
+				$('#assignments').hide();
+			} else if(force == true) {
+				$('#content_today').hide();
+			} else {
+				$('#content_pacs').hide();
+			}
+
+			if (content_pacs == "" && content_today == "") {
+				$('#button_pacs').remove();
+			}
+
+			$('#show_upcomming').unbind( "click" );
+			$('#show_upcomming').click(function(){
+				$('#content_today').show();
+				$('#content_pacs').hide();
+			});
+
+			$('#assignments').unbind( "click" );
+			$('#assignments').click(function(){
+				$('#content_today').hide();
+				$('#content_pacs').show();
+			});
+
+		   	$('.linkEvent').unbind( "click" );
+			$('.linkEvent').click(function(){
+				var link = $(this).parents('.event').attr('link');
+				if(link && link != 'undefined'){
+					var url = link;
+					var data = {};
+					open_tab(url, data);
+				}
+			});
+
+			$('.sort_pacs').unbind( "click" );
+			$('.sort_pacs').click(function(){
+				var sorting = $(this).attr('by');
+				save_sorting(sorting);
+				UI.pacs(true);
+			});
+		}
+	}
+
+	function EventUI(evnt) {
+		var ev = evnt;
+
+		this.pacs_event = function() {
+			if(ev.link != 'undefined'){
+				var link = 'link="'+ev.link+'"';
+			}
+
+			var eventstate = "";
+			if (ev.has_started()) {
+				if (ev.has_ended()) {
+					return "";
+				} if (ev.committed) {
+					eventstate = ' warning running';
+				} else {
+					eventstate = ' danger running';
+				}
+			}
+			var dstart = eventdate(ev.start, "");
+			var dend = eventdate(ev.end, "end");
+
+			var title = "";
+			if (ev.committed) {
+				if (ev.viewed) {
+					title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+				} else {
+					title = icon(_('__COMMITTED__'), 'save');
+				}
+			} else if(ev.has_ended()) {
+				title = icon(_('__NOT_COMMITTED__'), 'remove');
+			} else {
+				title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
+			}
+			if (ev.subject != undefined) {
+				title += ev.subject + ' - ';
+			}
+			title += ev.name;
+			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+'</tr>';
+		}
+
+		this.classroom_event = function() {
+			if(ev.link != 'undefined') {
+				var link = 'link="'+ev.link+'"';
+			}
+
+			var eventstate = "";
+			if (ev.has_started()) {
+				if (ev.has_ended()) {
+					eventstate = ' success';
+				} else if (ev.committed || !ev.is_assignment()) {
+					eventstate = ' warning running';
+				} else {
+					eventstate = ' danger running';
+				}
+			}
+			var dstart = eventdate(ev.start, "");
+			var dend = eventdate(ev.end, "end");
+			var dsol = eventdate(ev.solution, "");
+			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, "");
+
+			var title = "";
+			if (ev.is_assignment()) {
+				if (ev.committed) {
+					if (ev.viewed) {
+						title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+					} else {
+						title = icon(_('__COMMITTED__'), 'save');
+					}
+				} else if(ev.has_ended()){
+					title = icon(_('__NOT_COMMITTED__'), 'remove');
+				} else {
+					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
+				}
+			} else {
+				title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
+			}
+			title += ev.name;
+			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
+		}
+
+		this.today_event = function() {
+			if(ev.link != 'undefined') {
+				var link = 'link="'+ev.link+'"';
+			}
+
+			var eventstate = "";
+			if (ev.has_started()) {
+				if (ev.has_ended()) {
+					eventstate = ' success';
+				} else if (ev.committed || !ev.is_assignment()) {
+					eventstate = ' warning running';
+				} else {
+					eventstate = ' danger running';
+				}
+			}
+			var dstart = eventdate(ev.start, "");
+			var dend = eventdate(ev.end, "end");
+			var dsol = eventdate(ev.solution, "");
+			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, "");
+
+			var title = "";
+			if (ev.is_assignment()) {
+				if (ev.committed) {
+					if (ev.viewed) {
+						title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+					} else {
+						title = icon(_('__COMMITTED__'), 'save');
+					}
+				} else if(ev.has_ended()){
+					title = icon(_('__NOT_COMMITTED__'), 'remove');
+				} else {
+					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
+				}
+			} else if (ev.is_uoc()) {
+				title = colored_icon(_('__'+ev.type+'__'), 'education', '');
+			} else {
+				title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
+			}
+			if (ev.subject != undefined) {
+				title += ev.subject + ' - ';
+			}
+			title += ev.name;
+			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
+		}
+
+		this.classroom_event_grade = function() {
+			if(ev.link != 'undefined'){
+				var link = 'link="'+ev.link+'"';
+			}
+			var dgrade = eventtext(ev.graded, "graded");
+
+			var title = "";
+			if (ev.is_assignment()) {
+				if (ev.committed) {
+					if (ev.viewed) {
+						title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+					} else {
+						title = icon(_('__COMMITTED__'), 'save');
+					}
+				} else if(ev.has_ended()){
+					title = icon(_('__NOT_COMMITTED__'), 'remove');
+				} else {
+					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
+				}
+			} else {
+				title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
+			}
+			title += ev.name;
+			return '<tr class="event success" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
+		}
+
+		function eventdate(d, clas) {
+			var fdate;
+			var title = "";
+			if (d) {
+				var dsplit = d.split('/');
+				fdate = dsplit[0]+'/'+dsplit[1];
+				if (isBeforeToday(d)) {
+					clas += " text-success";
+					fdate = icon(fdate, 'ok');
+				} else if (isToday(d)) {
+					clas += " today";
+					title = fdate;
+					fdate = _('__TODAY__');
+				}
+			} else {
+				fdate = '-';
+			}
+			return eventtext(fdate, clas, title);
+		}
+
+		function eventtext(text, clas, title) {
+			if (title == undefined) {
+				title = "";
+			} else {
+				var dsplit = title.split('/');
+				if (dsplit.length >= 2) {
+					title = dsplit[0]+'/'+dsplit[1];
+				}
+				title = ' title="'+title+'"';
+
+			}
+			return '<td><a href="#" class="linkEvent '+clas+'"'+title+'>'+text+'</a></td>';
+		}
+
+		function icon(title, type) {
+			return '<span class="glyphicon glyphicon-'+type+' text-success" aria-hidden="true" title="'+title+'"></span> ';
+		}
+
+		function colored_icon(title, type, color) {
+			return '<span class="glyphicon glyphicon-'+type+'" style="color:#'+color+';"  aria-hidden="true" title="'+title+'"></span> ';
+		}
+	}
+
+	function color(col){
+		if(col){
+			return 'style="border-color:#'+col+'; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.20) 100%), #'+col+' no-repeat; color:white;"';
+		}
 		return "";
 	}
-	var events_html = '';
-	var show_module_dates = get_show_module_dates();
-	if (classroom.all_events_graded()) {
-		for(var j in classroom.events){
-			var ev = classroom.events[j];
-			if (show_module_dates || ev.is_assignment()) {
-				if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
-					events_html += buildUI_event_grade(ev);
-				}
-			}
-		}
-		for(var j in classroom.grades){
-			events_html += buildUI_grade(classroom.grades[j], 1);
-		}
-		return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
-				<thead><tr><th></th><th>'+_('__GRADE__')+'</th></tr></thead>\
-				<tbody>' + events_html + ' </tbody>\
-			</table>';
-	} else {
-		for(var j in classroom.events) {
-			var ev = classroom.events[j];
-			if (show_module_dates || ev.is_assignment()) {
-				if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
-					events_html += buildUI_event(ev);
-				}
-			}
-		}
-		for(var j in classroom.grades){
-			events_html += buildUI_grade(classroom.grades[j], 4);
-		}
-		return '<table class="table table-condensed events" id="events_'+classroom.code+'">  \
-				<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
-				<tbody>' + events_html + ' </tbody>\
-			</table>';
-	}
-}
 
-function buildUI_event(ev){
-	if(ev.link != 'undefined'){
-		var link = 'link="'+ev.link+'"';
+	function get_badge_class(messages){
+		var critical = get_critical();
+		if(isNaN(messages)) return "btn-info";
+		if( messages == 0) return "btn-success";
+		if( messages >= critical) return "btn-danger";
+		return "btn-warning";
 	}
 
-	var eventstate = "";
-	if (ev.has_started()) {
-		if (ev.has_ended()) {
-			eventstate = ' success';
-		} else if (ev.committed || !ev.is_assignment()) {
-			eventstate = ' warning running';
-		} else {
-			eventstate = ' danger running';
-		}
-	}
-	var dstart = buildUI_eventdate(ev.start, "");
-	var dend = buildUI_eventdate(ev.end, "end");
-	var dsol = buildUI_eventdate(ev.solution, "");
-	var dgrade = ev.graded ? buildUI_eventtext(ev.graded, "graded", ev.grading): buildUI_eventdate(ev.grading, "");
-
-	var title = "";
-	if (ev.is_assignment()) {
-		if (ev.committed) {
-			if (ev.viewed) {
-				title = print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
-			} else {
-				title = print_icon(_('__COMMITTED__'), 'save');
-			}
-		} else if(ev.has_ended()){
-			title = print_icon(_('__NOT_COMMITTED__'), 'remove');
-		} else {
-			title = print_icon_color(_('__'+ev.type+'__'), 'certificate', '');
-		}
-	} else {
-		title = print_icon_color(_('__'+ev.type+'__'), 'triangle-right', '');
-	}
-	title += ev.name;
-	return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
-}
-
-function buildUI_event_grade(ev){
-	if(ev.link != 'undefined'){
-		var link = 'link="'+ev.link+'"';
-	}
-	var dgrade = buildUI_eventtext(ev.graded, "graded");
-
-	var title = "";
-	if (ev.is_assignment()) {
-		if (ev.committed) {
-			if (ev.viewed) {
-				title = print_icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
-			} else {
-				title = print_icon(_('__COMMITTED__'), 'save');
-			}
-		} else if(ev.has_ended()){
-			title = print_icon(_('__NOT_COMMITTED__'), 'remove');
-		} else {
-			title = print_icon_color(_('__'+ev.type+'__'), 'certificate', '');
-		}
-	} else {
-		title = print_icon_color(_('__'+ev.type+'__'), 'triangle-right', '');
-	}
-	title += ev.name;
-	return '<tr class="event success" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
-}
-
-function buildUI_grade(grade, colspan) {
-	return '<tr class="event bg-primary"><td class="name" colspan="'+colspan+'">'+ grade.get_title()+'</td><td class="graded">'+grade.grade+'</td></tr>';
-}
-
-function buildUI_eventdate(d, clas) {
-	var fdate;
-	var title = "";
-	if (d) {
-		var dsplit = d.split('/');
-		fdate = dsplit[0]+'/'+dsplit[1];
-		if (isBeforeToday(d)) {
-			clas += " text-success";
-			fdate = print_icon(fdate, 'ok');
-		} else if (isToday(d)) {
-			clas += " today";
-			title = fdate;
-			fdate = _('__TODAY__');
-		}
-	} else {
-		fdate = '-';
-	}
-	return buildUI_eventtext(fdate, clas, title);
-}
-
-function buildUI_eventtext(text, clas, title) {
-	if (title == undefined) {
-		title = "";
-	} else {
-		var dsplit = title.split('/');
-		if (dsplit.length >= 2) {
-			title = dsplit[0]+'/'+dsplit[1];
-		}
-		title = ' title="'+title+'"';
-
-	}
-	return '<td><a href="#" class="linkEvent '+clas+'"'+title+'>'+text+'</a></td>';
-}
-
-
-function buildUI_news(){
-	if($('#detail_news').html() == "") {
-		/*
-		if(!Session.get()) {
-			return false;
-		}
-
-		var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js';
-		var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsGetURLNovetatsExternesWithProviderServlet??up_isNoticiesInstitucionals=false&up_title=Novetats%2520i%2520noticies&up_maximized=true&up_maxDestacades=2&up_showImages=true&up_slide=false&up_sortable=true&up_ck=nee&up_rssUrlServiceProviderHTML=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant_widget_nou.js&up_maxAltres=5&up_rssUrlServiceProvider=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js&up_fxml=html&up_target=noticies.jsp&libs='+libs+'&fromCampus=true&lang=ca&country=ES&color=&userType=UOC-ESTUDIANT-gr06-a&hp_theme=false&s='+session;
-		$('#detail_news').html('<iframe src="'+src+'"></iframe>');*/
-		retrieve_news();
-	}
-}
-
-function buildUI_agenda(){
-	if($('#detail_agenda iframe').length == 0) {
+	function open_tab(url, data){
 		session = Session.get();
-		if(!session) {
-			return;
+		if(session){
+			if(url.indexOf('?') == -1){
+				if(!data) data = {};
+				data.s = session;
+				url += '?'+uri_data(data);
+			} else {
+				url += session;
+			}
+			open_new_tab(url);
 		}
-
-		var api = 'http%253A%252F%252Fcv.uoc.edu%252Fwebapps%252FAgenda%252FAgendaServlet%253Foperacion%253Dical';
-		var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944745.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height';
-		var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsIcalServlet?up_items=7&up_icalUrlServiceAPI='+api+'&up_targetMonth=agMonthlyView.jsp&up_target=agDailyView.jsp&libs='+libs+'&s='+session;
-		$('#detail_agenda').html('<iframe src="'+src+'"></iframe>');
 	}
-}
-
-function buildUI_rac(classroom){
-	var buttons = "";
-	var text = "";
-	if(classroom.type != 'TUTORIA'){
-		buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('__STATS__')+'" title="'+_('__STATS__')+'">\
-	    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>\
-	  	</button>\
-	  	<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
-	    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
-	  	</button>\
-	  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('__TEACHING_PLAN__')+'" title="'+_('__TEACHING_PLAN__')+'">\
-	    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
-	  	</button>';
-	}
-
-	if (classroom.consultor) {
-		var title = _('__TEACHER__')+': '+classroom.consultor;
-		if (classroom.consultorlastviewed) {
-			title += "\n"+_('__VIEWED_LAST_TIME__', [getDate(classroom.consultorlastviewed), getTime(classroom.consultorlastviewed)]);
-		}
-		if (classroom.consultormail) {
-			var img = "envelope";
-			var mail = 'mail="'+classroom.consultormail+'"';
-		} else {
-			var img = "user";
-			var mail = "";
-		}
-	  	buttons +=  '<button type="button" class="linkMail btn btn-success" '+mail+' aria-label="'+title+'" title="'+title+'">\
-	    	<span class="glyphicon glyphicon-'+img+'" aria-hidden="true"></span>\
-	  	</button>';
-	}
-
-  	if (buttons.length > 0) {
-  		text += '<div class="btn-group btn-group-sm pull-left" role="group">'+buttons+'</div>';
-  	}
-
-  	if(classroom.type != 'TUTORIA'){
-		text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
-	    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('__GRADES__') +'</button></div>';
-    }
-  	return text;
-}
-
-function buildUI_color(classroom){
-	if(classroom.color){
-		return 'style="border-color:#'+classroom.color+'; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.20) 100%), #'+classroom.color+' no-repeat; color:white;"';
-	}
-	return "";
-}
-
-
-function buildUI_resource(resource, classroom_code){
-	var badge = get_badge(resource.messages);
-	if(resource.link != 'undefined'){
-		var link = 'link="'+resource.link+'"';
-	}
-	if (resource.has_message_count()) {
-		return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
-					<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
-					<div class="col-xs-4">'+buildUI_badge(resource.messages, 'linkResource', resource.all_messages, _('__GOTO_RES__')) + '</div> \
-				</li>';
-	} else {
-		return '<li class="resource" '+link+' resource="'+resource.code+'"><a href="#" class="linkResource">'+resource.title+'</a></li>';
-	}
-}
-
-function buildUI_badge(messages, classes, allmessages, title){
-	var badge = get_badge(messages);
-	if (!isNaN(allmessages)) {
-		return '<div class="btn-group btn-group-justified btn-group-xs ' + classes + '" role="group"> \
-					<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+'" title="'+title+'">' + messages + '</button></div> \
-		  			<div class="btn-group btn-group-xs" role="group"><button type="button" class="btn '+badge+'" title="'+title+'">' + allmessages + '</button></div> \
-				</div>';
-	} else {
-		return '<button type="button" class="' + classes + ' btn btn-xs '+badge+' btn-group-justified" title="'+title+'">'+messages+'</button>';
-	}
-}
-
-function get_badge(messages){
-	var critical = get_critical();
-	if(isNaN(messages)) return "btn-info";
-	if( messages == 0) return "btn-success";
-	if( messages >= critical) return "btn-danger";
-	return "btn-warning";
-
-}
-
-function show_total_messages(){
-	$('#total_messages_button').addClass(get_badge(Classes.notified_messages))
-	$('#total_messages').html(""+Classes.notified_messages)
-}
-
-function handleEvents(){
-	$('.linkCampus').unbind( "click" );
-	$('.linkCampus').click(function(){
-		var url = root_url + '/cgi-bin/uocapp';
-		open_tab(url);
-	});
-
-	$('.linkAula').unbind( "click" );
-	$('.linkAula').click(function(){
-		var classroom_code = $(this).parents('.classroom').attr('classroom');
-		var classroom = Classes.search_code(classroom_code);
-
-		var url = root_url + '/webapps/classroom/'+classroom.template+'/frameset.jsp';
-		var data = {domainCode: classroom.code};
-		open_tab(url, data);
-	});
-
-	$('.linkNotas').unbind( "click" );
-	$('.linkNotas').click(function(){
-		var classroom_code = $(this).parents('.classroom').attr('classroom');
-		var classroom = Classes.search_code(classroom_code);
-
-		var url = root_url + '/webapps/rac/listEstudiant.action';
-		var data = {domainId: classroom.domain};
-		open_tab(url, data);
-	});
-
-	$('.linkEstads').unbind( "click" );
-	$('.linkEstads').click(function(){
-		var classroom_code = $(this).parents('.classroom').attr('classroom');
-		var classroom = Classes.search_code(classroom_code);
-		var url = root_url + '/tren/trenacc';
-		var data = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
-					assig: classroom.get_subject_code(),
-					pAnyAcademic: classroom.any};
-		open_tab(url, data);
-	});
-
-	$('.linkDocent').unbind( "click" );
-	$('.linkDocent').click(function(){
-		var classroom_code = $(this).parents('.classroom').attr('classroom');
-		var classroom = Classes.search_code(classroom_code);
-		var url = root_url + '/webapps/classroom/download.do';
-		var data = {nav: 'pladocent',
-					domainId: classroom.domain,
-					format: 'html',
-					app: 'aulaca',
-					precarrega: false
-				};
-		open_tab(url, data);
-	});
-
-	$('.linkMaterials').unbind( "click" );
-	$('.linkMaterials').click(function(){
-		var classroom_code = $(this).parents('.classroom').attr('classroom');
-		var classroom = Classes.search_code(classroom_code);
-		var url = root_url + '/webapps/classroom/student.do';
-		var data = {nav: 'recursos-estudiant',
-					domainId: classroom.domain,
-					domainCode: classroom.code};
-		open_tab(url, data);
-	});
-
-	$('.linkResource').unbind( "click" );
-	$('.linkResource').click(function(){
-		var link = $(this).parents('.resource').attr('link');
-		if(link && link != 'undefined'){
-			var url = link;
-			var data = {};
-		} else {
-			var code = $(this).parents('.resource').attr('resource');
-			var url = root_url + '/webapps/bustiaca/listMails.do';
-			var data = {l: code};
-		}
-		open_tab(url, data);
-	});
-
-	$('.linkEvent').unbind( "click" );
-	$('.linkEvent').click(function(){
-		var link = $(this).parents('.event').attr('link');
-		if(link && link != 'undefined'){
-			var url = link;
-			var data = {};
-			open_tab(url, data);
-		}
-	});
-
-	$('.linkMail').unbind( "click" );
-	$('.linkMail').click(function(){
-		var mail = $(this).attr('mail');
-		var url = root_url+"/WebMail/writeMail.do";
-		var data = {
-			to: mail
-		};
-		open_tab(url, data);
-	});
-}
-
-function open_tab(url, data){
-	var session = Session.get();
-	if(session){
-		if(url.indexOf('?') == -1){
-			if(!data) data = {};
-			data.s = session;
-			url += '?'+uri_data(data);
-		} else {
-			url += session;
-		}
-		open_new_tab(url);
-	}
-}
-
-function buildUI(){
-	//DEBUG
-	//check_messages();
-
-	var classrooms = Classes.get_notified();
-	show_total_messages();
-
-	var visibles = 0;
-	var class_html = "";
-	for(var i in classrooms){
-		class_html += buildUI_classroom(classrooms[i]);
-		visibles++;
-	}
-	if (!visibles) {
-		$('#classrooms').html("<div class='alert'><h4>"+_('__ATTENTION__')+"</h4>"+_('__NO_CLASSROOMS__')+"</div>")
-	} else {
-		$('#classrooms').html(class_html);
-	}
-
-	if (get_show_news()) {
-		$('#button_news').click(buildUI_news);
-	} else {
-		$('#button_news').remove();
-	}
-
-	if (get_show_agenda()) {
-		$('#button_agenda').click(buildUI_agenda);
-	} else {
-		$('#button_agenda').remove();
-	}
-	$('#button_campus').click(buildUI_tools);
-	$('#button_pacs').click(buildUI_pacs);
-
-
-	var mails = get_mails_unread();
-	if (mails > 0) {
-		$('#button_mail').removeClass('btn-success');
-		$('#button_mail').addClass('btn-danger');
-		$('#button_mail').attr('title', _('__UNREAD_MAIL__', [mails]));
-	} else {
-		$('#button_mail').removeClass('btn-danger');
-		$('#button_mail').addClass('btn-success');
-		$('#button_mail').attr('title', _('__MAIL__'));
-	}
-	$('#button_mail').click(function() {
-		var url = root_url + '/WebMail/listMails.do';
-		open_tab(url);
-	});
-
-	$('#update').click( function() {
-		check_messages(buildUI);
-	});
-
-	$('#options').click( function() {
-		open_new_tab("options.html");
-	});
-
-	setTimeout( handleEvents, 100);
-
-	$('.details').collapse({toggle: false});
-	$('.button_details').click( function () {
-		var val = this.value;
-		$('.button_details:not(#button_'+val+')').removeClass('active');
-		if ( $(this).hasClass('active') ){
-			// Does not have active class yet
-			$('.details').collapse('hide');
-	   	} else {
-			$('.details:not(#detail_'+val+')').collapse('hide');
-	   		$('#detail_'+val).collapse('show');
-	   	}
-	});
 }
 
 $(document).ready(function() {
-	if (has_username_password()) {
-		session = Session.get();
-		if(!session){
-			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__WAITING_TO_LOGIN__')+'</div></div>');
-			check_messages(buildUI);
-
-			$('#options').click( function() {
-				open_new_tab("options.html");
-			});
-			return;
-		}
-		buildUI();
-		return;
-	} else {
-		$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__NO_USER_PASSWORD__')+'</div></div>');
-		open_new_tab("options.html");
-	}
+	UI.init();
 });
-
 
 // Disable alerts
 window.alert = function ( text ) { Debug.print( 'ALERT: ' + text ); return true; };

@@ -84,6 +84,7 @@ body {
 
 .events td, .events th{
 	text-align: center;
+	vertical-align: middle !important;
 }
 .events td.name {
 	text-align: left;
@@ -148,7 +149,10 @@ body {
 			<div class="panel-body bg-info text-info details collapse" id="detail_news"></div>
 			<div class="panel-body bg-default text-default details collapse" id="detail_agenda"></div>
 			<div class="panel-body bg-info text-info details collapse" id="detail_campus"></div>
-			<div class="panel-body bg-info text-info details collapse" id="detail_pacs"></div>
+			<div class="panel-body bg-info text-info details collapse" id="detail_pacs">
+				<div id="content_pacs"></div>
+				<div id="content_today"></div>
+			</div>
 		</div>
 	</div>
 	<div id="classrooms"></div>

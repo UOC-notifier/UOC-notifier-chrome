@@ -4,7 +4,7 @@ $(document).ready(function(){
 	populate_classrooms();
 
 	$('#save_btn').on('click',function(){
-		save_options();
+		save_login();
 		return false;
 	});
 	$('#version').html(get_version());
@@ -94,9 +94,15 @@ function populate_options(){
 		var ischecked = $('#show_module_dates').is(':checked');
 		save_show_module_dates(ischecked);
 	});
+
+	option = get_today();
+	$('#today_tab').val(option);
+	$('#today_tab').on('change', function(){
+		save_today($(this).val());
+	});
 }
 
-function save_options(){
+function save_login(){
 	save_user($("#username").val(), $("#pwd").val());
 	check_messages(after_check_messages);
 

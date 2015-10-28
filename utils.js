@@ -43,12 +43,33 @@ function getTime(date) {
 }
 
 function isToday(date) {
+    if (!date) {
+        return false;
+    }
     var q = new Date();
     var y = q.getFullYear() - 2000;
     var m = q.getMonth() + 1;
     var d = q.getDate();
     var dsplit = date.split("/");
     return dsplit[0] == d && dsplit[1] == m && dsplit[2] == y;
+}
+
+function isNearDate(date, near) {
+    if (!date || isBeforeToday(date)) {
+        return false;
+    }
+    var q = new Date(new Date().getTime() + near * 24 * 60 * 60 * 1000);
+    var y = q.getFullYear() - 2000;
+    var m = q.getMonth() + 1;
+    var d = q.getDate();
+    var dsplit = date.split("/");
+    if (dsplit[2] == y) {
+        if (dsplit[1] == m) {
+            return dsplit[0] < d;
+        }
+        return dsplit[1] < m;
+    }
+    return dsplit[2] < y;
 }
 
 function isBeforeToday(date) {
@@ -66,14 +87,10 @@ function isBeforeToday(date) {
     return dsplit[2] < y;
 }
 
-function isBeforeToday_date(date) {
-    var q = new Date();
-    q = new Date(q.getFullYear(), q.getMonth(), q.getDate());
-    var d = new Date(date);
-    return q <= d;
-}
-
 function compareDates(dateA, dateB) {
+    if (!dateB && !dateA) {
+        return 0;
+    }
     if (!dateB) {
         return 1;
     }
@@ -165,6 +182,9 @@ function get_url_with_data(url, data) {
 }
 
 function get_acronym(text) {
+    if (text == undefined) {
+        return "";
+    }
     var words = text.split(/[\s, '´:\(\)\-]+/);
     var acronym = "";
     var nowords = new Array('de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd');

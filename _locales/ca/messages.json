@@ -151,6 +151,9 @@
     "__LINKS_TO_CAMPUS__" : {
         "message" : "Enllaços del campus"
     },
+    "__UOC__" : {
+        "message" : "UOC"
+    },
     "__STUDY_GUIDE__" : {
         "message" : "Guia d'estudi"
     },
@@ -171,6 +174,18 @@
     },
     "__TODAY__" : {
         "message" : "Avui"
+    },
+    "__UPCOMMING_DAYS__" : {
+        "message" : "Dies per mostrar als esdeveniments propers"
+    },
+    "__SHOW_UPCOMMING__" : {
+        "message" : "Mostra esdeveniments propers"
+    },
+    "__ONLY_ASSIGNMENTS__" : {
+        "message" : "Mostra només tasques"
+    },
+    "__DAYS__" : {
+        "message" : "dies"
     },
     "__TEACHER__" : {
         "message" : "Consultor/a"

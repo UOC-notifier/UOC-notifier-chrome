@@ -22,7 +22,7 @@
         "message" : "Universidad"
     },
     "__INTERVAL__" : {
-        "message" : "Intervalo de comprovación"
+        "message" : "Intervalo de comprova0ción"
     },
     "__CRITICAL__" : {
         "message" : "Mínimo de mensajes para considerar crítico y notificar"
@@ -151,6 +151,9 @@
     "__LINKS_TO_CAMPUS__" : {
         "message" : "Enlaces del campus"
     },
+    "__UOC__" : {
+        "message" : "UOC"
+    },
     "__STUDY_GUIDE__" : {
         "message" : "Guía de estudio"
     },
@@ -171,6 +174,18 @@
     },
     "__TODAY__" : {
         "message" : "Hoy"
+    },
+    "__UPCOMMING_DAYS__" : {
+        "message" : "Dias para mostrar en los eventos cercanos"
+    },
+    "__SHOW_UPCOMMING__" : {
+        "message" : "Mostrar eventos cercanos"
+    },
+    "__ONLY_ASSIGNMENTS__" : {
+        "message" : "Mostrar sólo tareas"
+    },
+    "__DAYS__" : {
+        "message" : "dias"
     },
     "__TEACHER__" : {
         "message" : "Consultor/a"

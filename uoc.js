@@ -368,10 +368,10 @@ function retrieve_users(classroom){
 
 function retrieve_agenda() {
 	var args = {
-		'app:mobile': false,
+		'app:mobile': true,
 		'app:cache': false,
 		'app:only' : 'agenda',
-		'app:Delta' : 1
+		'app:Delta' : 365
 	}
 	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
 		var items = $(resp).find('item category:contains(\'CALENDAR\')').parents('item');
@@ -379,62 +379,61 @@ function retrieve_agenda() {
 			var q = new Date();
 			items.each(function() {
 				var json = rssitem_to_json(this);
-				// Do not update old events
-				if (isBeforeToday_date(json.pubDate)) {
-					/*if (parseInt(json.EVENT_TYPE) == 16) {
-						var title = json.title + ' ' + json.description;
-						var evnt = new Event(title, json.guid, 'GNRAL');
-						agenda.push(evnt);
-						//console.log(ev, json);
-						return;
-					}*/
 
-					var id = json.guid.split('_');
-					var classroom = Classes.get_class_by_event(id[0]);
-					if (!classroom) {
-						var acronym = get_acronym(json.description);
-						classroom = Classes.get_class_by_acronym(acronym);
-					}
-					if (!classroom) {
-						Debug.print('Classroom not found');
+				// General events
+				if (parseInt(json.EVENT_TYPE) == 16) {
+					var title = json.title + ' ' + json.description;
+					var evnt = new Event(title, json.guid, 'UOC');
+					evnt.start =  getDate_hyphen(json.pubDate);
+					Classes.add_event(evnt);
+					return;
+				}
+
+				var id = json.guid.split('_');
+				var classroom = Classes.get_class_by_event(id[0]);
+				if (!classroom) {
+					var acronym = get_acronym(json.description);
+					classroom = Classes.get_class_by_acronym(acronym);
+				}
+				if (!classroom) {
+					Debug.print('Classroom not found');
+					Debug.print(json);
+					return;
+				}
+
+				var evnt = false;
+				evnt = classroom.get_event(id[0]);
+				if (evnt && evnt.is_assignment()) {
+					// The Assignments are processed in other parts
+					return;
+				}
+
+				var title = json.title.split('[');
+				title = title[0].trim();
+				if (!evnt) {
+					var evnt = new Event(title, id[0], 'MODULE');
+				}
+				var date =  getDate_hyphen(json.pubDate);
+				switch (parseInt(json.EVENT_TYPE)) {
+					case 22:
+					case 26:
+						evnt.type = 'MODULE';
+						evnt.start = date;
+						break;
+					case 23:
+						evnt.type = 'STUDY_GUIDE';
+						evnt.start = date;
+						break;
+					case 29:
+						evnt.end = date;
+						break;
+					default:
+						Debug.print('Unknown event type ' + json.EVENT_TYPE);
 						Debug.print(json);
 						return;
-					}
-
-					var evnt = false;
-					evnt = classroom.get_event(id[0]);
-					if (evnt && evnt.is_assignment()) {
-						// The Assignments are processed in other parts
-						return;
-					}
-
-					var title = json.title.split('[');
-					title = title[0].trim();
-					if (!evnt) {
-						var evnt = new Event(title, id[0], 'MODULE');
-					}
-					var date =  getDate_hyphen(json.pubDate);
-					switch (parseInt(json.EVENT_TYPE)) {
-						case 22:
-						case 26:
-							evnt.type = 'MODULE';
-							evnt.start = date;
-							break;
-						case 23:
-							evnt.type = 'STUDY_GUIDE';
-							evnt.start = date;
-							break;
-						case 29:
-							evnt.end = date;
-							break;
-						default:
-							Debug.print('Unknown event type ' + json.EVENT_TYPE);
-							Debug.print(json);
-							return;
-					}
-					evnt.link = json.link+'&s=';
-					classroom.add_event(evnt);
 				}
+				evnt.link = json.link+'&s=';
+				classroom.add_event(evnt);
 			});
 		}
 	});
@@ -464,6 +463,7 @@ function retrieve_news(){
 
 	Queue.request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', false, function(resp) {
 		resp = resp.replace(/<img/gi, '<noload');
+		resp = resp.replace(/\[\+\]/gi, '');
 		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
 		if (news != undefined) {
 			$('#detail_news').html(news);

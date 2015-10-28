@@ -151,6 +151,9 @@
     "__LINKS_TO_CAMPUS__" : {
         "message" : "Links to campus"
     },
+    "__UOC__" : {
+        "message" : "UOC"
+    },
     "__STUDY_GUIDE__" : {
         "message" : "Study guide"
     },
@@ -171,6 +174,18 @@
     },
     "__TODAY__" : {
         "message" : "Today"
+    },
+    "__UPCOMMING_DAYS__" : {
+        "message" : "Days to show on upcomming events"
+    },
+    "__SHOW_UPCOMMING__" : {
+        "message" : "Show upcomming events"
+    },
+    "__ONLY_ASSIGNMENTS__" : {
+        "message" : "Show only assignments"
+    },
+    "__DAYS__" : {
+        "message" : "days"
     },
     "__TEACHER__" : {
         "message" : "Teacher"

@@ -2,6 +2,7 @@ var Classes = new function(){
 	var classes = [];
 	this.messages = 0;
 	this.notified_messages = 0;
+	var events = [];
 
 	this.add = function(classr){
 		var idx = this.get_index(classr.code);
@@ -13,10 +14,32 @@ var Classes = new function(){
 		}
 	};
 
+	this.add_event = function(evnt){
+		// Do not add past events
+		if (isBeforeToday(evnt.start) || evnt.eventId == undefined) {
+			return;
+		}
+		for(var idx in events){
+			if(events[idx].eventId == evnt.eventId) {
+				events[idx].name = evnt.name;
+				events[idx].eventId = evnt.eventId;
+				if (evnt.type)  events[idx].type = evnt.type;
+				if (evnt.start) events[idx].start = evnt.start;
+				return;
+			}
+		}
+		events.push(evnt);
+	};
+
+	this.get_general_events = function() {
+		return events;
+	}
+
 	this.save = function(){
 		this.count_messages();
 		set_messages();
 		Debug.print(classes);
+		Debug.print(events);
 		classes.sort(function(a, b) {
 			if (a.notify != b.notify) {
 				return b.notify - a.notify;
@@ -41,6 +64,7 @@ var Classes = new function(){
 		}
 
 		Storage.set_option("classes", JSON.stringify(classes));
+		Storage.set_option("events", JSON.stringify(events));
 	};
 
 	this.search_code = function(code){
@@ -186,6 +210,18 @@ var Classes = new function(){
 				this.add(classr);
 			}
 			this.count_messages();
+		}
+
+		var evnts = Storage.get_option("events", false);
+		if (evnts) {
+			events = [];
+			evnts = JSON.parse(evnts);
+			for (var i in evnts) {
+				var evl = evnts[i];
+				var ev = new Event(evl.name, evl.eventId, evl.type);
+				ev.start = evl.start;
+				this.add_event(ev);
+			}
 		}
 	};
 
@@ -333,10 +369,11 @@ function Classroom(title, code, domain, type, template){
 		});
 
 		this.events.sort(function(a, b) {
-			if (a.has_started() && b.has_started()) {
+			var comp = compareDates(a.start, b.start);
+			if (comp == 0) {
 				return compareDates(a.end, b.end);
 			}
-			return compareDates(a.start, b.start);
+			return comp;
 		});
 	}
 
@@ -603,7 +640,15 @@ function Event(name, id, type) {
 		return isToday(this.end);
 	}
 
+	this.is_near = function(near) {
+		return (this.has_started() && !this.has_ended()) || isNearDate(this.start, near) || isNearDate(this.grading, near) || isNearDate(this.solution, near);
+	}
+
 	this.is_assignment = function(){
 		return (this.type == 'ASSIGNMENT' || this.type == undefined);
+	}
+
+	this.is_uoc = function(){
+		return this.type == 'UOC';
 	}
 }
