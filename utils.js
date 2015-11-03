@@ -54,22 +54,22 @@ function isToday(date) {
     return dsplit[0] == d && dsplit[1] == m && dsplit[2] == y;
 }
 
-function isNearDate(date, near) {
-    if (!date || isBeforeToday(date)) {
+function isNearDate(date, limit) {
+    if (!date || !limit || isBeforeToday(date)) {
         return false;
     }
-    var q = new Date(new Date().getTime() + near * 24 * 60 * 60 * 1000);
+    var q = new Date(limit);
     var y = q.getFullYear() - 2000;
     var m = q.getMonth() + 1;
     var d = q.getDate();
     var dsplit = date.split("/");
     if (dsplit[2] == y) {
         if (dsplit[1] == m) {
-            return dsplit[0] < d;
+            return dsplit[0] <= d;
         }
-        return dsplit[1] < m;
+        return dsplit[1] <= m;
     }
-    return dsplit[2] < y;
+    return dsplit[2] <= y;
 }
 
 function isBeforeToday(date) {

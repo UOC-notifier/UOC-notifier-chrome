@@ -67,8 +67,16 @@ function get_lang_code() {
 }
 
 // OPTIONS - TODAY TAB
+function get_today_limit(){
+	var limit = get_today();
+	if (limit >= 0) {
+		return new Date().getTime() + limit * 24 * 60 * 60 * 1000;
+	}
+	return false;
+}
+
 function get_today(){
-	return Storage.get_option_int("today", 7);
+	return Storage.get_option_int("today", 6);
 }
 
 function save_today(today){

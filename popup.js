@@ -444,7 +444,7 @@ var UI = new function() {
 	this.pacs = function(force) {
 		if(force == true || !pacs_loaded) {
 			pacs_loaded = true;
-			var today = get_today();
+			var limit = get_today_limit();
 
 			var events_pacs = new Array();
 			var events_today = new Array();
@@ -456,7 +456,7 @@ var UI = new function() {
 						if (classroom.events[j].is_assignment()) {
 							events_pacs.push(classroom.events[j]);
 						}
-						if (today >= 0 && classroom.events[j].is_near(today)) {
+						if (classroom.events[j].is_near(limit)) {
 							events_today.push(classroom.events[j]);
 						}
 					}
@@ -465,7 +465,7 @@ var UI = new function() {
 
 			var gnral_events = Classes.get_general_events();
 			for(var j in gnral_events){
-				if (today >= 0 && gnral_events[j].is_near(today)) {
+				if (gnral_events[j].is_near(limit)) {
 					events_today.push(gnral_events[j]);
 				}
 			}
