@@ -62,6 +62,9 @@
     "__FINAL_GRADES__" : {
         "message" : "Notes finals"
     },
+    "__EXAM_SELECT__" : {
+        "message" : "Full de proves"
+    },
     "__STATS__" : {
         "message" : "Estadístiques"
     },
