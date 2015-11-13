@@ -518,7 +518,7 @@ var UI = new function() {
 					<tbody>';
 				for (var i in events_today) {
 					var e = new EventUI(events_today[i])
-					content_today += e.today_event();
+					content_today += e.today_event(limit);
 				}
 				content_today += '</tbody></table>';
 			}
@@ -648,7 +648,7 @@ var UI = new function() {
 			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
 		}
 
-		this.today_event = function() {
+		this.today_event = function(limit) {
 			if(ev.link != 'undefined') {
 				var link = 'link="'+ev.link+'"';
 			}
@@ -663,10 +663,11 @@ var UI = new function() {
 					eventstate = ' danger running';
 				}
 			}
-			var dstart = eventdate(ev.start, "");
-			var dend = eventdate(ev.end, "end");
-			var dsol = eventdate(ev.solution, "");
-			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, "");
+
+			var dstart = eventdate(ev.start, isNearDate(ev.start, limit) ? "near" : "");
+			var dend = eventdate(ev.end, isNearDate(ev.end, limit) ? "end near" : "end");
+			var dsol = eventdate(ev.solution, isNearDate(ev.solution, limit) ? "near" : "");
+			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, isNearDate(ev.grading, limit) ? "near" : "");
 
 			var title = "";
 			if (ev.is_assignment()) {
