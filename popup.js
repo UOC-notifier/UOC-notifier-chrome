@@ -504,9 +504,9 @@ var UI = new function() {
 			var content_today = "";
 		   	if (events_today.length > 0) {
 				events_today.sort(function(a, b){
-					var comp = compareDates(a.start, b.start);
+					var comp = compareDates(a.end, b.end);
 					if (comp == 0) {
-						return compareDates(a.end, b.end);
+						return compareDates(a.start, b.start);
 					}
 					return comp;
 				});

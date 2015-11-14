@@ -88,14 +88,8 @@ function isBeforeToday(date) {
 }
 
 function compareDates(dateA, dateB) {
-    if (!dateB && !dateA) {
+    if (!dateB || !dateA) {
         return 0;
-    }
-    if (!dateB) {
-        return 1;
-    }
-    if (!dateA) {
-        return -1;
     }
     var asplit = dateA.split("/");
     var bsplit = dateB.split("/");
