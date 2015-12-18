@@ -313,7 +313,7 @@ function Classroom(title, code, domain, type, template){
 	this.add_grade = function(name, grade) {
 		var g = new Grade(name, grade);
 		for(var i in this.grades){
-			if (this.grades[i].code = g.code) {
+			if (this.grades[i].code == g.code) {
 				if (this.grades[i].grade != g.grade) {
 					this.grades[i].grade = grade;
 					return this.grades[i];
