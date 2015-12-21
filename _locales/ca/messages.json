@@ -284,6 +284,14 @@
           }
         }
     },
+    "__NOT_STATS__" : {
+        "message" : "Han sortit les estadístiques de $class$",
+        "placeholders": {
+          "class": {
+            "content": "$1"
+          }
+        }
+    },
     "__INCORRECT_USER__" : {
         "message" : "L'usuari/contrasenya no és correcte.<br>Si aquest error persisteix, fes login <a href=\"https://cv.uoc.edu/webapps/cas/login?renew=true\" target=\"_blank\">aquí</a>"
     },

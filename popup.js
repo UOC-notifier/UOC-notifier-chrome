@@ -131,7 +131,7 @@ var UI = new function() {
 			var classroom_code = $(this).parents('.classroom').attr('classroom');
 			var classroom = Classes.search_code(classroom_code);
 			var url = root_url + '/tren/trenacc';
-			var data = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
+			var data = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
 						assig: classroom.get_subject_code(),
 						pAnyAcademic: classroom.any};
 			open_tab(url, data);
@@ -247,7 +247,7 @@ var UI = new function() {
 			}
 			var events_html = '';
 			var show_module_dates = get_show_module_dates();
-			if (c.all_events_graded()) {
+			if (c.all_events_completed()) {
 				for(var j in c.events){
 					var ev = c.events[j];
 					if (show_module_dates || ev.is_assignment()) {
@@ -292,11 +292,14 @@ var UI = new function() {
 		function classrooms_buttons(){
 			var buttons = "";
 			var text = "";
-			if(c.type != 'TUTORIA'){
+
+			if(c.has_stats()) {
 				buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('__STATS__')+'" title="'+_('__STATS__')+'">\
-			    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>\
-			  	</button>\
-			  	<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
+			    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>';
+		    }
+
+			if(c.type != 'TUTORIA'){
+				buttons += '<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
 			    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
 			  	</button>\
 			  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('__TEACHING_PLAN__')+'" title="'+_('__TEACHING_PLAN__')+'">\
@@ -325,7 +328,7 @@ var UI = new function() {
 		  		text += '<div class="btn-group btn-group-sm pull-left" role="group">'+buttons+'</div>';
 		  	}
 
-		  	if(c.type != 'TUTORIA'){
+		  	if(c.has_events()){
 				text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
 			    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('__GRADES__') +'</button></div>';
 		    }
@@ -374,13 +377,8 @@ var UI = new function() {
 
 	function tools() {
 		if ($('#detail_campus').html() == "") {
-		    var uni =  get_uni();
-		    if(uni == 'UOCi'){
-		        gat = 'EXPIB';
-		    } else {
-		        gat = 'EXP';
-		    }
-		    var root_url_gate = root_url_ssl+'/tren/trenacc?modul=GAT_'+gat;
+		    var gat =  get_gat();
+		    var root_url_gate = root_url_ssl+'/tren/trenacc?modul='+gat;
 
 		    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
 		    text += '<div class="row-fluid clearfix">';

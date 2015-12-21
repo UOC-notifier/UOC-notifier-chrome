@@ -46,6 +46,14 @@ function get_uni(){
 	return Storage.get_option("uni", 'UOCc');
 }
 
+function get_gat(){
+	var uni =  get_uni();
+    if(uni == 'UOCi'){
+        return 'GAT_EXPIB';
+    }
+    return 'GAT_EXP';
+}
+
 function save_uni(uni){
 	Storage.set_option("uni",uni);
 }

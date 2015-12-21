@@ -176,6 +176,7 @@ var Classes = new function(){
 				classr.set_color(classl.color);
 				classr.any = classl.any;
 				classr.aula = classl.aula;
+				classr.stats = classl.stats;
 				classr.consultor = classl.consultor;
 				classr.consultormail = classl.consultormail;
 				classr.consultorlastviewed = classl.consultorlastviewed;
@@ -265,6 +266,7 @@ function Classroom(title, code, domain, type, template){
 	this.color = false;
 	this.any = false;
 	this.aula = false;
+	this.stats = false;
 	this.consultor = false;
 	this.consultormail = false;
 	this.consultorlastviewed = false;
@@ -444,14 +446,22 @@ function Classroom(title, code, domain, type, template){
 		return -1;
 	};
 
-	this.all_events_graded = function(name){
+	this.has_events = function(){
+		return this.events.length > 0;
+	};
+
+	this.all_events_completed = function(){
 		for(var i in this.events){
-			if (!this.events[i].graded) {
+			if (!this.events[i].is_completed()) {
 				return false;
 			}
 		}
 		return true;
 	};
+
+	this.has_stats = function() {
+		return this.stats && this.has_events();
+	}
 
 	this.event_merge = function(idx, ev) {
 		this.events[idx].name = ev.name;
@@ -650,5 +660,13 @@ function Event(name, id, type) {
 
 	this.is_uoc = function(){
 		return this.type == 'UOC';
+	}
+
+	this.is_graded = function(){
+		return !this.grading || this.grade;
+	}
+
+	this.is_completed = function(){
+		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading) && this.is_graded();
 	}
 }

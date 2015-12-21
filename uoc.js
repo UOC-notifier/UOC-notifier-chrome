@@ -17,6 +17,8 @@ function check_messages(after_check_fnc){
 		retrieve_old_classrooms();
 
 		retrieve_agenda();
+
+		retrieve_stats();
 	});
 
 	retrieve_gradeinfo();
@@ -316,6 +318,28 @@ function retrieve_gradeinfo() {
 			}
 		});
 	});
+}
+
+function retrieve_stats() {
+	var classrooms = Classes.get_notified();
+	for(var i in classrooms) {
+		classroom = classrooms[i];
+
+		if (classroom.has_events() && classroom.all_events_completed() && !classroom.has_stats()) {
+			var args = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
+						assig: classroom.get_subject_code(),
+						pAnyAcademic: classroom.any
+					};
+			Queue.request('/tren/trenacc', args, 'GET', false, function(data) {
+				var index = data.indexOf("addRow");
+				if (index != -1) {
+					notify(_('__NOT_STATS__', [classroom.get_acronym()]), 0);
+					classroom.stats = true;
+				}
+			});
+		}
+	}
+
 }
 
 function retrieve_resource(classroom, resource){

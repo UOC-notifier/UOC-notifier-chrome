@@ -73,6 +73,10 @@ function isNearDate(date, limit) {
 }
 
 function isBeforeToday(date) {
+    if (!date) {
+        return true;
+    }
+
     var q = new Date();
     var y = q.getFullYear() - 2000;
     var m = q.getMonth() + 1;
