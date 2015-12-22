@@ -284,14 +284,14 @@
           }
         }
     },
-    "message" : "Han salido les estadísticas de $class$",
+    "__NOT_STATS__" : {
+        "message" : "Han salido les estadísticas de $class$",
         "placeholders": {
           "class": {
             "content": "$1"
           }
         }
     },
-    "__
     "__INCORRECT_USER__" : {
         "message" : "El usuario/password no es correcto<br>Si este error persiste, haz login <a href=\"https://cv.uoc.edu/webapps/cas/login?renew=true\" target=\"_blank\">aquí</a>"
     },
