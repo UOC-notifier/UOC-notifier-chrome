@@ -663,7 +663,7 @@ function Event(name, id, type) {
 	}
 
 	this.is_graded = function(){
-		return !this.grading || this.grade;
+		return (!this.grading || this.graded);
 	}
 
 	this.is_completed = function(){

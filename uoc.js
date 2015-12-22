@@ -420,8 +420,8 @@ function retrieve_agenda() {
 					classroom = Classes.get_class_by_acronym(acronym);
 				}
 				if (!classroom) {
-					Debug.print('Classroom not found');
-					Debug.print(json);
+					Debug.log('Classroom not found');
+					Debug.log(json);
 					return;
 				}
 
