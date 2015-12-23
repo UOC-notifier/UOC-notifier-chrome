@@ -595,7 +595,7 @@ var UI = new function() {
 					title = icon(_('__COMMITTED__'), 'save');
 				}
 			} else if(ev.has_ended()) {
-				title = icon(_('__NOT_COMMITTED__'), 'remove');
+				title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
 			} else {
 				title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
 			}
@@ -635,7 +635,7 @@ var UI = new function() {
 						title = icon(_('__COMMITTED__'), 'save');
 					}
 				} else if(ev.has_ended()){
-					title = icon(_('__NOT_COMMITTED__'), 'remove');
+					title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
 				} else {
 					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
 				}
@@ -676,7 +676,7 @@ var UI = new function() {
 						title = icon(_('__COMMITTED__'), 'save');
 					}
 				} else if(ev.has_ended()){
-					title = icon(_('__NOT_COMMITTED__'), 'remove');
+					title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
 				} else {
 					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
 				}
@@ -707,7 +707,7 @@ var UI = new function() {
 						title = icon(_('__COMMITTED__'), 'save');
 					}
 				} else if(ev.has_ended()){
-					title = icon(_('__NOT_COMMITTED__'), 'remove');
+					title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
 				} else {
 					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
 				}
