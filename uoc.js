@@ -18,12 +18,67 @@ function check_messages(after_check_fnc){
 
 		retrieve_agenda();
 
-		retrieve_stats();
+		var classrooms = Classes.get_notified();
+		for(var i in classrooms) {
+			retrieve_stats(classrooms[i]);
+		}
 	});
 
-	retrieve_gradeinfo();
+	retrieve_gradeinfo()
+
+	var classrooms = Classes.get_notified();
+	for(var i in classrooms) {
+		retrieve_final_grades(classrooms[i]);
+	}
 
 	retrieve_mail();
+}
+
+function retrieve_final_grades(classroom) {
+	var exped = get_exped();
+	if (!exped) {
+		return;
+	}
+
+	if (!classroom.subject_code || !classroom.all_events_completed()) {
+		return;
+	}
+
+	var args = {
+		"F": "edu.uoc.gat.cexped.AppFactory",
+		"I": [{
+			"O": 'Od9l_GxbvdWUtIsyoEt2IWynnbk=',
+			"P": [classroom.subject_code, exped]
+		}]
+	}
+	Queue.request( '/tren/trenacc/webapp/'+get_gat()+'.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
+		try {
+			var grades = resp.O.pop().P;
+			var prov = grades.numConvocatoriaActual ? false : true;
+			var types = ['C', 'P', 'FC', 'PS', 'PV', 'EX', 'PF',  'FE', 'FA'];
+
+			for(i in types) {
+				var type = types[i];
+				var lettername = "codCalif"+type;
+				var numbername = "numCalif"+type;
+				var letter = grades[lettername];
+				if(letter != undefined && letter != '' && letter != 'N') {
+					var nota = letter;
+					var number = grades[numbername];
+					if (number != undefined) {
+						nota += " " + number;
+					}
+					var grade = classroom.add_grade(type, nota, prov);
+					if (grade) {
+						grade.notify(classroom.get_acronym());
+					}
+				}
+			}
+		} catch(err) {
+			Debug.log(err);
+		}
+	});
+
 }
 
 function retrieve_mail() {
@@ -252,15 +307,24 @@ function parse_classroom_old(classr){
 
 function retrieve_gradeinfo() {
 	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', false, function(data, args) {
+		var exped = $(data).find('files>file>id').first().text().trim();
+		save_exped(exped);
+
 		$(data).find('asignatura>asignatura').each(function() {
 			var classroom = false;
-
+			var clas = this;
 			$(this).find('actividad>actividad').each(function() {
 				var eventid = $(this).find('pacId').text().trim();
 				if (!classroom) {
 					classroom = Classes.get_class_by_event(eventid);
 					if (!classroom) {
 						return;
+					}
+
+					// Save the real subject code
+					var subject_code = $(clas).find('codigo').first().text().trim();
+					if (subject_code.length > 0) {
+						classroom.subject_code = subject_code;
 					}
 				}
 
@@ -282,7 +346,7 @@ function retrieve_gradeinfo() {
 						if (evnt.graded != grade) {
 							evnt.graded = grade;
 							changed = true;
-							notify(_('__PRACT_GRADE__', [grade, evnt.name, classroom.get_acronym()]), 0);
+							evnt.notify(classroom.get_acronym());
 						}
 					}
 					if (changed) {
@@ -292,9 +356,9 @@ function retrieve_gradeinfo() {
 					var nota = $(this).find('nota').text().trim();
 					if (nota.length > 0 && nota != '-') {
 						var name = $(this).find('descripcion').text().trim();
-						var grade = classroom.add_grade(name, nota);
+						var grade = classroom.add_grade(name, nota, false);
 						if (grade) {
-							notify(_('__FINAL_GRADE__', [grade.grade, grade.get_title(), classroom.get_acronym()]), 0);
+							grade.notify(classroom.get_acronym());
 						}
 					}
 				}
@@ -303,16 +367,16 @@ function retrieve_gradeinfo() {
 			if (classroom) {
 				var nota = $(this).find('notaFinal').text().trim();
 				if (nota.length > 0 && nota != '-') {
-					var grade = classroom.add_grade('FA', nota);
+					var grade = classroom.add_grade('FA', nota, false);
 					if (grade) {
-						notify(_('__FINAL_GRADE__', [grade.grade, grade.get_title(), classroom.get_acronym()]), 0);
+						grade.notify(classroom.get_acronym());
 					}
 				}
 				var nota = $(this).find('notaFinalContinuada').text().trim();
 				if (nota.length > 0 && nota != '-') {
-					var grade = classroom.add_grade('FC', nota);
+					var grade = classroom.add_grade('FC', nota, false);
 					if (grade) {
-						notify(_('__FINAL_GRADE__', [grade.grade, grade.get_title(), classroom.get_acronym()]), 0);
+						grade.notify(classroom.get_acronym());
 					}
 				}
 			}
@@ -320,26 +384,20 @@ function retrieve_gradeinfo() {
 	});
 }
 
-function retrieve_stats() {
-	var classrooms = Classes.get_notified();
-	for(var i in classrooms) {
-		classroom = classrooms[i];
-
-		if (classroom.has_events() && classroom.all_events_completed() && !classroom.has_stats()) {
-			var args = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
-						assig: classroom.get_subject_code(),
-						pAnyAcademic: classroom.any
-					};
-			Queue.request('/tren/trenacc', args, 'GET', false, function(data) {
-				var index = data.indexOf("addRow");
-				if (index != -1) {
-					notify(_('__NOT_STATS__', [classroom.get_acronym()]), 0);
-					classroom.stats = true;
-				}
-			});
-		}
+function retrieve_stats(classroom) {
+	if (classroom.has_events() && classroom.all_events_completed() && !classroom.has_stats() && classroom.subject_code) {
+		var args = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
+					assig: classroom.subject_code,
+					pAnyAcademic: classroom.any
+				};
+		Queue.request('/tren/trenacc', args, 'GET', false, function(data) {
+			var index = data.indexOf("addRow");
+			if (index != -1) {
+				notify(_('__NOT_STATS__', [classroom.get_acronym()]), 0);
+				classroom.stats = true;
+			}
+		});
 	}
-
 }
 
 function retrieve_resource(classroom, resource){

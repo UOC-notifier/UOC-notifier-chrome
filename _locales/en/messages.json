@@ -62,6 +62,9 @@
     "__FINAL_GRADES__" : {
         "message" : "Final grades"
     },
+    "__PROV_GRADE__" : {
+        "message" : "Provisional grade"
+    },
     "__EXAM_SELECT__" : {
         "message" : "Exam sheet"
     },
@@ -272,6 +275,20 @@
     },
     "__FINAL_GRADE__" : {
         "message" : "You've got a $grade$ in $final$ of $class$",
+        "placeholders": {
+          "grade": {
+            "content": "$1"
+          },
+          "final": {
+            "content": "$2"
+          },
+          "class": {
+            "content": "$3"
+          }
+        }
+    },
+    "__FINAL_GRADE_PROV__" : {
+        "message" : "You've got a $grade$ in $final$ of $class$ (Provisional grade)",
         "placeholders": {
           "grade": {
             "content": "$1"

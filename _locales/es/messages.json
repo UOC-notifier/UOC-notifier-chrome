@@ -62,6 +62,9 @@
     "__FINAL_GRADES__" : {
         "message" : "Notas finales"
     },
+    "__PROV_GRADE__" : {
+        "message" : "Nota provisional"
+    },
     "__EXAM_SELECT__" : {
         "message" : "Hoja de pruebas"
     },
@@ -272,6 +275,20 @@
     },
     "__FINAL_GRADE__" : {
         "message" : "Has sacado una $grade$ en $final$ de $class$",
+        "placeholders": {
+          "grade": {
+            "content": "$1"
+          },
+          "final": {
+            "content": "$2"
+          },
+          "class": {
+            "content": "$3"
+          }
+        }
+    },
+    "__FINAL_GRADE_PROV__" : {
+        "message" : "Has sacado una $grade$ en $final$ de $class$ (Nota provisional)",
         "placeholders": {
           "grade": {
             "content": "$1"

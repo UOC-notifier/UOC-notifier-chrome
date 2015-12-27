@@ -312,7 +312,6 @@ var Queue = new function(){
         if (!data) {
             data = {};
         }
-        data.s = session;
         url = root_url_ssl + url;
 
         var ajax_request = {
@@ -320,12 +319,15 @@ var Queue = new function(){
         };
 
         if (type == 'GET') {
+            data.s = session;
             url += '?'+uri_data(data);
             ajax_request.data = false;
         } else if (type == 'json') {
+            var d = {s: session};
+            url += '?'+uri_data(d);
             ajax_request.type = 'POST';
             ajax_request.dataType = 'json';
-            ajax_request.contentType = 'application/json';
+            ajax_request.contentType = 'application/json; charset=UTF-8';
             ajax_request.processData = false;
             ajax_request.data = JSON.stringify(data);
         } else {

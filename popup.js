@@ -132,7 +132,7 @@ var UI = new function() {
 			var classroom = Classes.search_code(classroom_code);
 			var url = root_url + '/tren/trenacc';
 			var data = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
-						assig: classroom.get_subject_code(),
+						assig: classroom.subject_code,
 						pAnyAcademic: classroom.any};
 			open_tab(url, data);
 		});
@@ -284,7 +284,14 @@ var UI = new function() {
 			}
 
 			function only_grade(grade, colspan) {
-				return '<tr class="event bg-primary"><td class="name" colspan="'+colspan+'">'+ grade.get_title()+'</td><td class="graded">'+grade.grade+'</td></tr>';
+				if (grade.prov) {
+					var clas = "bg-warning";
+					var icon = ' <span class="glyphicon glyphicon-warning-sign text-danger"  aria-hidden="true" title="'+_('__PROV_GRADE__')+'"></span> ';
+				} else {
+					var clas = "bg-primary";
+					var icon = "";
+				}
+				return '<tr class="event '+clas+'"><td class="name" colspan="'+colspan+'">'+ grade.get_title()+'</td><td class="graded">'+icon+grade.grade+'</td></tr>';
 			}
 
 		}

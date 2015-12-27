@@ -176,6 +176,7 @@ var Classes = new function(){
 				classr.set_color(classl.color);
 				classr.any = classl.any;
 				classr.aula = classl.aula;
+				classr.subject_code = classl.subject_code;
 				classr.stats = classl.stats;
 				classr.consultor = classl.consultor;
 				classr.consultormail = classl.consultormail;
@@ -205,7 +206,7 @@ var Classes = new function(){
 					}
 					for(var j in classl.grades){
 						var g = classl.grades[j];
-						classr.add_grade(g.name, g.grade);
+						classr.add_grade(g.name, g.grade, g.prov);
 					}
 				}
 				this.add(classr);
@@ -263,6 +264,7 @@ function Classroom(title, code, domain, type, template){
 	this.domainassig = domain;
 	this.type = type;
 	this.template = template;
+	this.subject_code = false;
 	this.color = false;
 	this.any = false;
 	this.aula = false;
@@ -295,14 +297,6 @@ function Classroom(title, code, domain, type, template){
 		this.acronym =  this.type == 'TUTORIA' ? 'TUT'+this.aula : get_acronym(this.title);
 	}
 
-	this.get_subject_code = function(){
-		if(this.type != 'TUTORIA'){
-			var temp = code.split("_");
-			return temp[1]+'.'+temp[2];
-		}
-		return false;
-	}
-
 	this.set_notify = function(notify){
 		this.notify = notify;
 	};
@@ -312,12 +306,16 @@ function Classroom(title, code, domain, type, template){
 	};
 
 	// Adds a final grade returning if it changed
-	this.add_grade = function(name, grade) {
-		var g = new Grade(name, grade);
+	this.add_grade = function(name, grade, prov, notify) {
+		var g = new Grade(name, grade, prov);
 		for(var i in this.grades){
 			if (this.grades[i].code == g.code) {
-				if (this.grades[i].grade != g.grade) {
+				if (this.grades[i].grade != g.grade || (!prov && this.grades[i].prov)) {
 					this.grades[i].grade = grade;
+					if (!prov) {
+						// Only change when it becomes def
+						this.grades[i].prov = false;
+					}
 					return this.grades[i];
 				}
 				return false;
@@ -552,9 +550,10 @@ function Resource(title, code){
 	};
 }
 
-function Grade(name, grade) {
+function Grade(name, grade, prov) {
 	this.name = name;
 	this.grade = grade;
+	this.prov = prov;
 
 	switch (name) {
 		case 'Qualificació d\'avaluació continuada':
@@ -606,6 +605,14 @@ function Grade(name, grade) {
 			return _('__'+this.code+'__');
 		}
 		return this.name;
+	}
+
+	this.notify = function(acronym) {
+		if (this.prov) {
+			notify(_('__FINAL_GRADE_PROV__', [this.grade, this.get_title(), acronym]), 0);
+		} else {
+			notify(_('__FINAL_GRADE__', [this.grade, this.get_title(), acronym]), 0);
+		}
 	}
 }
 
@@ -668,5 +675,9 @@ function Event(name, id, type) {
 
 	this.is_completed = function(){
 		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading) && this.is_graded();
+	}
+
+	this.notify = function() {
+		notify(_('__PRACT_GRADE__', [this.graded, this.name, acronym]), 0);
 	}
 }
