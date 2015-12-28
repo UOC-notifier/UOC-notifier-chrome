@@ -310,10 +310,20 @@ function retrieve_gradeinfo() {
 		var exped = $(data).find('files>file>id').first().text().trim();
 		save_exped(exped);
 
-		$(data).find('asignatura>asignatura').each(function() {
+		$(data).find('listaAsignaturas asignatura').each(function() {
+			// If has a children of same type
+			if($(this).has('asignatura').length > 0) {
+				return;
+			}
 			var classroom = false;
-			var clas = this;
-			$(this).find('actividad>actividad').each(function() {
+			var subject_code = $(this).find('codigo').first().text().trim();
+
+			$(this).find('listaActividades actividad').each(function() {
+				// If has a children of same type
+				if($(this).has('actividad').length > 0) {
+					return;
+				}
+
 				var eventid = $(this).find('pacId').text().trim();
 				if (!classroom) {
 					classroom = Classes.get_class_by_event(eventid);
@@ -322,7 +332,6 @@ function retrieve_gradeinfo() {
 					}
 
 					// Save the real subject code
-					var subject_code = $(clas).find('codigo').first().text().trim();
 					if (subject_code.length > 0) {
 						classroom.subject_code = subject_code;
 					}

@@ -670,14 +670,14 @@ function Event(name, id, type) {
 	}
 
 	this.is_graded = function(){
-		return (!this.grading || this.graded);
+		return (!this.grading || this.graded);notify
 	}
 
 	this.is_completed = function(){
 		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading) && this.is_graded();
 	}
 
-	this.notify = function() {
+	this.notify = function(acronym) {
 		notify(_('__PRACT_GRADE__', [this.graded, this.name, acronym]), 0);
 	}
 }
