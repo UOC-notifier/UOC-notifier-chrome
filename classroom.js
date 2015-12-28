@@ -306,7 +306,7 @@ function Classroom(title, code, domain, type, template){
 	};
 
 	// Adds a final grade returning if it changed
-	this.add_grade = function(name, grade, prov, notify) {
+	this.add_grade = function(name, grade, prov) {
 		var g = new Grade(name, grade, prov);
 		for(var i in this.grades){
 			if (this.grades[i].code == g.code) {
@@ -670,7 +670,7 @@ function Event(name, id, type) {
 	}
 
 	this.is_graded = function(){
-		return (!this.grading || this.graded);notify
+		return (!this.grading || this.graded);
 	}
 
 	this.is_completed = function(){

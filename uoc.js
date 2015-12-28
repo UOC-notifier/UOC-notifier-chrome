@@ -62,7 +62,7 @@ function retrieve_final_grades(classroom) {
 				var lettername = "codCalif"+type;
 				var numbername = "numCalif"+type;
 				var letter = grades[lettername];
-				if(letter != undefined && letter != '' && letter != 'N') {
+				if (letter != undefined && letter != '' && letter != 'N') {
 					var nota = letter;
 					var number = grades[numbername];
 					if (number != undefined) {
