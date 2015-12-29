@@ -40,7 +40,7 @@ function retrieve_final_grades(classroom) {
 		return;
 	}
 
-	if (!classroom.subject_code || !classroom.all_events_completed()) {
+	if (!classroom.final_grades && (!classroom.subject_code || !classroom.all_events_completed())) {
 		return;
 	}
 
@@ -54,7 +54,7 @@ function retrieve_final_grades(classroom) {
 	Queue.request( '/tren/trenacc/webapp/'+get_gat()+'.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
 		try {
 			var grades = resp.O.pop().P;
-			var prov = grades.numConvocatoriaActual ? false : true;
+			var prov = grades.numConvocatoriaActual <= 0;
 			var types = ['C', 'P', 'FC', 'PS', 'PV', 'EX', 'PF',  'FE', 'FA'];
 
 			for(i in types) {
@@ -65,7 +65,7 @@ function retrieve_final_grades(classroom) {
 				if (letter != undefined && letter != '' && letter != 'N') {
 					var nota = letter;
 					var number = grades[numbername];
-					if (number != undefined) {
+					if (number != undefined && number != '') {
 						nota += " " + number;
 					}
 					var grade = classroom.add_grade(type, nota, prov);
@@ -74,8 +74,12 @@ function retrieve_final_grades(classroom) {
 					}
 				}
 			}
+
+			if (!prov) {
+				classroom.final_grades = true;
+			}
 		} catch(err) {
-			Debug.log(err);
+			Debug.error(err);
 		}
 	});
 

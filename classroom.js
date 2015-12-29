@@ -178,6 +178,7 @@ var Classes = new function(){
 				classr.aula = classl.aula;
 				classr.subject_code = classl.subject_code;
 				classr.stats = classl.stats;
+				classr.final_grades = classl.final_grades;
 				classr.consultor = classl.consultor;
 				classr.consultormail = classl.consultormail;
 				classr.consultorlastviewed = classl.consultorlastviewed;
@@ -269,6 +270,7 @@ function Classroom(title, code, domain, type, template){
 	this.any = false;
 	this.aula = false;
 	this.stats = false;
+	this.final_grades = false;
 	this.consultor = false;
 	this.consultormail = false;
 	this.consultorlastviewed = false;
