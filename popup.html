@@ -102,6 +102,49 @@ body {
 	cursor: pointer;
 }
 
+a:hover {
+	cursor: pointer;
+}
+
+.spinner {
+	display: none;
+}
+
+.spinner.show-always {
+	display: inline-block;
+}
+
+
+.has-spinner.spin {
+  cursor:progress;
+}
+
+.has-spinner.spin .spinner {
+	display: inline-block;
+    -webkit-animation: spin 1000ms infinite linear;
+    animation: spin 1000ms infinite linear;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
 </style>
 </head>
 <body>
@@ -116,7 +159,8 @@ body {
 				</div>
 				<div class="col-xs-7 text-center">
 					<div class="btn-group btn-group-sm" role="group">
-						<button type="button" class="btn btn-success button_details translatetit translateal" id="button_news" value="news" aria-label="__NEWS__" title="__NEWS__" data-toggle="button" aria-pressed="false">
+						<button type="button" class="btn btn-success button_details translatetit translateal has-spinner" id="button_news" value="news" aria-label="__NEWS__" title="__NEWS__" data-toggle="button" aria-pressed="false">
+							<span class="spinner"><span class="glyphicon glyphicon-refresh"></span> </span>
 					    	<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
 					  	</button>
 					  	<button type="button" class="btn btn-primary button_details translatetit translateal" id="button_agenda" value="agenda" aria-label="__AGENDA__" title="__AGENDA__" data-toggle="button" aria-pressed="false">
@@ -136,7 +180,8 @@ body {
 				<div class="col-xs-3">
 					<div class="btn-group btn-group-sm btn-group-justified" role="group">
 						<div class="btn-group" role="group">
-							<button type="button" id="update" class="btn btn-default btn-xs translatetit translateal" aria-label="__UPDATE__" title="__UPDATE__" style="padding: 5px;"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+							<button type="button" id="update" class="btn btn-default btn-xs translatetit translateal has-spinner" aria-label="__UPDATE__" title="__UPDATE__" style="padding: 5px;">
+							<span class="spinner show-always"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></span>
 						</div>
 						<div class="btn-group" role="group">
 							<button type="button" id="options" class="btn btn-default btn-xs translatetit translateal" aria-label="__OPTIONS__" title="__OPTIONS__" style="padding: 5px;"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button>

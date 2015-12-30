@@ -293,7 +293,7 @@ function parse_classroom_old(classr){
 		}
 		if (classroom) {
 			if(Classes.get_notify(classroom.code)) {
-				retrieve_users(classroom);
+				retrieve_consultor(classroom);
 
 				for(var j in classr.resources){
 					var resourcel = classr.resources[j];
@@ -435,7 +435,7 @@ function retrieve_resource(classroom, resource){
     });
 }
 
-function retrieve_users(classroom){
+function retrieve_consultor(classroom){
 	var args = {
 		classroomId : classroom.domain,
 		subjectId : classroom.domainassig
@@ -458,6 +458,18 @@ function retrieve_users(classroom){
 		} catch(err) {
     		Debug.error(err);
 		}
+    });
+}
+
+function retrieve_users(classroom, button){
+	var args = {
+		classroomId : classroom.domain,
+		subjectId : classroom.domainassig
+	};
+	Queue.set_after_function('nosave');
+	Queue.request('/webapps/aulaca/classroom/UsersList.action', args, 'GET', false, function(data) {
+		UI.fill_users(classroom.code, data);
+		$(button).removeClass('spin');
     });
 }
 
@@ -555,13 +567,14 @@ function retrieve_news(){
 		//userType: 'UOC-ESTUDIANT-gr06-a',
 		//hp_theme: 'false'
 	}
-
+	Queue.set_after_function('nosave');
 	Queue.request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', false, function(resp) {
 		resp = resp.replace(/<img/gi, '<noload');
 		resp = resp.replace(/\[\+\]/gi, '');
 		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
 		if (news != undefined) {
 			$('#detail_news').html(news);
+			$('#button_news').removeClass('spin');
 		}
 	});
 }

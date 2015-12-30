@@ -71,6 +71,15 @@
     "__STATS__" : {
         "message" : "Statistics"
     },
+    "__USERS__" : {
+        "message" : "Users"
+    },
+    "__CONNECTED__" : {
+        "message" : "Connected"
+    },
+    "__DISCONNECTED__" : {
+        "message" : "Disconnected"
+    },
     "__ENROLL_PROP__" : {
         "message" : "Enroll propose"
     },

@@ -274,10 +274,13 @@ var Queue = new function(){
                     ajax_do(session, pet.url, pet.data, pet.type, pet.reset, pet.success);
                 } else {
                     Debug.print('End of queue');
-                    Classes.save();
-                    if (after_function) {
-                        after_function();
+                    if (after_function != 'nosave') {
+                        Classes.save();
+                        if (after_function) {
+                            after_function();
+                        }
                     }
+                    after_function = false;
                 }
             }
         } else {

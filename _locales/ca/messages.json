@@ -71,6 +71,15 @@
     "__STATS__" : {
         "message" : "Estadístiques"
     },
+    "__USERS__" : {
+        "message" : "Usuaris"
+    },
+    "__CONNECTED__" : {
+        "message" : "Connectat"
+    },
+    "__DISCONNECTED__" : {
+        "message" : "Desconnectat"
+    },
     "__ENROLL_PROP__" : {
         "message" : "Proposta Matrícula"
     },

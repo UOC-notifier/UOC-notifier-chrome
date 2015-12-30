@@ -23,6 +23,8 @@ var UI = new function() {
 	}
 
 	function build() {
+		$('#update').removeClass('spin');
+
 		classrooms = Classes.get_notified();
 
 		// Total messages
@@ -76,7 +78,8 @@ var UI = new function() {
 		});
 
 		$('#update').click( function() {
-			check_messages(this.build);
+			$('#update').addClass('spin');
+			check_messages(build);
 		});
 
 		$('#options').click( function() {
@@ -195,6 +198,22 @@ var UI = new function() {
 			};
 			open_tab(url, data);
 		});
+
+		$('.showUsers').unbind( "click" );
+		$('.showUsers').click(function(){
+			var classroom_code = $(this).parents('.classroom').attr('classroom');
+			var classroom = Classes.search_code(classroom_code);
+			if( $('#users_'+classroom.code).hasClass('hidden') ) {
+				if($('#users_'+classroom.code).text() == '') {
+					$(this).addClass('spin');
+					retrieve_users(classroom, this);
+				}
+				$('#users_'+classroom.code).removeClass('hidden');
+			} else {
+				$(this).removeClass('spin');
+				$('#users_'+classroom.code).addClass('hidden');
+			}
+		});
 	}
 
 	function ClassroomUI(classroom) {
@@ -222,7 +241,7 @@ var UI = new function() {
 								<div class="col-xs-3">' + badge(c.messages, 'linkAula', '-', _('__GOTO_CLASS__')) + '</div> \
 							</div> \
 						</div>\
-						<div class="panel-body bg-info text-info collapse" id="detail_'+c.code+'">'+ classrooms_buttons() + resources_html + events() + '</div> \
+						<div class="panel-body bg-info text-info collapse" id="detail_'+c.code+'">'+ classrooms_buttons() + users() + resources_html + events() + '</div> \
 					</div>';
 			return content;
 		}
@@ -239,6 +258,10 @@ var UI = new function() {
 			} else {
 				return '<li class="resource" '+link+' resource="'+resource.code+'"><a href="#" class="linkResource">'+resource.title+'</a></li>';
 			}
+		}
+
+		function users() {
+			return '<div id="users_'+c.code+'" class="hidden row-fluid well"></div>';
 		}
 
 		function events() {
@@ -298,7 +321,7 @@ var UI = new function() {
 
 		function classrooms_buttons(){
 			var buttons = "";
-			var text = "";
+			var text = '<div class="row-fluid clearfix">';
 
 			if(c.has_stats()) {
 				buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('__STATS__')+'" title="'+_('__STATS__')+'">\
@@ -313,6 +336,11 @@ var UI = new function() {
 			    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
 			  	</button>';
 			}
+
+			buttons += '<button type="button" class="showUsers btn btn-info has-spinner" aria-label="'+_('__USERS__')+'" title="'+_('__USERS__')+'" data-toggle="button">\
+					<span class="spinner"><span class="glyphicon glyphicon-refresh"></span></span> \
+			    	<span class="glyphicon glyphicon-user" aria-hidden="true"></span>\
+			  	</button>';
 
 			if (c.consultor) {
 				var title = _('__TEACHER__')+': '+c.consultor;
@@ -339,6 +367,8 @@ var UI = new function() {
 				text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
 			    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('__GRADES__') +'</button></div>';
 		    }
+
+		    text += '</div>';
 		  	return text;
 		}
 
@@ -365,6 +395,7 @@ var UI = new function() {
 			var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js';
 			var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsGetURLNovetatsExternesWithProviderServlet??up_isNoticiesInstitucionals=false&up_title=Novetats%2520i%2520noticies&up_maximized=true&up_maxDestacades=2&up_showImages=true&up_slide=false&up_sortable=true&up_ck=nee&up_rssUrlServiceProviderHTML=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant_widget_nou.js&up_maxAltres=5&up_rssUrlServiceProvider=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js&up_fxml=html&up_target=noticies.jsp&libs='+libs+'&fromCampus=true&lang=ca&country=ES&color=&userType=UOC-ESTUDIANT-gr06-a&hp_theme=false&s='+session;
 			$('#detail_news').html('<iframe src="'+src+'"></iframe>');*/
+			$(this).addClass('spin');
 			retrieve_news();
 		}
 	}
@@ -794,6 +825,53 @@ var UI = new function() {
 				url += session;
 			}
 			open_new_tab(url);
+		}
+	}
+
+	this.fill_users = function(classcode, data) {
+		$('#users_'+classcode).html(data);
+		var text = "";
+		var connected = "";
+		var idp = get_idp();
+		for(x in data.studentUsers) {
+			var user = data.studentUsers[x];
+			if(user.userNumber == idp) {
+				continue;
+			}
+
+			if (user.connected) {
+				var title = _('__CONNECTED__');
+				var clas = 'success';
+			} else if (user.lastLoginTime) {
+				var title = _('__VIEWED_LAST_TIME__', [getDate(user.lastLoginTime), getTime(user.lastLoginTime)]);
+				var clas = 'warning';
+			} else {
+				var title = _('__DISCONNECTED__');
+				var clas = 'warning';
+			}
+
+		  	var usertext = '<li><a class="linkMail text-'+clas+'" mail="'+user.email+' "aria-label="'+title+'" title="'+title+' - '+user.email+'">\
+		    	<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> '+ user.fullName+ '\
+		  	</a> ';
+		  	if (user.connected) {
+		  		connected += usertext;
+		  	} else {
+		  		text += usertext;
+		  	}
+		}
+		text = connected + text;
+
+		if (text != "") {
+			$('#users_'+classcode).html('<ul>'+text+'</ul>');
+			$('.linkMail').unbind( "click" );
+			$('.linkMail').click(function(){
+				var mail = $(this).attr('mail');
+				var url = root_url+"/WebMail/writeMail.do";
+				var data = {
+					to: mail
+				};
+				open_tab(url, data);
+			});
 		}
 	}
 }
