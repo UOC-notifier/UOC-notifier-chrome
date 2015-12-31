@@ -246,6 +246,9 @@
           }
         }
     },
+    "__UOC_WORKING__" : {
+        "message" : "UOC is back"
+    },
     "__PRACT_START__" : {
         "message" : "$pract$ of $class$ starts today",
         "placeholders": {

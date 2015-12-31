@@ -24,7 +24,7 @@ function check_messages(after_check_fnc){
 		}
 	});
 
-	retrieve_gradeinfo()
+	retrieve_gradeinfo();
 
 	var classrooms = Classes.get_notified();
 	for(var i in classrooms) {
@@ -51,7 +51,8 @@ function retrieve_final_grades(classroom) {
 			"P": [classroom.subject_code, exped]
 		}]
 	}
-	Queue.request( '/tren/trenacc/webapp/'+get_gat()+'.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
+	// Always GAT_EXP, not dependant on UOCi
+	Queue.request( '/tren/trenacc/webapp/GAT_EXP.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
 		try {
 			var grades = resp.O.pop().P;
 			var prov = grades.numConvocatoriaActual <= 0;
@@ -643,6 +644,9 @@ var Session = new function(){
 					    	var matchs = resp.match(/campusSessionId = ([^\n]*)/);
 							if (matchs) {
 								var session = matchs[1];
+								if(!get_working()) {
+									notify(_('__UOC_WORKING__'));
+								}
 								save_session(session);
 								Debug.print('Session! '+session);
 								Queue.run();
@@ -654,6 +658,7 @@ var Session = new function(){
 								if (typeof login_failed == 'function') {
 									login_failed();
 								}
+								not_working();
 							}
 					    })
 					    .fail(function() {
@@ -666,6 +671,9 @@ var Session = new function(){
 						var matchs = resp.match(/campusSessionId = ([^\n]*)/);
 						if (matchs) {
 							var session = matchs[1];
+							if(!get_working()) {
+								notify(_('__UOC_WORKING__'));
+							}
 							save_session(session);
 							Debug.print('Session! '+session);
 							Queue.run();
@@ -677,6 +685,7 @@ var Session = new function(){
 							if (typeof login_failed == 'function') {
 								login_failed();
 							}
+							not_working();
 						}
 					}
 				})

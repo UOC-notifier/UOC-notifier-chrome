@@ -246,6 +246,9 @@
           }
         }
     },
+    "__UOC_WORKING__" : {
+        "message" : "La UOC ha tornat"
+    },
     "__PRACT_START__" : {
         "message" : "Avui comença la $pract$ de $class$",
         "placeholders": {

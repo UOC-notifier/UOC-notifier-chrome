@@ -194,12 +194,21 @@ function get_session() {
 
 function save_session(session){
 	Storage.set_option("session", session);
+	Storage.set_option("working", true);
 }
 
 function reset_session(){
 	Debug.print('Session resetted');
 	Storage.unset_option("session");
 	Session.reset_retrieve();
+}
+
+function get_working() {
+	return Storage.get_option_bool("working", false);
+}
+
+function not_working() {
+	Storage.get_option_bool("working", false);
 }
 
 // RUNNING - TOTAL MESSAGES

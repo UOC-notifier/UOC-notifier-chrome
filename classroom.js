@@ -559,6 +559,7 @@ function Grade(name, grade, prov) {
 
 	switch (name) {
 		case 'Qualificació d\'avaluació continuada':
+		case 'Calificación final':
 		case 'C':
 			this.code = 'C';
 			this.pos = 1;
