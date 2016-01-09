@@ -309,6 +309,7 @@ function Classroom(title, code, domain, type, template){
 
 	// Adds a final grade returning if it changed
 	this.add_grade = function(name, grade, prov) {
+		grade = grade.replace('.', ',');
 		var g = new Grade(name, grade, prov);
 		for(var i in this.grades){
 			if (this.grades[i].code == g.code) {
@@ -677,7 +678,7 @@ function Event(name, id, type) {
 	}
 
 	this.is_completed = function(){
-		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading) && this.is_graded();
+		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading);
 	}
 
 	this.notify = function(acronym) {

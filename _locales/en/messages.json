@@ -87,7 +87,7 @@
         "message" : "Enrollment"
     },
     "__GRADES_SMS__" : {
-        "message" : "Grades by SMS"
+        "message" : "Grades by e-mail"
     },
     "__EXPEDIENT__" : {
         "message" : "Expedient"

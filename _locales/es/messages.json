@@ -87,7 +87,7 @@
         "message" : "Matrícula"
     },
     "__GRADES_SMS__" : {
-        "message" : "Notas por SMS"
+        "message" : "Notas por correo-e"
     },
     "__EXPEDIENT__" : {
         "message" : "Expediente"

@@ -734,7 +734,7 @@ var UI = new function() {
 			if(ev.link != 'undefined'){
 				var link = 'link="'+ev.link+'"';
 			}
-			var dgrade = eventtext(ev.graded, "graded");
+			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, "");
 
 			var title = "";
 			if (ev.is_assignment()) {

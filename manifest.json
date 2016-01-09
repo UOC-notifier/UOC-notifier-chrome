@@ -20,5 +20,5 @@
    "name": "__MSG_TITLE__",
    "options_page": "options.html",
    "permissions": [ "http://cv.uoc.edu/", "https://cv.uoc.edu/", "notifications", "alarms"],
-   "version": "1.73"
+   "version": "1.74"
 }
