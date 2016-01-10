@@ -585,6 +585,7 @@ function Grade(name, grade, prov) {
 			this.pos = 1;
 			break;
 		case 'nota final activitats pràctiques':
+		case 'nota final de actividades prácticas':
 		case 'qualificació final dactivitats pràctiques':
 		case 'calificación final de actividades prácticas':
 		case 'p':
