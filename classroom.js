@@ -76,6 +76,16 @@ var Classes = new function(){
 		return false;
 	};
 
+	this.search_subject_code = function(subject_code){
+		for(var i in classes){
+			if(classes[i].subject_code == subject_code){
+				return classes[i];
+			}
+		}
+		return false;
+	};
+
+
 	this.get_class_by_event = function(eventid) {
 		for(var i in classes) {
 			if (classes[i].notify) {
@@ -179,6 +189,7 @@ var Classes = new function(){
 				classr.subject_code = classl.subject_code;
 				classr.stats = classl.stats;
 				classr.final_grades = classl.final_grades;
+				classr.exams = classl.exams;
 				classr.consultor = classl.consultor;
 				classr.consultormail = classl.consultormail;
 				classr.consultorlastviewed = classl.consultorlastviewed;
@@ -281,6 +292,7 @@ function Classroom(title, code, domain, type, template){
 	this.resources = [];
 	this.events = [];
 	this.grades = [];
+	this.exams = false;
 
 	this.set_color = function(color){
 		if(color && color != 'undefined' && color != 'false'){
@@ -558,55 +570,74 @@ function Grade(name, grade, prov) {
 	this.grade = grade;
 	this.prov = prov;
 
-	switch (name) {
-		case 'Qualificació d\'avaluació continuada':
-		case 'Calificación final':
-		case 'C':
+	name = name.toLowerCase();
+	name = name.replace('\'', '');
+	switch (name.toLowerCase()) {
+		case 'qualificació davaluació continuada':
+		case 'calificación de evaluación continuada':
+		case 'calificación final':
+		case 'c':
 			this.code = 'C';
 			this.pos = 1;
 			break;
-		case 'Nota final activitats pràctiques':
-		case 'P':
+		case 'nota final activitats pràctiques':
+		case 'qualificació final dactivitats pràctiques':
+		case 'calificación final de actividades prácticas':
+		case 'p':
 			this.code = 'P';
 			this.pos = 2;
 			break;
-		case 'FC':
+		case 'qualificació final davaluació continuada':
+		case 'calificación final de evaluación continuada':
+		case 'fc':
 			this.code = 'FC';
 			this.pos = 3;
 			break;
-		case 'PS':
+		case 'prova de síntesi':
+		case 'prueba de síntesis':
+		case 'ps':
 			this.code = 'PS';
 			this.pos = 4;
 			break;
-		case 'PV':
+		case 'prova de validació':
+		case 'prueba de validación':
+		case 'pv':
 			this.code = 'PV';
 			this.pos = 5;
 			break;
-		case 'EX':
+		case 'exàmen':
+		case 'exámen':
+		case 'ex':
 			this.code = 'EX';
 			this.pos = 6;
 			break;
-		case 'PF':
+		case 'prova final':
+		case 'prueba final':
+		case 'pf':
 			this.code = 'PF';
 			this.pos = 7;
 			break;
-		case 'FE':
+		case 'qualificació final dexàmens (p+ex)':
+		case 'calificación final de exámenes (p+ex)':
+		case 'fe':
 			this.code = 'FE';
 			this.pos = 8;
 			break;
-		case 'FA':
+		case 'qualificació final de lassignatura':
+		case 'calificación final de la asignatura':
+		case 'fa':
 			this.code = 'FA';
 			this.pos = 9;
 			break;
 		default:
 			this.code = false;
 			this.pos = 10;
-			Debug.error('Grade type not recognized: '+name);
+			Debug.error('Grade type not recognized: '+this.name);
 	}
 
 	this.get_title = function(){
 		if (this.code) {
-			return _('__'+this.code+'__');
+			return _('__'+this.code+'__') + ' ('+this.code+')';
 		}
 		return this.name;
 	}

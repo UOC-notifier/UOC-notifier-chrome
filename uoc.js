@@ -25,6 +25,7 @@ function check_messages(after_check_fnc){
 	});
 
 	retrieve_gradeinfo();
+	retrieve_final_exams_event();
 
 	var classrooms = Classes.get_notified();
 	for(var i in classrooms) {
@@ -79,6 +80,55 @@ function retrieve_final_grades(classroom) {
 			if (!prov) {
 				classroom.final_grades = true;
 			}
+		} catch(err) {
+			Debug.error(err);
+		}
+	});
+
+}
+
+function retrieve_final_exams_event() {
+	var idp = get_idp();
+	if (!idp) {
+		return;
+	}
+
+	var any = Classes.get_max_any()
+	var args = {
+		"F": "edu.uoc.gepaf.fullpersonalpaf.AppFactory",
+		"I": [{
+			"O": 'xUK0l32plsYSkUc00vYpZ2oukRM=',
+			"P": ['' + any, "1", '' + idp, "ESTUDIANT"]
+		}]
+	}
+	// Always GAT_EXP, not dependant on UOCi
+	Queue.request( '/tren/trenacc/webapp/GEPAF.FULLPERSONAL/gwtRequest', args, 'json', false, function(resp) {
+		try {
+			var objects = resp.O;
+			for (x in objects) {
+				var object = objects[x].P;
+				if (object.veureAula) {
+					var code = object.codAssignatura;
+					classroom = Classes.search_subject_code(code);
+					if (classroom) {
+						var exam = {};
+						if (object.indExam == 'S') {
+							exam.date = getDate_slash(object.dataExamenFormatada);
+							exam.seu =  object.descSeu;
+							exam.timeEX =  getTimeFromNumber(object.horaIniciExamen) + ' - ' + getTimeFromNumber(object.horaFiExamen);
+							exam.placeEX =  object.llocExam;
+						}
+						if (object.indProva == 'S') {
+							exam.date = getDate_slash(object.dataExamenFormatada);
+							exam.seu = object.descSeu;
+							exam.timePS =  getTimeFromNumber(object.horaIniciProva) + ' - ' + getTimeFromNumber(object.horaFiProva);
+							exam.placePS = object.llocProva;
+						}
+						classroom.exams = exam;
+					}
+				}
+			}
+
 		} catch(err) {
 			Debug.error(err);
 		}

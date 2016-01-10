@@ -110,6 +110,42 @@
     "__WORKING_GROUPS__" : {
         "message" : "Grups de treball"
     },
+    "__FINAL_TESTS__" : {
+        "message" : "Proves d'avaluacio final a $seu$ el dia $date$",
+        "placeholders": {
+          "date": {
+            "content": "$1"
+          },
+          "seu": {
+            "content": "$2"
+          }
+        }
+    },
+    "__FINAL_TESTS_CLASS__" : {
+        "message" : "$class$ - Proves d'avaluacio final",
+        "placeholders": {
+          "class": {
+            "content": "$1"
+          }
+        }
+    },
+    "__FINAL_TESTS_CLASS_TITLE__" : {
+        "message" : "$time$ $type$ a $seu$ $place$",
+        "placeholders": {
+          "type": {
+            "content": "$1"
+          },
+          "time": {
+            "content": "$2"
+          },
+          "seu": {
+            "content": "$3"
+          },
+          "place": {
+            "content": "$4"
+          }
+        }
+    },
     "__COMMITTED__" : {
         "message" : "Entregat"
     },

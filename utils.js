@@ -21,6 +21,14 @@ function getDate_hyphen(date) {
     return sp[2]+"/"+sp[1]+"/"+(sp[0] - 2000);
 }
 
+function getDate_slash(date) {
+    var sp = date.split('/');
+    if (sp.length <= 2) {
+        return "";
+    }
+    return sp[0]+"/"+sp[1]+"/"+(sp[2] - 2000);
+}
+
 function getDate(date) {
     var sp = date.split('T');
     sp = sp[0].split('-');
@@ -40,6 +48,14 @@ function getTime(date) {
         return "";
     }
     return sp[0]+":"+sp[1];
+}
+
+function getTimeFromNumber(number) {
+    var mins = number % 100;
+    if (mins < 10) {
+        mins = mins + '0';
+    }
+    return Math.floor(number / 100) +':'+ mins;
 }
 
 function isToday(date) {

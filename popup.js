@@ -234,6 +234,37 @@ var UI = new function() {
 				resources_html = '<ul class="container-fluid resources">' + resources_html + '</ul>';
 			}
 
+			var exams = "";
+			var nearexams = false;
+			if (classroom.exams && classroom.exams.date && !isBeforeToday(classroom.exams.date)) {
+
+				if (classroom.exams.timeEX) {
+					exams += '<div><a href="#" class="linkResource" title="'+classroom.exams.placeEX+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__EX__') + ' ' + classroom.exams.timeEX + '</a></div>';
+				}
+				if (classroom.exams.timePS) {
+					exams += '<div><a href="#" class="linkResource" title="'+classroom.exams.placePS+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__PS__') + ' ' + classroom.exams.timePS + '</a></div>';
+				}
+				if (exams != "") {
+					var link = root_url+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
+
+					var limit = get_today_limit();
+					nearexams = isNearDate(classroom.exams.date, limit);
+					var clas = nearexams ? 'success' : 'warning';
+					exams = '<div class="resource alert alert-'+clas+'" link="'+link+'">'+ _('__FINAL_TESTS__', [classroom.exams.date, classroom.exams.seu]) + exams + '</div>';
+				}
+			}
+
+			var text = classrooms_buttons() + users();
+			if (nearexams) {
+				text += exams;
+			}
+
+			text += resources_html + events();
+
+			if (!nearexams) {
+				text += exams;
+			}
+
 			return '<div class="classroom panel panel-warning" classroom="'+c.code+'">  \
 						<div class="panel-heading container-fluid" '+color(c.color)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+c.code+'">	\
 							<div class="row">\
@@ -241,7 +272,7 @@ var UI = new function() {
 								<div class="col-xs-3">' + badge(c.messages, 'linkAula', '-', _('__GOTO_CLASS__')) + '</div> \
 							</div> \
 						</div>\
-						<div class="panel-body bg-info text-info collapse" id="detail_'+c.code+'">'+ classrooms_buttons() + users() + resources_html + events() + '</div> \
+						<div class="panel-body bg-info text-info collapse" id="detail_'+c.code+'">'+ text + '</div> \
 					</div>';
 			return content;
 		}
@@ -497,6 +528,28 @@ var UI = new function() {
 							events_today.push(classroom.events[j]);
 						}
 					}
+				}
+
+				// Final tests
+				if (classroom.exams && classroom.exams.date && isNearDate(classroom.exams.date, limit)) {
+					var name = _('__FINAL_TESTS_CLASS__', [classroom.get_acronym()]);
+					var title = "";
+					if (classroom.exams.timeEX) {
+						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.seu, classroom.exams.placeEX]);
+					}
+					if (classroom.exams.timePS) {
+						if (title != "") {
+							title += "\n";
+						}
+						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.seu, classroom.exams.placePS]);
+					}
+					if (title != "") {
+						name = '<span title ="'+title+'">'+ name + '</span>';
+					}
+					var evnt = new Event(name, '', 'UOC');
+					evnt.start = classroom.exams.date;
+					evnt.link = root_url+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
+					events_today.push(evnt);
 				}
 			}
 
