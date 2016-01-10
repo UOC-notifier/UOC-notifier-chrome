@@ -327,6 +327,11 @@ function Classroom(title, code, domain, type, template){
 		var g = new Grade(name, grade, prov);
 		for(var i in this.grades){
 			if (this.grades[i].code == g.code) {
+				if (!this.grades[i].prov && prov) {
+					// Change to not provisional not allowed
+					return false;
+				}
+
 				if (this.grades[i].grade != g.grade || (!prov && this.grades[i].prov)) {
 					this.grades[i].grade = grade;
 					if (!prov) {
@@ -570,9 +575,9 @@ function Resource(title, code){
 }
 
 function Grade(name, grade, prov) {
-	this.name = name;
 	this.grade = grade;
 	this.prov = prov;
+	this.name = name;
 
 	name = name.toLowerCase();
 	name = name.replace('\'', '');
@@ -638,6 +643,10 @@ function Grade(name, grade, prov) {
 			this.code = false;
 			this.pos = 10;
 			Debug.error('Grade type not recognized: '+this.name);
+	}
+
+	if (this.code) {
+		this.name = this.code;
 	}
 
 	this.get_title = function(){
