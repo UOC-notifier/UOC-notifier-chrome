@@ -349,6 +349,17 @@
           }
         }
     },
+    "__COMMENT__" : {
+        "message" : "Comentari (el dia $date$ a les $time$)",
+        "placeholders": {
+          "date": {
+            "content": "$1"
+          },
+          "time": {
+            "content": "$2"
+          }
+        }
+    },
     "__NOT_STATS__" : {
         "message" : "Han sortit les estadístiques de $class$",
         "placeholders": {

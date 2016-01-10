@@ -401,7 +401,14 @@ function retrieve_gradeinfo() {
 						evnt.committed = true;
 						var viewed = $(this).find('listaEntregas>entrega').last().find('fechaDescargaConsultor').html();
 						evnt.viewed = viewed && viewed.length ? viewed: false;
-						classroom.add_event(evnt);
+						changed = true;
+					}
+
+					var comments = $(this).find('listaComentarios>comentario').length > 0;
+					if (comments) {
+						var lastcomment = $(this).find('listaComentarios>comentario').last();
+						evnt.commenttext = lastcomment.find('texto').html();
+						evnt.commentdate= lastcomment.find('fechaComentario').html();
 						changed = true;
 					}
 

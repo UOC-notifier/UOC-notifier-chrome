@@ -715,7 +715,15 @@ var UI = new function() {
 			var dstart = eventdate(ev.start, "");
 			var dend = eventdate(ev.end, "end");
 			var dsol = eventdate(ev.solution, "");
-			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, "");
+			if (ev.graded) {
+				var grad = ev.graded;
+				if (ev.commenttext) {
+					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
+				}
+				var dgrade = eventtext(grad, "graded", ev.grading);
+			} else {
+				var dgrade = eventdate(ev.grading, "");
+			}
 
 			var title = "";
 			if (ev.is_assignment()) {
@@ -756,7 +764,15 @@ var UI = new function() {
 			var dstart = eventdate(ev.start, isNearDate(ev.start, limit) ? "near" : "");
 			var dend = eventdate(ev.end, isNearDate(ev.end, limit) ? "end near" : "end");
 			var dsol = eventdate(ev.solution, isNearDate(ev.solution, limit) ? "near" : "");
-			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, isNearDate(ev.grading, limit) ? "near" : "");
+			if (ev.graded) {
+				var grad = ev.graded;
+				if (ev.commenttext) {
+					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
+				}
+				var dgrade = eventtext(grad, "graded", ev.grading);
+			} else {
+				var dgrade = eventdate(ev.grading, isNearDate(ev.grading, limit) ? "near" : "");
+			}
 
 			var title = "";
 			if (ev.is_assignment()) {
@@ -787,7 +803,15 @@ var UI = new function() {
 			if(ev.link != 'undefined'){
 				var link = 'link="'+ev.link+'"';
 			}
-			var dgrade = ev.graded ? eventtext(ev.graded, "graded", ev.grading): eventdate(ev.grading, "");
+			if (ev.graded) {
+				var grad = ev.graded;
+				if (ev.commenttext) {
+					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
+				}
+				var dgrade = eventtext(grad, "graded", ev.grading);
+			} else {
+				var dgrade = eventdate(ev.grading, "");
+			}
 
 			var title = "";
 			if (ev.is_assignment()) {
