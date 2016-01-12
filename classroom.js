@@ -1,12 +1,12 @@
-var Classes = new function(){
+var Classes = new function() {
 	var classes = [];
 	this.messages = 0;
 	this.notified_messages = 0;
 	var events = [];
 
-	this.add = function(classr){
+	this.add = function(classr) {
 		var idx = this.get_index(classr.code);
-		if(idx !== false){
+		if (idx !== false) {
 			classr.notify = classes[idx].notify;
 			classes[idx] = classr;
 		} else {
@@ -14,12 +14,12 @@ var Classes = new function(){
 		}
 	};
 
-	this.add_event = function(evnt){
+	this.add_event = function(evnt) {
 		// Do not add past events
 		if (isBeforeToday(evnt.start) || evnt.eventId == undefined) {
 			return;
 		}
-		for(var idx in events){
+		for (var idx in events) {
 			if(events[idx].eventId == evnt.eventId) {
 				events[idx].name = evnt.name;
 				events[idx].eventId = evnt.eventId;
@@ -35,7 +35,7 @@ var Classes = new function(){
 		return events;
 	}
 
-	this.save = function(){
+	this.save = function() {
 		this.count_messages();
 		set_messages();
 		Debug.print(classes);
@@ -57,7 +57,7 @@ var Classes = new function(){
 		    return 0;
 		});
 
-		for(var i in classes){
+		for (var i in classes) {
 			if (classes[i].notify) {
 				classes[i].sort_things();
 			}
@@ -67,18 +67,18 @@ var Classes = new function(){
 		Storage.set_option("events", JSON.stringify(events));
 	};
 
-	this.search_code = function(code){
-		for(var i in classes){
-			if(classes[i].code == code){
+	this.search_code = function(code) {
+		for (var i in classes) {
+			if (classes[i].code == code) {
 				return classes[i];
 			}
 		}
 		return false;
 	};
 
-	this.search_subject_code = function(subject_code){
-		for(var i in classes){
-			if(classes[i].subject_code == subject_code){
+	this.search_subject_code = function(subject_code) {
+		for (var i in classes) {
+			if (classes[i].subject_code == subject_code) {
 				return classes[i];
 			}
 		}
@@ -136,16 +136,16 @@ var Classes = new function(){
 		this.save();
 	}
 
-	this.get_index = function(code){
-		for(var i in classes){
-			if(classes[i].code == code){
+	this.get_index = function(code) {
+		for (var i in classes) {
+			if (classes[i].code == code) {
 				return i;
 			}
 		}
 		return false;
 	};
 
-	this.get_notify = function (code){
+	this.get_notify = function (code) {
 		var idx = this.get_index(code);
 		if (idx === false) {
 			// New Classrooms won\'t be notified
@@ -154,32 +154,32 @@ var Classes = new function(){
 		return classes[idx].notify;
 	}
 
-	this.search_domain = function(domain){
-		for(var i in classes){
-			if(classes[i].domain == domain){
+	this.search_domain = function(domain) {
+		for (var i in classes) {
+			if (classes[i].domain == domain) {
 				return classes[i];
 			}
 		}
 		return false;
 	};
 
-	this.search_domainassig = function(domain){
-		for(var i in classes){
-			if(classes[i].domainassig == domain){
+	this.search_domainassig = function(domain) {
+		for (var i in classes) {
+			if (classes[i].domainassig == domain) {
 				return classes[i];
 			}
 		}
 		return false;
 	};
 
-	this.load = function (){
+	this.load = function () {
 		var classroom = Storage.get_option("classes", false);
 		if (classroom) {
 			classes = [];
 			this.messages = 0;
 			this.notified_messages = 0;
 			var classesl = JSON.parse(classroom);
-			for(var i in classesl){
+			for (var i in classesl) {
 				var classl = classesl[i];
 				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type, classl.template);
 				classr.domainassig = classl.domainassig;
@@ -194,8 +194,8 @@ var Classes = new function(){
 				classr.consultormail = classl.consultormail;
 				classr.consultorlastviewed = classl.consultorlastviewed;
 				classr.set_notify(classl.notify);
-				if(classl.notify) {
-					for(var j in classl.resources){
+				if (classl.notify) {
+					for (var j in classl.resources) {
 						var resourcel = classl.resources[j];
 						var resource = new Resource(resourcel.title, resourcel.code);
 						resource.set_messages(resourcel.messages, resourcel.all_messages);
@@ -203,7 +203,7 @@ var Classes = new function(){
 						resource.set_link(resourcel.link);
 						classr.add_resource(resource);
 					}
-					for(var j in classl.events){
+					for (var j in classl.events) {
 						var evl = classl.events[j];
 						var ev = new Event(evl.name, evl.eventId, evl.type);
 						ev.start = evl.start;
@@ -218,7 +218,7 @@ var Classes = new function(){
 						ev.commentdate = evl.commentdate;
 						classr.add_event(ev);
 					}
-					for(var j in classl.grades){
+					for (var j in classl.grades) {
 						var g = classl.grades[j];
 						classr.add_grade(g.name, g.grade, g.prov);
 					}
@@ -241,26 +241,26 @@ var Classes = new function(){
 		}
 	};
 
-	this.get_all = function (){
+	this.get_all = function () {
 		return classes;
 	};
 
-	this.get_notified = function (){
+	this.get_notified = function () {
 		var classrooms = [];
-		for(var i in classes){
-			if(classes[i].notify){
+		for (var i in classes) {
+			if (classes[i].notify) {
 				classrooms.push(classes[i]);
 			}
 		}
 		return classrooms;
 	};
 
-	this.count_messages = function(){
+	this.count_messages = function() {
 		var classrooms = this.get_all();
 		this.notified_messages = 0;
 		this.messages = 0;
-		for(var i in classrooms){
-			if(classrooms[i].notify){
+		for (var i in classrooms) {
+			if (classrooms[i].notify) {
 				this.notified_messages += classrooms[i].messages;
 			}
 			this.messages += classrooms[i].messages;
@@ -271,7 +271,7 @@ var Classes = new function(){
 	this.load();
 }
 
-function Classroom(title, code, domain, type, template){
+function Classroom(title, code, domain, type, template) {
 	this.title = title;
 	this.code = code;
 	this.domain = domain;
@@ -296,8 +296,8 @@ function Classroom(title, code, domain, type, template){
 	this.grades = [];
 	this.exams = false;
 
-	this.set_color = function(color){
-		if(color && color != 'undefined' && color != 'false'){
+	this.set_color = function(color) {
+		if(color && color != 'undefined' && color != 'false') {
 			this.color = color;
 		}
 	};
@@ -313,11 +313,11 @@ function Classroom(title, code, domain, type, template){
 		this.acronym =  this.type == 'TUTORIA' ? 'TUT'+this.aula : get_acronym(this.title);
 	}
 
-	this.set_notify = function(notify){
+	this.set_notify = function(notify) {
 		this.notify = notify;
 	};
 
-	this.reset_messages = function(){
+	this.reset_messages = function() {
 		this.messages = 0;
 	};
 
@@ -325,8 +325,8 @@ function Classroom(title, code, domain, type, template){
 	this.add_grade = function(name, grade, prov) {
 		grade = grade.replace('.', ',');
 		var g = new Grade(name, grade, prov);
-		for(var i in this.grades){
-			if (this.grades[i].code == g.code) {
+		for (var i in this.grades) {
+			if (this.grades[i].name == g.name) {
 				if (!this.grades[i].prov && prov) {
 					// Change to not provisional not allowed
 					return false;
@@ -347,15 +347,15 @@ function Classroom(title, code, domain, type, template){
 		return g;
 	}
 
-	this.add_resource = function(resource){
+	this.add_resource = function(resource) {
 		if(!this.notify) return;
 
 		var idx = this.get_index(resource.code, resource.lcode);
-		if(idx >= 0){
+		if (idx >= 0) {
 			this.resource_merge(idx, resource);
 		} else {
 			this.resources.push(resource);
-			if(resource.messages != '-'){
+			if (resource.messages != '-') {
 				this.messages += resource.messages;
 			}
 		}
@@ -399,8 +399,8 @@ function Classroom(title, code, domain, type, template){
 		});
 	}
 
-	this.get_index = function(code, lcode){
-		for(var i in this.resources){
+	this.get_index = function(code, lcode) {
+		for (var i in this.resources) {
 			if(this.resources[i].code == code) {
 				return i;
 			}
@@ -417,12 +417,12 @@ function Classroom(title, code, domain, type, template){
 		return -1;
 	};
 
-	this.get_resources = function(){
+	this.get_resources = function() {
 		return resources;
 	};
 
 	this.resource_merge = function(idx, resource) {
-		if(this.resources[idx].messages != '-'){
+		if (this.resources[idx].messages != '-') {
 			this.messages -= this.resources[idx].messages;
 		}
 		this.resources[idx].set_messages(resource.messages, resource.all_messages);
@@ -431,25 +431,25 @@ function Classroom(title, code, domain, type, template){
 		this.resources[idx].code = resource.code;
 		this.resources[idx].lcode = resource.lcode;
 		this.resources[idx].title = resource.title;
-		if(this.resources[idx].messages != '-'){
+		if (this.resources[idx].messages != '-') {
 			this.messages += this.resources[idx].messages;
 		}
 	};
 
 
-	this.add_event = function(ev){
+	this.add_event = function(ev) {
 		if (ev.eventId == undefined) {
 			return;
 		}
 		var idx = this.get_event_idx(ev.eventId);
-		if(idx >= 0){
+		if (idx >= 0) {
 			this.event_merge(idx, ev);
 		} else {
 			this.events.push(ev);
 		}
 	};
 
-	this.get_event = function(id){
+	this.get_event = function(id) {
 		var idx = this.get_event_idx(id);
 		if (idx >= 0) {
 			return this.events[idx];
@@ -457,8 +457,8 @@ function Classroom(title, code, domain, type, template){
 		return false;
 	};
 
-	this.get_event_idx = function(id){
-		for(var i in this.events){
+	this.get_event_idx = function(id) {
+		for (var i in this.events) {
 			if(this.events[i].eventId == id) {
 				return i;
 			}
@@ -466,12 +466,12 @@ function Classroom(title, code, domain, type, template){
 		return -1;
 	};
 
-	this.has_events = function(){
+	this.has_events = function() {
 		return this.events.length > 0;
 	};
 
-	this.all_events_completed = function(){
-		for(var i in this.events){
+	this.all_events_completed = function() {
+		for (var i in this.events) {
 			if (!this.events[i].is_completed()) {
 				return false;
 			}
@@ -500,7 +500,7 @@ function Classroom(title, code, domain, type, template){
 	};
 }
 
-function Resource(title, code){
+function Resource(title, code) {
 	this.title = title;
 	this.code = code;
 	this.lcode = code;
@@ -529,7 +529,7 @@ function Resource(title, code){
 			return 0;
 		}
 
-		if(!isNaN(this.messages) && isNaN(this.all_messages)){
+		if (!isNaN(this.messages) && isNaN(this.all_messages)) {
 			this.messages = 0;
 			this.all_messages = 0;
 		}
@@ -544,28 +544,28 @@ function Resource(title, code){
 	};
 
 
-	this.set_link = function(link){
+	this.set_link = function(link) {
 		var url = get_url_attr(link, 'redirectUrl');
-		if(url){
+		if (url) {
 			link = decodeURIComponent(url);
 			/*var url = get_url_attr(link, 'url');
-			if(url){
+			if (url) {
 				link = root_url + '/' + decodeURIComponent(url);
 			}*/
 		}
 
 		code = get_url_attr(link, 'l');
-		if(code){
+		if (code) {
 			this.lcode = code;
 		}
 
 		session = get_url_attr(link, 's');
-		if(session){
+		if (session) {
 			link = get_url_withoutattr(link,'s');
 			link += '&s=';
 		} else {
 			session = get_url_attr(link, 'sessionId');
-			if(session){
+			if (session) {
 				link = get_url_withoutattr(link,'sessionId');
 				link += '&sessionId=';
 			}
@@ -574,19 +574,18 @@ function Resource(title, code){
 	};
 }
 
-function Grade(name, grade, prov) {
+function Grade(title, grade, prov) {
 	this.grade = grade;
 	this.prov = prov;
-	this.name = name;
+	this.name = title;
 
-	name = name.toLowerCase();
-	name = name.replace('\'', '');
-	switch (name.toLowerCase()) {
+	title = title.toLowerCase().replace('\'', '');
+	switch (title) {
 		case 'qualificació davaluació continuada':
 		case 'calificación de evaluación continuada':
 		case 'calificación final':
 		case 'c':
-			this.code = 'C';
+			this.name = 'C';
 			this.pos = 1;
 			break;
 		case 'nota final activitats pràctiques':
@@ -594,64 +593,60 @@ function Grade(name, grade, prov) {
 		case 'qualificació final dactivitats pràctiques':
 		case 'calificación final de actividades prácticas':
 		case 'p':
-			this.code = 'P';
+			this.name = 'P';
 			this.pos = 2;
 			break;
 		case 'qualificació final davaluació continuada':
 		case 'calificación final de evaluación continuada':
 		case 'fc':
-			this.code = 'FC';
+			this.name = 'FC';
 			this.pos = 3;
 			break;
 		case 'prova de síntesi':
 		case 'prueba de síntesis':
 		case 'ps':
-			this.code = 'PS';
+			this.name = 'PS';
 			this.pos = 4;
 			break;
 		case 'prova de validació':
 		case 'prueba de validación':
 		case 'pv':
-			this.code = 'PV';
+			this.name = 'PV';
 			this.pos = 5;
 			break;
 		case 'exàmen':
 		case 'exámen':
 		case 'ex':
-			this.code = 'EX';
+			this.name = 'EX';
 			this.pos = 6;
 			break;
 		case 'prova final':
 		case 'prueba final':
 		case 'pf':
-			this.code = 'PF';
+			this.name = 'PF';
 			this.pos = 7;
 			break;
 		case 'qualificació final dexàmens (p+ex)':
 		case 'calificación final de exámenes (p+ex)':
 		case 'fe':
-			this.code = 'FE';
+			this.name = 'FE';
 			this.pos = 8;
 			break;
 		case 'qualificació final de lassignatura':
 		case 'calificación final de la asignatura':
 		case 'fa':
-			this.code = 'FA';
+			this.name = 'FA';
 			this.pos = 9;
 			break;
 		default:
-			this.code = false;
 			this.pos = 10;
 			Debug.error('Grade type not recognized: '+this.name);
 	}
 
-	if (this.code) {
-		this.name = this.code;
-	}
-
-	this.get_title = function(){
-		if (this.code) {
-			return _('__'+this.code+'__') + ' ('+this.code+')';
+	this.get_title = function() {
+		// POS 10 is the only not translatable grade name
+		if (this.pos < 10) {
+			return _('__'+this.name+'__') + ' ('+this.name+')';
 		}
 		return this.name;
 	}
@@ -680,28 +675,28 @@ function Event(name, id, type) {
 	this.eventId = id;
 	this.type = type;
 
-	this.has_started = function(){
+	this.has_started = function() {
 		if (!this.start) {
 			return true;
 		}
 		return isBeforeToday(this.start) || isToday(this.start);
 	}
 
-	this.has_ended = function(){
+	this.has_ended = function() {
 		if (!this.end) {
 			return isBeforeToday(this.start);
 		}
 		return isBeforeToday(this.end);
 	}
 
-	this.starts_today = function(){
+	this.starts_today = function() {
 		if (!this.start) {
 			return false;
 		}
 		return isToday(this.start);
 	}
 
-	this.ends_today = function(){
+	this.ends_today = function() {
 		if (!this.start) {
 			return isToday(this.start);
 		}
@@ -712,19 +707,19 @@ function Event(name, id, type) {
 		return (this.has_started() && !this.has_ended()) || isNearDate(this.start, near) || isNearDate(this.grading, near) || isNearDate(this.solution, near);
 	}
 
-	this.is_assignment = function(){
+	this.is_assignment = function() {
 		return (this.type == 'ASSIGNMENT' || this.type == undefined);
 	}
 
-	this.is_uoc = function(){
+	this.is_uoc = function() {
 		return this.type == 'UOC';
 	}
 
-	this.is_graded = function(){
+	this.is_graded = function() {
 		return (!this.grading || this.graded);
 	}
 
-	this.is_completed = function(){
+	this.is_completed = function() {
 		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading);
 	}
 

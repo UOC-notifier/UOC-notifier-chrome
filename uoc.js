@@ -1,4 +1,4 @@
-function check_messages(after_check_fnc){
+function check_messages(after_check_fnc) {
 	Queue.set_after_function(after_check_fnc);
 
 	// Get the new aulas
@@ -146,7 +146,7 @@ function retrieve_mail() {
 		$(resp).find('item').each(function() {
     		var description = $(this).find('description').first().text();
     		var matches = description.match(/:([0-9]+):([0-9]+)$/);
-			if(matches && matches[1]) {
+			if (matches && matches[1]) {
 				save_mail(matches[1]);
 			}
 		});
@@ -169,10 +169,10 @@ function set_messages() {
 	save_icon(messages);
 
 	// Set icon
-	if(messages > 0){
+	if (messages > 0) {
 		var color = messages >= get_critical() ? '#AA0000' : '#EB9316';
 		setBadge(messages, color);
-		if(old_messages < messages && messages >= get_critical()){
+		if (old_messages < messages && messages >= get_critical()) {
 			notify(_('__NOTIFICATION_UNREAD__', [messages]));
 		}
 	} else {
@@ -247,7 +247,7 @@ function parse_classroom(classr) {
 
 	// Parse resources
 	if (classr.widget.eines.length > 0) {
-		for(var j in classr.widget.eines){
+		for(var j in classr.widget.eines) {
 			var resourcel = classr.widget.eines[j];
 			var resource = new Resource(resourcel.nom, resourcel.resourceId);
 			classroom.add_resource(resource);
@@ -291,7 +291,7 @@ function parse_classroom(classr) {
 	}
 }
 
-function retrieve_old_classrooms(){
+function retrieve_old_classrooms() {
 	var args = {
 		newStartingPage:0,
 		language: get_lang_code()
@@ -303,15 +303,15 @@ function retrieve_old_classrooms(){
 			var last = lastPage.indexOf(";");
 			lastPage = lastPage.substring(0,last);
 			var classrooms = eval(lastPage);
-			for(var i in classrooms){
+			for (var i in classrooms) {
 				parse_classroom_old(classrooms[i]);
 			}
 		}
 	});
 }
 
-function parse_classroom_old(classr){
-	if(classr.title) {
+function parse_classroom_old(classr) {
+	if (classr.title) {
 		var title = classr.shortname ? classr.shortname : classr.title;
 		switch (classr.domaintypeid) {
 			case 'TUTORIA':
@@ -343,12 +343,12 @@ function parse_classroom_old(classr){
 
 		}
 		if (classroom) {
-			if(Classes.get_notify(classroom.code)) {
+			if (Classes.get_notify(classroom.code)) {
 				retrieve_consultor(classroom);
 
-				for(var j in classr.resources){
+				for (var j in classr.resources) {
 					var resourcel = classr.resources[j];
-					if(resourcel.title){
+					if (resourcel.title) {
 						var resource = new Resource(resourcel.title, resourcel.code);
 						resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
 						classroom.add_resource(resource);
@@ -367,7 +367,7 @@ function retrieve_gradeinfo() {
 
 		$(data).find('listaAsignaturas asignatura').each(function() {
 			// If has a children of same type
-			if($(this).has('asignatura').length > 0) {
+			if ($(this).has('asignatura').length > 0) {
 				return;
 			}
 			var classroom = false;
@@ -375,7 +375,7 @@ function retrieve_gradeinfo() {
 
 			$(this).find('listaActividades actividad').each(function() {
 				// If has a children of same type
-				if($(this).has('actividad').length > 0) {
+				if ($(this).has('actividad').length > 0) {
 					return;
 				}
 
@@ -471,7 +471,7 @@ function retrieve_stats(classroom) {
 	}
 }
 
-function retrieve_resource(classroom, resource){
+function retrieve_resource(classroom, resource) {
 	var args = {
 		sectionId : '-1',
 		pageSize : 0,
@@ -493,7 +493,7 @@ function retrieve_resource(classroom, resource){
     });
 }
 
-function retrieve_consultor(classroom){
+function retrieve_consultor(classroom) {
 	var args = {
 		classroomId : classroom.domain,
 		subjectId : classroom.domainassig
@@ -519,7 +519,7 @@ function retrieve_consultor(classroom){
     });
 }
 
-function retrieve_users(classroom, button){
+function retrieve_users(classroom, button) {
 	var args = {
 		classroomId : classroom.domain,
 		subjectId : classroom.domainassig
@@ -605,7 +605,7 @@ function retrieve_agenda() {
 }
 
 
-function retrieve_news(){
+function retrieve_news() {
 	var args = {
 		up_isNoticiesInstitucionals : false,
 		//up_title : 'Novetats%2520i%2520noticies',
@@ -637,7 +637,7 @@ function retrieve_news(){
 	});
 }
 
-var Session = new function(){
+var Session = new function() {
 	var retrieving = false;
 	var session = false;
 
@@ -655,7 +655,7 @@ var Session = new function(){
 
 	this.retrieve = function() {
 		var user_save = get_user();
-		if(user_save.username && user_save.password) {
+		if (user_save.username && user_save.password) {
 			if (!retrieving) {
 				Debug.print('Retrieving session...');
 				retrieving = true;
@@ -671,7 +671,7 @@ var Session = new function(){
 					url: root_url_ssl + url,
 				})
 				.done(function(resp) {
-					if(resp.match(/name="lt" value="([^"]+)"/)) {
+					if (resp.match(/name="lt" value="([^"]+)"/)) {
 						var lt = resp.match(/name="lt" value="([^"]+)"/)[1];
 						var execution = resp.match(/name="execution" value="([^"]+)"/)[1];
 						Debug.print('No session, logging in');
@@ -686,7 +686,7 @@ var Session = new function(){
 					    url = root_url_ssl + "/webapps/cas/login";
 					    $.ajax({
 					        type: 'POST',
-					        beforeSend: function (request){
+					        beforeSend: function (request) {
 					            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 					        },
 					        xhrFields: {
@@ -701,7 +701,7 @@ var Session = new function(){
 					    	var matchs = resp.match(/campusSessionId = ([^\n]*)/);
 							if (matchs) {
 								var session = matchs[1];
-								if(!get_working()) {
+								if (!get_working()) {
 									notify(_('__UOC_WORKING__'));
 								}
 								save_session(session);
@@ -728,7 +728,7 @@ var Session = new function(){
 						var matchs = resp.match(/campusSessionId = ([^\n]*)/);
 						if (matchs) {
 							var session = matchs[1];
-							if(!get_working()) {
+							if (!get_working()) {
 								notify(_('__UOC_WORKING__'));
 							}
 							save_session(session);
