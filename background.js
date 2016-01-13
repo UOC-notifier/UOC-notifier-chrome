@@ -37,8 +37,8 @@ var Start = new function() {
 		started = true;
 		reset_session();
 		if (has_username_password()) {
-			setup_alarm();
 			check_messages(show_PAC_notifications);
+			setup_alarm();
 			return true;
 		}
 		return false;

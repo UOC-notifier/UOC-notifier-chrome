@@ -17,31 +17,25 @@ function check_messages(after_check_fnc) {
 		retrieve_old_classrooms();
 
 		retrieve_agenda();
-
-		var classrooms = Classes.get_notified();
-		for(var i in classrooms) {
-			retrieve_stats(classrooms[i]);
-		}
 	});
 
 	retrieve_gradeinfo();
-	retrieve_final_exams_event();
 
 	var classrooms = Classes.get_notified();
 	for(var i in classrooms) {
 		retrieve_final_grades(classrooms[i]);
+		retrieve_stats(classrooms[i]);
 	}
+
+	retrieve_final_exams_event();
 
 	retrieve_mail();
 }
 
 function retrieve_final_grades(classroom) {
 	var exped = get_exped();
-	if (!exped) {
-		return;
-	}
 
-	if (!classroom.final_grades && (!classroom.subject_code || !classroom.all_events_completed())) {
+	if (!exped || !classroom.subject_code || classroom.final_grades || !classroom.all_events_completed()) {
 		return;
 	}
 
@@ -93,7 +87,7 @@ function retrieve_final_exams_event() {
 		return;
 	}
 
-	var any = Classes.get_max_any()
+	var any = Classes.get_max_any();
 	var args = {
 		"F": "edu.uoc.gepaf.fullpersonalpaf.AppFactory",
 		"I": [{
@@ -212,12 +206,14 @@ function parse_classroom(classr) {
 	var title = classr.shortTitle ? classr.shortTitle : classr.title;
 	var classroom = Classes.search_domainassig(classr.domainFatherId);
 	if (!classroom) {
+		var aul = title.lastIndexOf(" aula " + classr.numeralAula);
+		if (aul > 0) {
+			title = title.substr(0, aul);
+		}
+
 		var classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId, classr.ptTemplate);
 		classroom.domainassig = classr.domainFatherId;
 	} else {
-		if (!classroom.title) {
-			classroom.title = title;
-		}
 		classroom.code = classr.domainCode;
 		classroom.domain = classr.domainId;
 		classroom.type = classr.domainTypeId;
@@ -370,8 +366,9 @@ function retrieve_gradeinfo() {
 			if ($(this).has('asignatura').length > 0) {
 				return;
 			}
-			var classroom = false;
+
 			var subject_code = $(this).find('codigo').first().text().trim();
+			var classroom = Classes.search_subject_code(subject_code);
 
 			$(this).find('listaActividades actividad').each(function() {
 				// If has a children of same type

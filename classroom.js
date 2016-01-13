@@ -690,14 +690,14 @@ function Event(name, id, type) {
 	}
 
 	this.starts_today = function() {
-		if (!this.start) {
+		if (!this.end || !this.start) {
 			return false;
 		}
 		return isToday(this.start);
 	}
 
 	this.ends_today = function() {
-		if (!this.start) {
+		if (!this.end) {
 			return isToday(this.start);
 		}
 		return isToday(this.end);

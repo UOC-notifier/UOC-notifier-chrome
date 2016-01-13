@@ -394,7 +394,7 @@ var UI = new function() {
 		  		text += '<div class="btn-group btn-group-sm pull-left" role="group">'+buttons+'</div>';
 		  	}
 
-		  	if(c.has_events()){
+		  	if(c.has_events() && c.subject_code){
 				text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
 			    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('__GRADES__') +'</button></div>';
 		    }
@@ -576,16 +576,17 @@ var UI = new function() {
 					});
 				}
 
-				content_pacs = '<div class="pull-right"><button type="button" class="btn-sm btn btn-primary" id="show_upcomming">\
-			    	<span class="glyphicon glyphicon-road" aria-hidden="true"></span> ' + _('__SHOW_UPCOMMING__') +'</button></div>\
-					<table class="table table-condensed events">  \
-					<thead><tr><th></th><th by="start" class="sort_pacs">'+_('__START__')+'</th><th by="end" class="sort_pacs">'+_('__END__')+'</th></tr></thead>\
-					<tbody>';
 				for (var i in events_pacs) {
 					var e = new EventUI(events_pacs[i])
 					content_pacs += e.pacs_event();
 				}
-				content_pacs += '</tbody></table>';
+				if (content_pacs != "") {
+					content_pacs = '<div class="pull-right"><button type="button" class="btn-sm btn btn-primary" id="show_upcomming">\
+				    	<span class="glyphicon glyphicon-road" aria-hidden="true"></span> ' + _('__SHOW_UPCOMMING__') +'</button></div>\
+						<table class="table table-condensed events">  \
+						<thead><tr><th></th><th by="start" class="sort_pacs">'+_('__START__')+'</th><th by="end" class="sort_pacs">'+_('__END__')+'</th></tr></thead>\
+						<tbody>' + content_pacs + '</tbody></table>';
+				}
 			}
 		   	$('#content_pacs').html(content_pacs);
 
@@ -600,16 +601,17 @@ var UI = new function() {
 					return comp;
 				});
 
-				content_today = '<div class="pull-right"><button type="button" class="btn-sm btn btn-primary" id="assignments">\
-			    	<span class="glyphicon glyphicon-flag" aria-hidden="true"></span> ' + _('__ONLY_ASSIGNMENTS__') +'</button></div>\
-			    	<table class="table table-condensed events">  \
-					<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
-					<tbody>';
 				for (var i in events_today) {
 					var e = new EventUI(events_today[i])
 					content_today += e.today_event(limit);
 				}
-				content_today += '</tbody></table>';
+				if (content_today != "") {
+					content_today = '<div class="pull-right"><button type="button" class="btn-sm btn btn-primary" id="assignments">\
+				    	<span class="glyphicon glyphicon-flag" aria-hidden="true"></span> ' + _('__ONLY_ASSIGNMENTS__') +'</button></div>\
+				    	<table class="table table-condensed events">  \
+						<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
+						<tbody>' + content_today + '</tbody></table>';
+					}
 			}
 			$('#content_today').html(content_today);
 

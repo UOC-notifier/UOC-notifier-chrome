@@ -22,7 +22,7 @@
         "message" : "Universidad"
     },
     "__INTERVAL__" : {
-        "message" : "Intervalo de comprova0ción"
+        "message" : "Intervalo de comprovación"
     },
     "__CRITICAL__" : {
         "message" : "Mínimo de mensajes para considerar crítico y notificar"
