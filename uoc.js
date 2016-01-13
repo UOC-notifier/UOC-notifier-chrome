@@ -1,6 +1,8 @@
 function check_messages(after_check_fnc) {
 	Queue.set_after_function(after_check_fnc);
 
+	retrieve_mail();
+
 	// Get the new aulas
 	var args = {
 		perfil : 'estudiant',
@@ -17,19 +19,17 @@ function check_messages(after_check_fnc) {
 		retrieve_old_classrooms();
 
 		retrieve_agenda();
+
+		retrieve_gradeinfo();
+
+		var classrooms = Classes.get_notified();
+		for(var i in classrooms) {
+			retrieve_final_grades(classrooms[i]);
+			retrieve_stats(classrooms[i]);
+		}
+
+		retrieve_final_exams_event();
 	});
-
-	retrieve_gradeinfo();
-
-	var classrooms = Classes.get_notified();
-	for(var i in classrooms) {
-		retrieve_final_grades(classrooms[i]);
-		retrieve_stats(classrooms[i]);
-	}
-
-	retrieve_final_exams_event();
-
-	retrieve_mail();
 }
 
 function retrieve_final_grades(classroom) {
@@ -324,8 +324,22 @@ function parse_classroom_old(classr) {
 					classroom.type = classr.domaintypeid;
 					classroom.template = classr.pt_template
 				}
-
 				classroom.aula = classr.codi_tercers;
+
+				if (classroom.notify) {
+					retrieve_consultor(classroom);
+
+					for (var j in classr.resources) {
+						var resourcel = classr.resources[j];
+						if (resourcel.title) {
+							var resource = new Resource(resourcel.title, resourcel.code);
+							resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
+							classroom.add_resource(resource);
+						}
+					}
+				}
+				Classes.add(classroom);
+
 				break;
 			case 'ASSIGNATURA':
 				// Override title
@@ -333,25 +347,9 @@ function parse_classroom_old(classr) {
 				if (classroom) {
 					classroom.title = title;
 				}
-				return;
+				break;
 			case 'AULA':
-				return;
-
-		}
-		if (classroom) {
-			if (Classes.get_notify(classroom.code)) {
-				retrieve_consultor(classroom);
-
-				for (var j in classr.resources) {
-					var resourcel = classr.resources[j];
-					if (resourcel.title) {
-						var resource = new Resource(resourcel.title, resourcel.code);
-						resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
-						classroom.add_resource(resource);
-					}
-				}
-			}
-			Classes.add(classroom);
+				break;
 		}
 	}
 }
@@ -369,6 +367,9 @@ function retrieve_gradeinfo() {
 
 			var subject_code = $(this).find('codigo').first().text().trim();
 			var classroom = Classes.search_subject_code(subject_code);
+			if (classroom && !classroom.notify) {
+				return;
+			}
 
 			$(this).find('listaActividades actividad').each(function() {
 				// If has a children of same type
@@ -387,6 +388,10 @@ function retrieve_gradeinfo() {
 					if (subject_code.length > 0) {
 						classroom.subject_code = subject_code;
 					}
+				}
+
+				if (!classroom.notify) {
+					return;
 				}
 
 				var evnt = classroom.get_event(eventid);
