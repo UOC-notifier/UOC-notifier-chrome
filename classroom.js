@@ -33,7 +33,7 @@ var Classes = new function() {
 
 	this.get_general_events = function() {
 		return events;
-	}
+	};
 
 	this.save = function() {
 		this.count_messages();
@@ -95,7 +95,7 @@ var Classes = new function() {
 			}
 		}
 		return false;
-	}
+	};
 
 	this.get_class_by_acronym = function(acronym) {
 		for(var i in classes) {
@@ -106,7 +106,7 @@ var Classes = new function() {
 			}
 		}
 		return false;
-	}
+	};
 
 	this.purge_old = function() {
 		var max_any = this.get_max_any();
@@ -117,7 +117,7 @@ var Classes = new function() {
 				}
 			}
 		}
-	}
+	};
 
 	this.get_max_any = function() {
 		var max_any = 0;
@@ -127,14 +127,14 @@ var Classes = new function() {
 			}
 		}
 		return max_any;
-	}
+	};
 
 	this.purge_all = function() {
 		classes = [];
 		this.messages = 0;
 		this.notified_messages = 0;
 		this.save();
-	}
+	};
 
 	this.get_index = function(code) {
 		for (var i in classes) {
@@ -152,15 +152,6 @@ var Classes = new function() {
 			return false;
 		}
 		return classes[idx].notify;
-	}
-
-	this.search_domain = function(domain) {
-		for (var i in classes) {
-			if (classes[i].domain == domain) {
-				return classes[i];
-			}
-		}
-		return false;
 	};
 
 	this.search_domainassig = function(domain) {
@@ -203,9 +194,9 @@ var Classes = new function() {
 						resource.set_link(resourcel.link);
 						classr.add_resource(resource);
 					}
-					for (var j in classl.events) {
-						var evl = classl.events[j];
-						var ev = new Event(evl.name, evl.eventId, evl.type);
+					for (var k in classl.events) {
+						var evl = classl.events[k];
+						var ev = new CalEvent(evl.name, evl.eventId, evl.type);
 						ev.start = evl.start;
 						ev.end = evl.end;
 						ev.grading = evl.grading;
@@ -218,8 +209,8 @@ var Classes = new function() {
 						ev.commentdate = evl.commentdate;
 						classr.add_event(ev);
 					}
-					for (var j in classl.grades) {
-						var g = classl.grades[j];
+					for (var l in classl.grades) {
+						var g = classl.grades[l];
 						classr.add_grade(g.name, g.grade, g.prov);
 					}
 				}
@@ -232,11 +223,11 @@ var Classes = new function() {
 		if (evnts) {
 			events = [];
 			evnts = JSON.parse(evnts);
-			for (var i in evnts) {
-				var evl = evnts[i];
-				var ev = new Event(evl.name, evl.eventId, evl.type);
-				ev.start = evl.start;
-				this.add_event(ev);
+			for (var m in evnts) {
+				var evnt = evnts[m];
+				var cevnt = new CalEvent(evnt.name, evnt.eventId, evnt.type);
+				cevnt.start = evnt.start;
+				this.add_event(cevnt);
 			}
 		}
 	};
@@ -269,7 +260,7 @@ var Classes = new function() {
 	};
 
 	this.load();
-}
+};
 
 function Classroom(title, code, domain, type, template) {
 	this.title = title;
@@ -307,18 +298,14 @@ function Classroom(title, code, domain, type, template) {
 			this.set_acronym();
 		}
 		return this.acronym;
-	}
+	};
 
 	this.set_acronym = function() {
 		this.acronym =  this.type == 'TUTORIA' ? 'TUT'+this.aula : get_acronym(this.title);
-	}
+	};
 
 	this.set_notify = function(notify) {
 		this.notify = notify;
-	};
-
-	this.reset_messages = function() {
-		this.messages = 0;
 	};
 
 	// Adds a final grade returning if it changed
@@ -345,7 +332,7 @@ function Classroom(title, code, domain, type, template) {
 		}
 		this.grades.push(g);
 		return g;
-	}
+	};
 
 	this.add_resource = function(resource) {
 		if(!this.notify) return;
@@ -397,7 +384,7 @@ function Classroom(title, code, domain, type, template) {
 			}
 			return comp;
 		});
-	}
+	};
 
 	this.get_index = function(code, lcode) {
 		for (var i in this.resources) {
@@ -417,10 +404,6 @@ function Classroom(title, code, domain, type, template) {
 		return -1;
 	};
 
-	this.get_resources = function() {
-		return resources;
-	};
-
 	this.resource_merge = function(idx, resource) {
 		if (this.resources[idx].messages != '-') {
 			this.messages -= this.resources[idx].messages;
@@ -435,7 +418,6 @@ function Classroom(title, code, domain, type, template) {
 			this.messages += this.resources[idx].messages;
 		}
 	};
-
 
 	this.add_event = function(ev) {
 		if (ev.eventId == undefined) {
@@ -479,10 +461,6 @@ function Classroom(title, code, domain, type, template) {
 		return true;
 	};
 
-	this.has_stats = function() {
-		return this.stats && this.has_events();
-	}
-
 	this.event_merge = function(idx, ev) {
 		this.events[idx].name = ev.name;
 		this.events[idx].eventId = ev.eventId;
@@ -511,7 +489,7 @@ function Resource(title, code) {
 
 	this.has_message_count = function() {
 		return !isNaN(this.all_messages);
-	}
+	};
 
 	this.set_messages = function(messages, all_messages) {
 		messages = parseInt(messages);
@@ -543,7 +521,6 @@ function Resource(title, code) {
 		}
 	};
 
-
 	this.set_link = function(link) {
 		var url = get_url_attr(link, 'redirectUrl');
 		if (url) {
@@ -559,7 +536,7 @@ function Resource(title, code) {
 			this.lcode = code;
 		}
 
-		session = get_url_attr(link, 's');
+		var session = get_url_attr(link, 's');
 		if (session) {
 			link = get_url_withoutattr(link,'s');
 			link += '&s=';
@@ -649,7 +626,7 @@ function Grade(title, grade, prov) {
 			return _('__'+this.name+'__') + ' ('+this.name+')';
 		}
 		return this.name;
-	}
+	};
 
 	this.notify = function(acronym) {
 		if (this.prov) {
@@ -657,10 +634,10 @@ function Grade(title, grade, prov) {
 		} else {
 			notify(_('__FINAL_GRADE__', [this.grade, this.get_title(), acronym]), 0);
 		}
-	}
+	};
 }
 
-function Event(name, id, type) {
+function CalEvent(name, id, type) {
 	this.name = name;
 	this.start = false;
 	this.end = false;
@@ -680,50 +657,46 @@ function Event(name, id, type) {
 			return true;
 		}
 		return isBeforeToday(this.start) || isToday(this.start);
-	}
+	};
 
 	this.has_ended = function() {
 		if (!this.end) {
 			return isBeforeToday(this.start);
 		}
 		return isBeforeToday(this.end);
-	}
+	};
 
 	this.starts_today = function() {
 		if (!this.end || !this.start) {
 			return false;
 		}
 		return isToday(this.start);
-	}
+	};
 
 	this.ends_today = function() {
 		if (!this.end) {
 			return isToday(this.start);
 		}
 		return isToday(this.end);
-	}
+	};
 
 	this.is_near = function(near) {
 		return (this.has_started() && !this.has_ended()) || isNearDate(this.start, near) || isNearDate(this.grading, near) || isNearDate(this.solution, near);
-	}
+	};
 
 	this.is_assignment = function() {
 		return (this.type == 'ASSIGNMENT' || this.type == undefined);
-	}
+	};
 
 	this.is_uoc = function() {
 		return this.type == 'UOC';
-	}
-
-	this.is_graded = function() {
-		return (!this.grading || this.graded);
-	}
+	};
 
 	this.is_completed = function() {
 		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading);
-	}
+	};
 
 	this.notify = function(acronym) {
 		notify(_('__PRACT_GRADE__', [this.graded, this.name, acronym]), 0);
-	}
+	};
 }

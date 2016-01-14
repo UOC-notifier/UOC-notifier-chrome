@@ -42,23 +42,23 @@ function populate_options(){
 	$('#pwd').val(option.password);
 
 	option = get_uni();
-	$('#uni').val(option);
-	$('#uni').on('change', function(){
-		save_uni($(this).val());
-	});
+	$('#uni').val(option)
+			.on('change', function(){
+				save_uni($(this).val());
+			});
 
 	option = get_interval();
-	$('#check_interval').val(option);
-	$('#check_interval').on('change', function(){
-		save_interval($(this).val());
-		reset_alarm();
-	});
+	$('#check_interval').val(option)
+			.on('change', function(){
+				save_interval($(this).val());
+				reset_alarm();
+			});
 
 	option = get_critical();
-	$('#critical').val(option);
-	$('#critical').on('change', function(){
-		save_critical($(this).val());
-	});
+	$('#critical').val(option)
+			.on('change', function(){
+				save_critical($(this).val());
+			});
 
 	option = get_notification();
 	if (option) {
@@ -97,10 +97,10 @@ function populate_options(){
 	});
 
 	option = get_today();
-	$('#today_tab').val(option);
-	$('#today_tab').on('change', function(){
-		save_today($(this).val());
-	});
+	$('#today_tab').val(option)
+			.on('change', function(){
+				save_today($(this).val());
+			});
 }
 
 function save_login(){

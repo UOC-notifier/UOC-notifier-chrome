@@ -8,11 +8,11 @@ function check_messages(after_check_fnc) {
 		perfil : 'estudiant',
 		setLng : get_lang(),
 		format: 'json'
-	}
+	};
 	Queue.request('/app/guaita/calendari', args, "GET", true, function(data) {
 		save_idp(data.idp);
-		for (x in data.classrooms) {
-			classroom = parse_classroom(data.classrooms[x]);
+		for (var x in data.classrooms) {
+			parse_classroom(data.classrooms[x]);
 		}
 		Classes.purge_old();
 
@@ -45,7 +45,7 @@ function retrieve_final_grades(classroom) {
 			"O": 'Od9l_GxbvdWUtIsyoEt2IWynnbk=',
 			"P": [classroom.subject_code, exped]
 		}]
-	}
+	};
 	// Always GAT_EXP, not dependant on UOCi
 	Queue.request( '/tren/trenacc/webapp/GAT_EXP.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
 		try {
@@ -53,7 +53,7 @@ function retrieve_final_grades(classroom) {
 			var prov = grades.numConvocatoriaActual <= 0;
 			var types = ['C', 'P', 'FC', 'PS', 'PV', 'EX', 'PF',  'FE', 'FA'];
 
-			for(i in types) {
+			for(var i in types) {
 				var type = types[i];
 				var lettername = "codCalif"+type;
 				var numbername = "numCalif"+type;
@@ -94,16 +94,16 @@ function retrieve_final_exams_event() {
 			"O": 'xUK0l32plsYSkUc00vYpZ2oukRM=',
 			"P": ['' + any, "1", '' + idp, "ESTUDIANT"]
 		}]
-	}
+	};
 	// Always GAT_EXP, not dependant on UOCi
 	Queue.request( '/tren/trenacc/webapp/GEPAF.FULLPERSONAL/gwtRequest', args, 'json', false, function(resp) {
 		try {
 			var objects = resp.O;
-			for (x in objects) {
+			for (var x in objects) {
 				var object = objects[x].P;
 				if (object.veureAula) {
 					var code = object.codAssignatura;
-					classroom = Classes.search_subject_code(code);
+					var classroom = Classes.search_subject_code(code);
 					if (classroom) {
 						var exam = {};
 						if (object.indExam == 'S') {
@@ -135,7 +135,7 @@ function retrieve_mail() {
 		'app:mobile': true,
 		'app:cache': false,
 		'app:only' : 'bustia'
-	}
+	};
 	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
 		$(resp).find('item').each(function() {
     		var description = $(this).find('description').first().text();
@@ -211,7 +211,7 @@ function parse_classroom(classr) {
 			title = title.substr(0, aul);
 		}
 
-		var classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId, classr.ptTemplate);
+		classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId, classr.ptTemplate);
 		classroom.domainassig = classr.domainFatherId;
 	} else {
 		classroom.code = classr.domainCode;
@@ -254,19 +254,20 @@ function parse_classroom(classr) {
 
 	// Parse events
 	if (classr.activitats.length > 0) {
-		for (y in classr.activitats) {
+		for (var y in classr.activitats) {
 			var act = classr.activitats[y];
-			var evnt = new Event(act.name, act.eventId, 'ASSIGNMENT');
+			var evnt = new CalEvent(act.name, act.eventId, 'ASSIGNMENT');
 
 			var args = {};
+			var urlbase;
 			if (classr.presentation == "AULACA") {
-				var urlbase = '/webapps/aulaca/classroom/Classroom.action';
+				urlbase = '/webapps/aulaca/classroom/Classroom.action';
 				args.classroomId = act.classroomId;
 				args.subjectId = act.subjectId;
 				args.activityId = act.eventId;
 				args.javascriptDisabled = false;
 			} else {
-				var urlbase = '/webapps/classroom/081_common/jsp/eventFS.jsp';
+				urlbase = '/webapps/classroom/081_common/jsp/eventFS.jsp';
 				args.domainId = act.domainId;
 				var aux = classr.domainCode.split('_');
 				args.domainTemplate = 'uoc_'+aux[0]+'_'+classr.codi;
@@ -291,7 +292,7 @@ function retrieve_old_classrooms() {
 	var args = {
 		newStartingPage:0,
 		language: get_lang_code()
-	}
+	};
 	Queue.request('/UOC2000/b/cgi-bin/hola', args, 'GET', false, function(resp) {
 		var index = resp.indexOf("aulas = ");
 		if (index != -1) {
@@ -309,9 +310,10 @@ function retrieve_old_classrooms() {
 function parse_classroom_old(classr) {
 	if (classr.title) {
 		var title = classr.shortname ? classr.shortname : classr.title;
+		var classroom;
 		switch (classr.domaintypeid) {
 			case 'TUTORIA':
-				var classroom = Classes.search_domainassig(classr.domainid);
+				classroom = Classes.search_domainassig(classr.domainid);
 				var sp = title.split(classr.codi_tercers);
 				title = sp[0].trim();
 				if (!classroom) {
@@ -343,7 +345,7 @@ function parse_classroom_old(classr) {
 				break;
 			case 'ASSIGNATURA':
 				// Override title
-				var classroom = Classes.search_domainassig(classr.domainid);
+				classroom = Classes.search_domainassig(classr.domainid);
 				if (classroom) {
 					classroom.title = title;
 				}
@@ -355,9 +357,10 @@ function parse_classroom_old(classr) {
 }
 
 function retrieve_gradeinfo() {
-	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', false, function(data, args) {
+	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', false, function(data) {
 		var exped = $(data).find('files>file>id').first().text().trim();
 		save_exped(exped);
+		var grade;
 
 		$(data).find('listaAsignaturas asignatura').each(function() {
 			// If has a children of same type
@@ -414,7 +417,7 @@ function retrieve_gradeinfo() {
 						changed = true;
 					}
 
-					var grade = $(this).find('nota').text().trim();
+					grade = $(this).find('nota').text().trim();
 					if (grade.length > 0 && grade != '-') {
 						if (evnt.graded != grade) {
 							evnt.graded = grade;
@@ -429,7 +432,7 @@ function retrieve_gradeinfo() {
 					var nota = $(this).find('nota').text().trim();
 					if (nota.length > 0 && nota != '-') {
 						var name = $(this).find('descripcion').text().trim();
-						var grade = classroom.add_grade(name, nota, false);
+						grade = classroom.add_grade(name, nota, false);
 						if (grade) {
 							grade.notify(classroom.get_acronym());
 						}
@@ -440,14 +443,15 @@ function retrieve_gradeinfo() {
 			if (classroom) {
 				var nota = $(this).find('notaFinal').text().trim();
 				if (nota.length > 0 && nota != '-') {
-					var grade = classroom.add_grade('FA', nota, false);
+					grade = classroom.add_grade('FA', nota, false);
 					if (grade) {
 						grade.notify(classroom.get_acronym());
 					}
 				}
-				var nota = $(this).find('notaFinalContinuada').text().trim();
+
+				nota = $(this).find('notaFinalContinuada').text().trim();
 				if (nota.length > 0 && nota != '-') {
-					var grade = classroom.add_grade('FC', nota, false);
+					grade = classroom.add_grade('FC', nota, false);
 					if (grade) {
 						grade.notify(classroom.get_acronym());
 					}
@@ -458,19 +462,21 @@ function retrieve_gradeinfo() {
 }
 
 function retrieve_stats(classroom) {
-	if (classroom.has_events() && classroom.all_events_completed() && !classroom.has_stats() && classroom.subject_code) {
-		var args = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
-					assig: classroom.subject_code,
-					pAnyAcademic: classroom.any
-				};
-		Queue.request('/tren/trenacc', args, 'GET', false, function(data) {
-			var index = data.indexOf("addRow");
-			if (index != -1) {
-				notify(_('__NOT_STATS__', [classroom.get_acronym()]), 0);
-				classroom.stats = true;
-			}
-		});
+	if (!classroom.subject_code || classroom.stats || !classroom.all_events_completed()) {
+		return;
 	}
+
+	var args = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
+				assig: classroom.subject_code,
+				pAnyAcademic: classroom.any
+			};
+	Queue.request('/tren/trenacc', args, 'GET', false, function(data) {
+		var index = data.indexOf("addRow");
+		if (index != -1) {
+			notify(_('__NOT_STATS__', [classroom.get_acronym()]));
+			classroom.stats = true;
+		}
+	});
 }
 
 function retrieve_resource(classroom, resource) {
@@ -501,16 +507,17 @@ function retrieve_consultor(classroom) {
 		subjectId : classroom.domainassig
 	};
 	Queue.request('/webapps/aulaca/classroom/UsersList.action', args, 'GET', false, function(data) {
+		var user;
 		try {
 			if (data.tutorUsers[0]) {
-				var user = data.tutorUsers[0];
+				user = data.tutorUsers[0];
 				classroom.consultor = user.fullName;
 				classroom.consultormail = user.email;
 				classroom.consultorlastviewed = user.lastLoginTime;
 				return;
 			}
 			if (data.referenceUsers[0]) {
-				var user = data.referenceUsers[0];
+				user = data.referenceUsers[0];
 				classroom.consultor = user.fullName;
 				classroom.consultormail = user.email;
 				classroom.consultorlastviewed = user.lastLoginTime;
@@ -539,18 +546,18 @@ function retrieve_agenda() {
 		'app:cache': false,
 		'app:only' : 'agenda',
 		'app:Delta' : 365
-	}
+	};
 	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
 		var items = $(resp).find('item category:contains(\'CALENDAR\')').parents('item');
 		if (items.length > 0) {
-			var q = new Date();
 			items.each(function() {
 				var json = rssitem_to_json(this);
 
+				var title, evnt;
 				// General events
 				if (parseInt(json.EVENT_TYPE) == 16) {
-					var title = json.title + ' ' + json.description;
-					var evnt = new Event(title, json.guid, 'UOC');
+					title = json.title + ' ' + json.description;
+					evnt = new CalEvent(title, json.guid, 'UOC');
 					evnt.start =  getDate_hyphen(json.pubDate);
 					Classes.add_event(evnt);
 					return;
@@ -568,17 +575,16 @@ function retrieve_agenda() {
 					return;
 				}
 
-				var evnt = false;
 				evnt = classroom.get_event(id[0]);
 				if (evnt && evnt.is_assignment()) {
 					// The Assignments are processed in other parts
 					return;
 				}
 
-				var title = json.title.split('[');
+				title = json.title.split('[');
 				title = title[0].trim();
 				if (!evnt) {
-					var evnt = new Event(title, id[0], 'MODULE');
+					evnt = new CalEvent(title, id[0], 'MODULE');
 				}
 				var date =  getDate_hyphen(json.pubDate);
 				switch (parseInt(json.EVENT_TYPE)) {
@@ -610,23 +616,23 @@ function retrieve_agenda() {
 function retrieve_news() {
 	var args = {
 		up_isNoticiesInstitucionals : false,
-		//up_title : 'Novetats%2520i%2520noticies',
-		//up_maximized: true,
 		up_maxDestacades : 2,
 		up_showImages : 0,
 		up_sortable : true,
-		//up_ck : 'nee',
 		up_maxAltres: 5,
 		up_rssUrlServiceProvider : '%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js',
 		up_target : 'noticies.jsp',
+		fromCampus : true
+		//up_title : 'Novetats%2520i%2520noticies',
+		//up_maximized: true,
+		//up_ck : 'nee',
 		//libs : '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height',
-		fromCampus : true,
 		//lang: get_lang(),
 		//country: 'ES',
 		//color: '',
 		//userType: 'UOC-ESTUDIANT-gr06-a',
 		//hp_theme: 'false'
-	}
+	};
 	Queue.set_after_function('nosave');
 	Queue.request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', false, function(resp) {
 		resp = resp.replace(/<img/gi, '<noload');
@@ -648,12 +654,12 @@ var Session = new function() {
 			session = get_session();
 		}
 		return session;
-	}
+	};
 
 	this.reset_retrieve = function() {
 		session = false;
 		this.retrieve();
-	}
+	};
 
 	this.retrieve = function() {
 		var user_save = get_user();
@@ -670,7 +676,7 @@ var Session = new function() {
 
 				$.ajax({
 					type: 'GET',
-					url: root_url_ssl + url,
+					url: root_url_ssl + url
 				})
 				.done(function(resp) {
 					if (resp.match(/name="lt" value="([^"]+)"/)) {
@@ -757,4 +763,4 @@ var Session = new function() {
 			}
 		}
 	}
-}
+};

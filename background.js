@@ -24,14 +24,14 @@ var Start = new function() {
 	this.onStart = function(alarm) {
 		if (started) return;
 		startup();
-	}
+	};
 
 	this.onInstall = function(alarm) {
 		if (started) return;
 		if (!startup()) {
 			chrome.tabs.create({ url: "options.html" });
 		}
-	}
+	};
 
 	function startup() {
 		started = true;
@@ -43,7 +43,7 @@ var Start = new function() {
 		}
 		return false;
 	}
-}
+};
 
 if (chrome.runtime) {
 	if (chrome.runtime.onStartup) {

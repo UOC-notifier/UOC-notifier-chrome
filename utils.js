@@ -2,12 +2,12 @@ var root_url = 'http://cv.uoc.edu';
 var root_url_ssl = 'https://cv.uoc.edu';
 
 function utf8_to_b64(str) {
-    return window.btoa(unescape(encodeURIComponent(str)));
+    return window.btoa(decodeURIComponent(encodeURIComponent(str)));
 }
 
 function b64_to_utf8(str) {
     try {
-        return decodeURIComponent(escape(window.atob(str)));
+        return decodeURIComponent(encodeURIComponent(window.atob(str)));
     } catch(err) {
         return str;
     }
@@ -163,17 +163,6 @@ function get_url_withoutattr(url, parameter) {
     }
 }
 
-function get_url_base(url) {
-    //prefer to use l.search if you have a location/link object
-    url = get_real_url(url);
-    var urlparts= url.split('?');
-    if (urlparts.length >= 2) {
-        return urlparts[0];
-    } else {
-        return url;
-    }
-}
-
 function uri_data(map){
     var str = "";
     for(var v in map){
@@ -191,9 +180,25 @@ function get_real_url(url) {
     return url;
 }
 
-function get_url_with_data(url, data) {
-    var uri = get_real_url(url) + '?' + uri_data(data);
+function get_url_base(url) {
+    //prefer to use l.search if you have a location/link object
+    url = get_real_url(url);
+    var urlparts= url.split('?');
+    if (urlparts.length >= 2) {
+        return urlparts[0];
+    } else {
+        return url;
+    }
 }
+
+function get_url_with_data(url, data) {
+    return get_real_url(url) + '?' + uri_data(data);
+}
+
+function get_html_realtext(text) {
+    return $('<textarea />').html(text).text();
+}
+
 
 function get_acronym(text) {
     if (text == undefined) {
@@ -201,7 +206,7 @@ function get_acronym(text) {
     }
     var words = text.split(/[\s, '´:\(\)\-]+/);
     var acronym = "";
-    var nowords = new Array('de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd');
+    var nowords = ['de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd'];
     for (var x in words) {
         if (nowords.indexOf(words[x].toLowerCase()) < 0) {
             if (words[x] == words[x].toUpperCase()) {
@@ -212,10 +217,6 @@ function get_acronym(text) {
         }
     }
     return acronym.toUpperCase();
-}
-
-function get_html_realtext(text) {
-    return $('<textarea />').html(text).text();
 }
 
 function rssitem_to_json(item) {
@@ -245,7 +246,7 @@ function rssitem_to_json(item) {
 
     return obj;
   } catch (e) {
-      Debug.log(e.message);
+      Debug.error(e.message);
   }
 }
 
@@ -256,26 +257,26 @@ var Debug = new function(){
         if (show) {
             console.log(message);
         }
-    }
+    };
 
     this.function = function(func) {
         if (show) {
             func();
         }
-    }
+    };
 
     this.print = function(message) {
         console.log(message);
-    }
+    };
 
     this.error = function(message) {
         console.error(message);
-    }
-}
+    };
+};
 
 
 var Queue = new function(){
-    var queue = Array();
+    var queue = [];
     var after_function = false;
     var executing = false;
 
@@ -302,11 +303,11 @@ var Queue = new function(){
         } else {
             Session.retrieve();
         }
-    }
+    };
 
     this.clear = function() {
-        queue = Array();
-    }
+        queue = [];
+    };
 
     this.request = function(url, data, type, reset_on_fail, handler) {
         if (url) {
@@ -321,11 +322,11 @@ var Queue = new function(){
             Debug.print('Queued ' + url);
             run();
         }
-    }
+    };
 
     this.set_after_function = function(fnc){
         after_function = fnc;
-    }
+    };
 
     function ajax_do(session, url, data, type, reset_on_fail, handler){
         if (!data) {
@@ -355,23 +356,23 @@ var Queue = new function(){
         ajax_request.url = url;
 
         $.ajax(ajax_request)
-        .done(function(resp) {
-            Debug.log(resp);
-            if (handler) {
-                handler(resp, data);
-            }
-        })
-        .fail(function(resp) {
-            Debug.error('ERROR: Cannot fetch ' + url);
-            Debug.log(resp);
-            if (reset_on_fail) {
-                reset_session();
-            }
-        })
-        .always(function() {
-            executing = false;
-            run();
-        });
+            .done(function(resp) {
+                Debug.log(resp);
+                if (handler) {
+                    handler(resp, data);
+                }
+            })
+            .fail(function(resp) {
+                Debug.error('ERROR: Cannot fetch ' + url);
+                Debug.log(resp);
+                if (reset_on_fail) {
+                    reset_session();
+                }
+            })
+            .always(function() {
+                executing = false;
+                run();
+            });
     }
 };
 

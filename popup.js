@@ -15,12 +15,11 @@ var UI = new function() {
 				return;
 			}
 			build();
-			return;
 		} else {
 			$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__NO_USER_PASSWORD__')+'</div></div>');
 			open_new_tab("options.html");
 		}
-	}
+	};
 
 	function build() {
 		$('#update').removeClass('spin');
@@ -28,13 +27,13 @@ var UI = new function() {
 		classrooms = Classes.get_notified();
 
 		// Total messages
-		$('#total_messages_button').addClass(get_badge_class(Classes.notified_messages))
-		$('#total_messages').html(""+Classes.notified_messages)
+		$('#total_messages_button').addClass(get_badge_class(Classes.notified_messages));
+		$('#total_messages').html(""+Classes.notified_messages);
 
-		var visibles = false;
+		var visibles;
 		var class_html = "";
 		for(var i in classrooms){
-			var c = new ClassroomUI(classrooms[i])
+			var c = new ClassroomUI(classrooms[i]);
 			class_html += c.build();
 			visibles = true;
 		}
@@ -64,13 +63,13 @@ var UI = new function() {
 
 		var mails = get_mails_unread();
 		if (mails > 0) {
-			$('#button_mail').removeClass('btn-success');
-			$('#button_mail').addClass('btn-danger');
-			$('#button_mail').attr('title', _('__UNREAD_MAIL__', [mails]));
+			$('#button_mail').removeClass('btn-success')
+                .addClass('btn-danger')
+			    .attr('title', _('__UNREAD_MAIL__', [mails]));
 		} else {
-			$('#button_mail').removeClass('btn-danger');
-			$('#button_mail').addClass('btn-success');
-			$('#button_mail').attr('title', _('__MAIL__'));
+			$('#button_mail').removeClass('btn-danger')
+			        .addClass('btn-success')
+			        .attr('title', _('__MAIL__'));
 		}
 		$('#button_mail').click(function() {
 			var url = root_url + '/WebMail/listMails.do';
@@ -103,117 +102,117 @@ var UI = new function() {
 	}
 
 	function handleEvents(){
-		$('.linkCampus').unbind( "click" );
-		$('.linkCampus').click(function(){
-			var url = root_url + '/cgi-bin/uocapp';
-			open_tab(url);
-		});
+		$('.linkCampus').unbind( "click" )
+                .click(function(){
+                    var url = root_url + '/cgi-bin/uocapp';
+                    open_tab(url);
+                });
 
-		$('.linkAula').unbind( "click" );
-		$('.linkAula').click(function(){
-			var classroom_code = $(this).parents('.classroom').attr('classroom');
-			var classroom = Classes.search_code(classroom_code);
+		$('.linkAula').unbind( "click" )
+                .click(function(){
+                    var classroom_code = $(this).parents('.classroom').attr('classroom');
+                    var classroom = Classes.search_code(classroom_code);
 
-			var url = root_url + '/webapps/classroom/'+classroom.template+'/frameset.jsp';
-			var data = {domainCode: classroom.code};
-			open_tab(url, data);
-		});
+                    var url = root_url + '/webapps/classroom/'+classroom.template+'/frameset.jsp';
+                    var data = {domainCode: classroom.code};
+                    open_tab(url, data);
+                });
 
-		$('.linkNotas').unbind( "click" );
-		$('.linkNotas').click(function(){
-			var classroom_code = $(this).parents('.classroom').attr('classroom');
-			var classroom = Classes.search_code(classroom_code);
+		$('.linkNotas').unbind( "click" )
+                .click(function(){
+                    var classroom_code = $(this).parents('.classroom').attr('classroom');
+                    var classroom = Classes.search_code(classroom_code);
 
-			var url = root_url + '/webapps/rac/listEstudiant.action';
-			var data = {domainId: classroom.domain};
-			open_tab(url, data);
-		});
+                    var url = root_url + '/webapps/rac/listEstudiant.action';
+                    var data = {domainId: classroom.domain};
+                    open_tab(url, data);
+                });
 
-		$('.linkEstads').unbind( "click" );
-		$('.linkEstads').click(function(){
-			var classroom_code = $(this).parents('.classroom').attr('classroom');
-			var classroom = Classes.search_code(classroom_code);
-			var url = root_url + '/tren/trenacc';
-			var data = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
-						assig: classroom.subject_code,
-						pAnyAcademic: classroom.any};
-			open_tab(url, data);
-		});
+		$('.linkEstads').unbind( "click" )
+                .click(function(){
+                    var classroom_code = $(this).parents('.classroom').attr('classroom');
+                    var classroom = Classes.search_code(classroom_code);
+                    var url = root_url + '/tren/trenacc';
+                    var data = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
+                                assig: classroom.subject_code,
+                                pAnyAcademic: classroom.any};
+                    open_tab(url, data);
+                });
 
-		$('.linkDocent').unbind( "click" );
-		$('.linkDocent').click(function(){
-			var classroom_code = $(this).parents('.classroom').attr('classroom');
-			var classroom = Classes.search_code(classroom_code);
-			var url = root_url + '/webapps/classroom/download.do';
-			var data = {nav: 'pladocent',
-						domainId: classroom.domain,
-						format: 'html',
-						app: 'aulaca',
-						precarrega: false
-					};
-			open_tab(url, data);
-		});
+		$('.linkDocent').unbind( "click" )
+                .click(function(){
+                    var classroom_code = $(this).parents('.classroom').attr('classroom');
+                    var classroom = Classes.search_code(classroom_code);
+                    var url = root_url + '/webapps/classroom/download.do';
+                    var data = {nav: 'pladocent',
+                                domainId: classroom.domain,
+                                format: 'html',
+                                app: 'aulaca',
+                                precarrega: false
+                            };
+                    open_tab(url, data);
+                });
 
-		$('.linkMaterials').unbind( "click" );
-		$('.linkMaterials').click(function(){
-			var classroom_code = $(this).parents('.classroom').attr('classroom');
-			var classroom = Classes.search_code(classroom_code);
-			var url = root_url + '/webapps/classroom/student.do';
-			var data = {nav: 'recursos-estudiant',
-						domainId: classroom.domain,
-						domainCode: classroom.code};
-			open_tab(url, data);
-		});
+		$('.linkMaterials').unbind( "click" )
+            .click(function(){
+                var classroom_code = $(this).parents('.classroom').attr('classroom');
+                var classroom = Classes.search_code(classroom_code);
+                var url = root_url + '/webapps/classroom/student.do';
+                var data = {nav: 'recursos-estudiant',
+                            domainId: classroom.domain,
+                            domainCode: classroom.code};
+                open_tab(url, data);
+            });
 
-		$('.linkResource').unbind( "click" );
-		$('.linkResource').click(function(){
-			var link = $(this).parents('.resource').attr('link');
-			if(link && link != 'undefined'){
-				var url = link;
-				var data = {};
-			} else {
-				var code = $(this).parents('.resource').attr('resource');
-				var url = root_url + '/webapps/bustiaca/listMails.do';
-				var data = {l: code};
-			}
-			open_tab(url, data);
-		});
+		$('.linkResource').unbind( "click" )
+            .click(function(){
+                var link = $(this).parents('.resource').attr('link');
+                var url, data;
+                if(link && link != 'undefined'){
+                    url = link;
+                    data = {};
+                } else {
+                    var code = $(this).parents('.resource').attr('resource');
+                    url = root_url + '/webapps/bustiaca/listMails.do';
+                    data = {l: code};
+                }
+                open_tab(url, data);
+            });
 
-		$('.linkEvent').unbind( "click" );
-		$('.linkEvent').click(function(){
-			var link = $(this).parents('.event').attr('link');
-			if(link && link != 'undefined'){
-				var url = link;
-				var data = {};
-				open_tab(url, data);
-			}
-		});
+		$('.linkEvent').unbind( "click" )
+            .click(function(){
+                var link = $(this).parents('.event').attr('link');
+                if(link && link != 'undefined'){
+                    var url = link;
+                    var data = {};
+                    open_tab(url, data);
+                }
+            });
 
-		$('.linkMail').unbind( "click" );
-		$('.linkMail').click(function(){
-			var mail = $(this).attr('mail');
-			var url = root_url+"/WebMail/writeMail.do";
-			var data = {
-				to: mail
-			};
-			open_tab(url, data);
-		});
+		$('.linkMail').unbind( "click" )
+            .click(function(){
+                var mail = $(this).attr('mail');
+                var url = root_url+"/WebMail/writeMail.do";
+                var data = {to: mail};
+                open_tab(url, data);
+            });
 
-		$('.showUsers').unbind( "click" );
-		$('.showUsers').click(function(){
-			var classroom_code = $(this).parents('.classroom').attr('classroom');
-			var classroom = Classes.search_code(classroom_code);
-			if( $('#users_'+classroom.code).hasClass('hidden') ) {
-				if($('#users_'+classroom.code).text() == '') {
-					$(this).addClass('spin');
-					retrieve_users(classroom, this);
-				}
-				$('#users_'+classroom.code).removeClass('hidden');
-			} else {
-				$(this).removeClass('spin');
-				$('#users_'+classroom.code).addClass('hidden');
-			}
-		});
+		$('.showUsers').unbind( "click" )
+            .click(function(){
+                var classroom_code = $(this).parents('.classroom').attr('classroom');
+                var classroom = Classes.search_code(classroom_code);
+                var elem = $('#users_'+classroom.code);
+                if ( elem.hasClass('hidden') ) {
+                    if ( elem.text() == '') {
+                        $(this).addClass('spin');
+                        retrieve_users(classroom, this);
+                    }
+                    elem.removeClass('hidden');
+                } else {
+                    $(this).removeClass('spin');
+                    elem.addClass('hidden');
+                }
+            });
 	}
 
 	function ClassroomUI(classroom) {
@@ -274,8 +273,7 @@ var UI = new function() {
 						</div>\
 						<div class="panel-body bg-info text-info collapse" id="detail_'+c.code+'">'+ text + '</div> \
 					</div>';
-			return content;
-		}
+		};
 
 		function resource(resource) {
 			if(resource.link != 'undefined'){
@@ -302,12 +300,12 @@ var UI = new function() {
 			var events_html = '';
 			var show_module_dates = get_show_module_dates();
 			if (c.all_events_completed()) {
-				for(var j in c.events){
-					var ev = c.events[j];
+				for(var i in c.events){
+					var ev = c.events[i];
 					if (show_module_dates || ev.is_assignment()) {
 						if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
-							var e = new EventUI(ev);
-							events_html += e.classroom_event_grade();
+							var eui = new EventUI(ev);
+							events_html += eui.classroom_event_grade();
 						}
 					}
 				}
@@ -319,17 +317,17 @@ var UI = new function() {
 						<tbody>' + events_html + ' </tbody>\
 					</table>';
 			} else {
-				for(var j in c.events) {
-					var ev = c.events[j];
-					if (show_module_dates || ev.is_assignment()) {
-						if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
-							var e = new EventUI(ev);
+				for(var k in c.events) {
+					var cev = c.events[k];
+					if (show_module_dates || cev.is_assignment()) {
+						if (cev.is_assignment() || !cev.has_started() || !cev.has_ended()) {
+							var e = new EventUI(cev);
 							events_html += e.classroom_event();
 						}
 					}
 				}
-				for(var j in c.grades){
-					events_html += only_grade(c.grades[j], 4);
+				for(var l in c.grades){
+					events_html += only_grade(c.grades[l], 4);
 				}
 				return '<table class="table table-condensed events" id="events_'+c.code+'">  \
 						<thead><tr><th></th><th>'+_('__START__')+'</th><th>'+_('__END__')+'</th><th>'+_('__SOLUTION__')+'</th><th>'+_('__GRADE__')+'</th></tr></thead>\
@@ -338,12 +336,13 @@ var UI = new function() {
 			}
 
 			function only_grade(grade, colspan) {
+                var clas, icon;
 				if (grade.prov) {
-					var clas = "bg-warning";
-					var icon = ' <span class="glyphicon glyphicon-warning-sign text-danger"  aria-hidden="true" title="'+_('__PROV_GRADE__')+'"></span> ';
+					clas = "bg-warning";
+					icon = ' <span class="glyphicon glyphicon-warning-sign text-danger"  aria-hidden="true" title="'+_('__PROV_GRADE__')+'"></span> ';
 				} else {
-					var clas = "bg-primary";
-					var icon = "";
+					clas = "bg-primary";
+					icon = "";
 				}
 				return '<tr class="event '+clas+'"><td class="name" colspan="'+colspan+'">'+ grade.get_title()+'</td><td class="graded">'+icon+grade.grade+'</td></tr>';
 			}
@@ -354,7 +353,7 @@ var UI = new function() {
 			var buttons = "";
 			var text = '<div class="row-fluid clearfix">';
 
-			if(c.has_stats()) {
+			if(c.stats) {
 				buttons += '<button type="button" class="linkEstads btn btn-warning" aria-label="'+_('__STATS__')+'" title="'+_('__STATS__')+'">\
 			    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>';
 		    }
@@ -378,12 +377,13 @@ var UI = new function() {
 				if (c.consultorlastviewed) {
 					title += "\n"+_('__VIEWED_LAST_TIME__', [getDate(c.consultorlastviewed), getTime(c.consultorlastviewed)]);
 				}
+                var img, mail;
 				if (c.consultormail) {
-					var img = "envelope";
-					var mail = 'mail="'+c.consultormail+'"';
+					img = "envelope";
+					mail = 'mail="'+c.consultormail+'"';
 				} else {
-					var img = "user";
-					var mail = "";
+					img = "user";
+					mail = "";
 				}
 			  	buttons +=  '<button type="button" class="linkMail btn btn-success" '+mail+' aria-label="'+title+'" title="'+title+'">\
 			    	<span class="glyphicon glyphicon-'+img+'" aria-hidden="true"></span>\
@@ -479,7 +479,7 @@ var UI = new function() {
 					break;
 				}
 			}
-			var link = root_url_ssl + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s='
+			var link = root_url_ssl + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s=';
 			text += get_general_link(link, _('__OLD_AGENDA__'));
 			text += get_general_link(root_url_ssl + '/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
 			text += get_general_link(root_url_ssl + '/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
@@ -492,13 +492,14 @@ var UI = new function() {
 		    $('.linkResource').unbind( "click" );
 			$('.linkResource').click(function(){
 				var link = $(this).parents('.resource').attr('link');
+                var url, data;
 				if(link && link != 'undefined'){
-					var url = link;
-					var data = {};
+					url = link;
+					data = {};
 				} else {
 					var code = $(this).parents('.resource').attr('resource');
-					var url = root_url + '/webapps/bustiaca/listMails.do';
-					var data = {l: code};
+					url = root_url + '/webapps/bustiaca/listMails.do';
+					data = {l: code};
 				}
 				open_tab(url, data);
 			});
@@ -514,8 +515,8 @@ var UI = new function() {
 			pacs_loaded = true;
 			var limit = get_today_limit();
 
-			var events_pacs = new Array();
-			var events_today = new Array();
+			var events_pacs = [];
+			var events_today = [];
 			for (var i in classrooms) {
 				var classroom = classrooms[i];
 				if (classroom.events.length > 0 ) {
@@ -546,7 +547,7 @@ var UI = new function() {
 					if (title != "") {
 						name = '<span title ="'+title+'">'+ name + '</span>';
 					}
-					var evnt = new Event(name, '', 'UOC');
+					var evnt = new CalEvent(name, '', 'UOC');
 					evnt.start = classroom.exams.date;
 					evnt.link = root_url+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
 					events_today.push(evnt);
@@ -554,9 +555,9 @@ var UI = new function() {
 			}
 
 			var gnral_events = Classes.get_general_events();
-			for(var j in gnral_events){
-				if (gnral_events[j].is_near(limit)) {
-					events_today.push(gnral_events[j]);
+			for(var k in gnral_events){
+				if (gnral_events[k].is_near(limit)) {
+					events_today.push(gnral_events[k]);
 				}
 			}
 
@@ -576,9 +577,9 @@ var UI = new function() {
 					});
 				}
 
-				for (var i in events_pacs) {
-					var e = new EventUI(events_pacs[i])
-					content_pacs += e.pacs_event();
+				for (var l in events_pacs) {
+					var eui = new EventUI(events_pacs[l]);
+					content_pacs += eui.pacs_event();
 				}
 				if (content_pacs != "") {
 					content_pacs = '<div class="pull-right"><button type="button" class="btn-sm btn btn-primary" id="show_upcomming">\
@@ -601,8 +602,8 @@ var UI = new function() {
 					return comp;
 				});
 
-				for (var i in events_today) {
-					var e = new EventUI(events_today[i])
+				for (var m in events_today) {
+					var e = new EventUI(events_today[m]);
 					content_today += e.today_event(limit);
 				}
 				if (content_today != "") {
@@ -657,7 +658,7 @@ var UI = new function() {
 				UI.pacs(true);
 			});
 		}
-	}
+	};
 
 	function EventUI(evnt) {
 		var ev = evnt;
@@ -697,7 +698,7 @@ var UI = new function() {
 			}
 			title += ev.name;
 			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+'</tr>';
-		}
+		};
 
 		this.classroom_event = function() {
 			if(ev.link != 'undefined') {
@@ -717,14 +718,15 @@ var UI = new function() {
 			var dstart = eventdate(ev.start, "");
 			var dend = eventdate(ev.end, "end");
 			var dsol = eventdate(ev.solution, "");
+            var dgrade;
 			if (ev.graded) {
 				var grad = ev.graded;
 				if (ev.commenttext) {
 					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
 				}
-				var dgrade = eventtext(grad, "graded", ev.grading);
+				dgrade = eventtext(grad, "graded", ev.grading);
 			} else {
-				var dgrade = eventdate(ev.grading, "");
+				dgrade = eventdate(ev.grading, "");
 			}
 
 			var title = "";
@@ -745,7 +747,7 @@ var UI = new function() {
 			}
 			title += ev.name;
 			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
-		}
+		};
 
 		this.today_event = function(limit) {
 			if(ev.link != 'undefined') {
@@ -766,14 +768,15 @@ var UI = new function() {
 			var dstart = eventdate(ev.start, isNearDate(ev.start, limit) ? "near" : "");
 			var dend = eventdate(ev.end, isNearDate(ev.end, limit) ? "end near" : "end");
 			var dsol = eventdate(ev.solution, isNearDate(ev.solution, limit) ? "near" : "");
+            var dgrade;
 			if (ev.graded) {
 				var grad = ev.graded;
 				if (ev.commenttext) {
 					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
 				}
-				var dgrade = eventtext(grad, "graded", ev.grading);
+				dgrade = eventtext(grad, "graded", ev.grading);
 			} else {
-				var dgrade = eventdate(ev.grading, isNearDate(ev.grading, limit) ? "near" : "");
+				dgrade = eventdate(ev.grading, isNearDate(ev.grading, limit) ? "near" : "");
 			}
 
 			var title = "";
@@ -799,20 +802,21 @@ var UI = new function() {
 			}
 			title += ev.name;
 			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
-		}
+		};
 
 		this.classroom_event_grade = function() {
 			if(ev.link != 'undefined'){
 				var link = 'link="'+ev.link+'"';
 			}
+            var dgrade;
 			if (ev.graded) {
 				var grad = ev.graded;
 				if (ev.commenttext) {
 					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
 				}
-				var dgrade = eventtext(grad, "graded", ev.grading);
+				dgrade = eventtext(grad, "graded", ev.grading);
 			} else {
-				var dgrade = eventdate(ev.grading, "");
+				dgrade = eventdate(ev.grading, "");
 			}
 
 			var title = "";
@@ -833,7 +837,7 @@ var UI = new function() {
 			}
 			title += ev.name;
 			return '<tr class="event success" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
-		}
+		};
 
 		function eventdate(d, clas) {
 			var fdate;
@@ -912,21 +916,21 @@ var UI = new function() {
 		var text = "";
 		var connected = "";
 		var idp = get_idp();
-		for(x in data.studentUsers) {
+		for(var x in data.studentUsers) {
 			var user = data.studentUsers[x];
 			if(user.userNumber == idp) {
 				continue;
 			}
-
+            var title, clas;
 			if (user.connected) {
-				var title = _('__CONNECTED__');
-				var clas = 'success';
+				title = _('__CONNECTED__');
+				clas = 'success';
 			} else if (user.lastLoginTime) {
-				var title = _('__VIEWED_LAST_TIME__', [getDate(user.lastLoginTime), getTime(user.lastLoginTime)]);
-				var clas = 'warning';
+				title = _('__VIEWED_LAST_TIME__', [getDate(user.lastLoginTime), getTime(user.lastLoginTime)]);
+				clas = 'warning';
 			} else {
-				var title = _('__DISCONNECTED__');
-				var clas = 'warning';
+				title = _('__DISCONNECTED__');
+				clas = 'warning';
 			}
 
 		  	var usertext = '<li><a class="linkMail text-'+clas+'" mail="'+user.email+' "aria-label="'+title+'" title="'+title+' - '+user.email+'">\
@@ -953,7 +957,7 @@ var UI = new function() {
 			});
 		}
 	}
-}
+};
 
 $(document).ready(function() {
 	UI.init();

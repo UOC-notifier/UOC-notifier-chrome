@@ -124,7 +124,7 @@ function get_critical(){
 function save_critical(messages){
 	// Do not allow < 0 messages
 	if (messages < 0) {
-		minutes = 0;
+		messages = 0;
 	}
 	Storage.set_option("critical", messages);
 }
@@ -239,7 +239,7 @@ var Storage = new function(){
 
 	this.get_option = function(option_name, default_value) {
 		return localStorage.getItem(option_name) || default_value;
-	}
+	};
 
 	this.get_option_bool = function(option_name, default_value) {
 		var value = localStorage.getItem(option_name);
@@ -247,7 +247,7 @@ var Storage = new function(){
 			return default_value;
 		}
 		return value == "true";
-	}
+	};
 
 	this.get_option_int = function(option_name, default_value) {
 		var value = this.get_option(option_name, default_value);
@@ -256,14 +256,13 @@ var Storage = new function(){
 			return default_value;
 		}
 		return value;
-	}
+	};
 
 	this.set_option = function(option_name, value) {
 		localStorage.setItem(option_name, value);
-	}
+	};
 
 	this.unset_option = function(option_name) {
 		localStorage.removeItem(option_name);
-	}
-
-}
+	};
+};
