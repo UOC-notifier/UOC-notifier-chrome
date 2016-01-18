@@ -188,7 +188,7 @@ var Classes = new function() {
 				if (classl.notify) {
 					for (var j in classl.resources) {
 						var resourcel = classl.resources[j];
-						var resource = new Resource(resourcel.title, resourcel.code);
+						var resource = new Resource(resourcel.title, resourcel.code, resourcel.type);
 						resource.set_messages(resourcel.messages, resourcel.all_messages);
 						resource.set_pos(resourcel.pos);
 						resource.set_link(resourcel.link);
@@ -337,7 +337,7 @@ function Classroom(title, code, domain, type, template) {
 	this.add_resource = function(resource) {
 		if(!this.notify) return;
 
-		var idx = this.get_index(resource.code, resource.lcode);
+		var idx = this.get_index(resource.code);
 		if (idx >= 0) {
 			this.resource_merge(idx, resource);
 		} else {
@@ -386,18 +386,9 @@ function Classroom(title, code, domain, type, template) {
 		});
 	};
 
-	this.get_index = function(code, lcode) {
+	this.get_index = function(code) {
 		for (var i in this.resources) {
 			if(this.resources[i].code == code) {
-				return i;
-			}
-			if(this.resources[i].lcode == lcode) {
-				return i;
-			}
-			if(this.resources[i].lcode == code) {
-				return i;
-			}
-			if(this.resources[i].code == lcode) {
 				return i;
 			}
 		}
@@ -412,8 +403,8 @@ function Classroom(title, code, domain, type, template) {
 		this.resources[idx].set_pos(resource.pos);
 		this.resources[idx].link = resource.link;
 		this.resources[idx].code = resource.code;
-		this.resources[idx].lcode = resource.lcode;
 		this.resources[idx].title = resource.title;
+		this.resources[idx].type = resource.type;
 		if (this.resources[idx].messages != '-') {
 			this.messages += this.resources[idx].messages;
 		}
@@ -478,10 +469,10 @@ function Classroom(title, code, domain, type, template) {
 	};
 }
 
-function Resource(title, code) {
+function Resource(title, code, type) {
 	this.title = title;
 	this.code = code;
-	this.lcode = code;
+	this.type = type;
 	this.messages =  '-';
 	this.all_messages =  '-';
 	this.link =  "";
@@ -525,15 +516,6 @@ function Resource(title, code) {
 		var url = get_url_attr(link, 'redirectUrl');
 		if (url) {
 			link = decodeURIComponent(url);
-			/*var url = get_url_attr(link, 'url');
-			if (url) {
-				link = root_url + '/' + decodeURIComponent(url);
-			}*/
-		}
-
-		code = get_url_attr(link, 'l');
-		if (code) {
-			this.lcode = code;
 		}
 
 		var session = get_url_attr(link, 's');

@@ -245,7 +245,7 @@ function parse_classroom(classr) {
 	if (classr.widget.eines.length > 0) {
 		for(var j in classr.widget.eines) {
 			var resourcel = classr.widget.eines[j];
-			var resource = new Resource(resourcel.nom, resourcel.resourceId);
+			var resource = new Resource(resourcel.nom, resourcel.resourceId, resourcel.idTipoLink);
 			classroom.add_resource(resource);
 			resource.set_link(resourcel.viewItemsUrl);
 			retrieve_resource(classroom, resource);
@@ -278,7 +278,7 @@ function parse_classroom(classr) {
 				args.canCreateEvent = false;
 			}
 
-			evnt.link = root_url + urlbase+'?'+uri_data(args)+'&s=';
+			evnt.link = root_url_ssl + urlbase+'?'+uri_data(args)+'&s=';
 			evnt.start = act.startDateStr;
 			evnt.end = act.deliveryDateStr;
 			evnt.solution = act.solutionDateStr;
@@ -334,7 +334,7 @@ function parse_classroom_old(classr) {
 					for (var j in classr.resources) {
 						var resourcel = classr.resources[j];
 						if (resourcel.title) {
-							var resource = new Resource(resourcel.title, resourcel.code);
+							var resource = new Resource(resourcel.title, resourcel.code, "OLD");
 							resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
 							classroom.add_resource(resource);
 						}
@@ -480,6 +480,9 @@ function retrieve_stats(classroom) {
 }
 
 function retrieve_resource(classroom, resource) {
+	if (resource.type == "URL") {
+		return;
+	}
 	var args = {
 		sectionId : '-1',
 		pageSize : 0,

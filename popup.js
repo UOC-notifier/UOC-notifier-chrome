@@ -493,7 +493,7 @@ var UI = new function() {
 			$('.linkResource').click(function(){
 				var link = $(this).parents('.resource').attr('link');
                 var url, data;
-				if(link && link != 'undefined'){
+				if(link && link != undefined){
 					url = link;
 					data = {};
 				} else {
