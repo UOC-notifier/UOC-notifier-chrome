@@ -110,6 +110,9 @@
     "__WORKING_GROUPS__" : {
         "message" : "Grups de treball"
     },
+    "__OLD_CLASSROOMS__" : {
+        "message" : "Aules anteriors"
+    },
     "__FINAL_TESTS__" : {
         "message" : "Proves d'avaluacio final a $seu$ el dia $date$",
         "placeholders": {

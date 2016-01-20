@@ -33,9 +33,7 @@ function check_messages(after_check_fnc) {
 }
 
 function retrieve_final_grades(classroom) {
-	var exped = get_exped();
-
-	if (!exped || !classroom.subject_code || classroom.final_grades || !classroom.all_events_completed()) {
+	if (!classroom.exped || !classroom.subject_code || classroom.final_grades || !classroom.all_events_completed()) {
 		return;
 	}
 
@@ -43,7 +41,7 @@ function retrieve_final_grades(classroom) {
 		"F": "edu.uoc.gat.cexped.AppFactory",
 		"I": [{
 			"O": 'Od9l_GxbvdWUtIsyoEt2IWynnbk=',
-			"P": [classroom.subject_code, exped]
+			"P": [classroom.subject_code, parseInt(classroom.exped)]
 		}]
 	};
 	// Always GAT_EXP, not dependant on UOCi
@@ -358,105 +356,106 @@ function parse_classroom_old(classr) {
 
 function retrieve_gradeinfo() {
 	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', false, function(data) {
-		var exped = $(data).find('files>file>id').first().text().trim();
-		save_exped(exped);
-		var grade;
+		$(data).find('files>file').each(function() {
+			var exped = $(this).children('id').first().text().trim();
 
-		$(data).find('listaAsignaturas asignatura').each(function() {
-			// If has a children of same type
-			if ($(this).has('asignatura').length > 0) {
-				return;
-			}
-
-			var subject_code = $(this).find('codigo').first().text().trim();
-			var classroom = Classes.search_subject_code(subject_code);
-			if (classroom && !classroom.notify) {
-				return;
-			}
-
-			$(this).find('listaActividades actividad').each(function() {
+			$(data).find('listaAsignaturas asignatura').each(function() {
 				// If has a children of same type
-				if ($(this).has('actividad').length > 0) {
+				if ($(this).has('asignatura').length > 0) {
 					return;
 				}
 
-				var eventid = $(this).find('pacId').text().trim();
-				if (!classroom) {
-					classroom = Classes.get_class_by_event(eventid);
-					if (!classroom) {
+				var subject_code = $(this).find('codigo').first().text().trim();
+				var classroom = Classes.search_subject_code(subject_code);
+				if (classroom && !classroom.notify) {
+					return;
+				}
+
+				$(this).find('listaActividades actividad').each(function() {
+					// If has a children of same type
+					if ($(this).has('actividad').length > 0) {
 						return;
 					}
 
-					// Save the real subject code
-					if (subject_code.length > 0) {
-						classroom.subject_code = subject_code;
-					}
-				}
+					var eventid = $(this).find('pacId').text().trim();
+					if (!classroom) {
+						classroom = Classes.get_class_by_event(eventid);
+						if (!classroom) {
+							return;
+						}
 
-				if (!classroom.notify) {
-					return;
-				}
-
-				var evnt = classroom.get_event(eventid);
-				if (evnt && evnt.is_assignment()) {
-					var changed = false;
-
-					var committed = $(this).find('listaEntregas>entrega').length > 0;
-					if (committed) {
-						evnt.committed = true;
-						var viewed = $(this).find('listaEntregas>entrega').last().find('fechaDescargaConsultor').html();
-						evnt.viewed = viewed && viewed.length ? viewed: false;
-						changed = true;
-					}
-
-					var comments = $(this).find('listaComentarios>comentario').length > 0;
-					if (comments) {
-						var lastcomment = $(this).find('listaComentarios>comentario').last();
-						evnt.commenttext = lastcomment.find('texto').html();
-						evnt.commentdate= lastcomment.find('fechaComentario').html();
-						changed = true;
-					}
-
-					grade = $(this).find('nota').text().trim();
-					if (grade.length > 0 && grade != '-') {
-						if (evnt.graded != grade) {
-							evnt.graded = grade;
-							changed = true;
-							evnt.notify(classroom.get_acronym());
+						// Save the real subject code
+						if (subject_code.length > 0) {
+							classroom.subject_code = subject_code;
 						}
 					}
-					if (changed) {
-						classroom.add_event(evnt);
+
+					if (!classroom.notify) {
+						return;
 					}
-				} else {
-					var nota = $(this).find('nota').text().trim();
+					classroom.exped = exped;
+
+					var evnt = classroom.get_event(eventid);
+					if (evnt && evnt.is_assignment()) {
+						var changed = false;
+
+						var committed = $(this).find('listaEntregas>entrega').length > 0;
+						if (committed) {
+							evnt.committed = true;
+							var viewed = $(this).find('listaEntregas>entrega').last().find('fechaDescargaConsultor').html();
+							evnt.viewed = viewed && viewed.length ? viewed: false;
+							changed = true;
+						}
+
+						var comments = $(this).find('listaComentarios>comentario').length > 0;
+						if (comments) {
+							var lastcomment = $(this).find('listaComentarios>comentario').last();
+							evnt.commenttext = lastcomment.find('texto').html();
+							evnt.commentdate= lastcomment.find('fechaComentario').html();
+							changed = true;
+						}
+
+						var grade = $(this).find('nota').text().trim();
+						if (grade.length > 0 && grade != '-') {
+							if (evnt.graded != grade) {
+								evnt.graded = grade;
+								changed = true;
+								evnt.notify(classroom.get_acronym());
+							}
+						}
+						if (changed) {
+							classroom.add_event(evnt);
+						}
+					} else {
+						var nota = $(this).find('nota').text().trim();
+						if (nota.length > 0 && nota != '-') {
+							var name = $(this).find('descripcion').text().trim();
+							var grade = classroom.add_grade(name, nota, false);
+							if (grade) {
+								grade.notify(classroom.get_acronym());
+							}
+						}
+					}
+				});
+
+				if (classroom) {
+					var nota = $(this).find('notaFinal').text().trim();
 					if (nota.length > 0 && nota != '-') {
-						var name = $(this).find('descripcion').text().trim();
-						grade = classroom.add_grade(name, nota, false);
+						var grade = classroom.add_grade('FA', nota, false);
+						if (grade) {
+							grade.notify(classroom.get_acronym());
+						}
+					}
+
+					nota = $(this).find('notaFinalContinuada').text().trim();
+					if (nota.length > 0 && nota != '-') {
+						var grade = classroom.add_grade('FC', nota, false);
 						if (grade) {
 							grade.notify(classroom.get_acronym());
 						}
 					}
 				}
 			});
-
-			if (classroom) {
-				var nota = $(this).find('notaFinal').text().trim();
-				if (nota.length > 0 && nota != '-') {
-					grade = classroom.add_grade('FA', nota, false);
-					if (grade) {
-						grade.notify(classroom.get_acronym());
-					}
-				}
-
-				nota = $(this).find('notaFinalContinuada').text().trim();
-				if (nota.length > 0 && nota != '-') {
-					grade = classroom.add_grade('FC', nota, false);
-					if (grade) {
-						grade.notify(classroom.get_acronym());
-					}
-				}
-			}
 		});
 	});
 }
@@ -539,6 +538,17 @@ function retrieve_users(classroom, button) {
 	Queue.set_after_function('nosave');
 	Queue.request('/webapps/aulaca/classroom/UsersList.action', args, 'GET', false, function(data) {
 		UI.fill_users(classroom.code, data);
+		$(button).removeClass('spin');
+    });
+}
+
+function retrieve_materials(classroom, button) {
+	var args = {
+		codAssig : classroom.subject_code
+	};
+	Queue.set_after_function('nosave');
+	Queue.request('/webapps/mymat/listMaterialsAjax.action', args, 'GET', false, function(data) {
+		UI.fill_materials(classroom.code, data);
 		$(button).removeClass('spin');
     });
 }

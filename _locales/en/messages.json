@@ -110,6 +110,9 @@
     "__WORKING_GROUPS__" : {
         "message" : "Working groups"
     },
+    "__OLD_CLASSROOMS__" : {
+        "message" : "Old classrooms"
+    },
     "__FINAL_TESTS__" : {
         "message" : "Final tests on $seu$ on $date$",
         "placeholders": {

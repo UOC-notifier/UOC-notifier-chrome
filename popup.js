@@ -153,17 +153,6 @@ var UI = new function() {
                     open_tab(url, data);
                 });
 
-		$('.linkMaterials').unbind( "click" )
-            .click(function(){
-                var classroom_code = $(this).parents('.classroom').attr('classroom');
-                var classroom = Classes.search_code(classroom_code);
-                var url = root_url + '/webapps/classroom/student.do';
-                var data = {nav: 'recursos-estudiant',
-                            domainId: classroom.domain,
-                            domainCode: classroom.code};
-                open_tab(url, data);
-            });
-
 		$('.linkResource').unbind( "click" )
             .click(function(){
                 var link = $(this).parents('.resource').attr('link');
@@ -202,6 +191,7 @@ var UI = new function() {
                 var classroom_code = $(this).parents('.classroom').attr('classroom');
                 var classroom = Classes.search_code(classroom_code);
                 var elem = $('#users_'+classroom.code);
+                //$('#materials_'+classroom.code).addClass('hidden');
                 if ( elem.hasClass('hidden') ) {
                     if ( elem.text() == '') {
                         $(this).addClass('spin');
@@ -212,6 +202,32 @@ var UI = new function() {
                     $(this).removeClass('spin');
                     elem.addClass('hidden');
                 }
+            });
+
+        $('.showMaterials').unbind( "click" )
+            .click(function(){
+                var classroom_code = $(this).parents('.classroom').attr('classroom');
+                var classroom = Classes.search_code(classroom_code);
+                /*if (classroom.subject_code) {
+                    var elem = $('#materials_'+classroom.code);
+                    //$('#users_'+classroom.code).addClass('hidden');
+                    if ( elem.hasClass('hidden') ) {
+                        if ( elem.text() == '') {
+                            $(this).addClass('spin');
+                            retrieve_materials(classroom, this);
+                        }
+                        elem.removeClass('hidden');
+                    } else {
+                        $(this).removeClass('spin');
+                        elem.addClass('hidden');
+                    }
+                } else {*/
+                    var url = root_url + '/webapps/classroom/student.do';
+                    var data = {nav: 'recursos-estudiant',
+                                domainId: classroom.domain,
+                                domainCode: classroom.code};
+                    open_tab(url, data);
+                //}
             });
 	}
 
@@ -253,7 +269,7 @@ var UI = new function() {
 				}
 			}
 
-			var text = classrooms_buttons() + users();
+			var text = classrooms_buttons() + users() + materials();
 			if (nearexams) {
 				text += exams;
 			}
@@ -292,6 +308,10 @@ var UI = new function() {
 		function users() {
 			return '<div id="users_'+c.code+'" class="hidden row-fluid well"></div>';
 		}
+
+        function materials() {
+            return '<div id="materials_'+c.code+'" class="hidden row-fluid well"></div>';
+        }
 
 		function events() {
 			if (c.events.length == 0 && c.grades.length == 0) {
@@ -358,8 +378,9 @@ var UI = new function() {
 			    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>';
 		    }
 
-			if(c.type != 'TUTORIA'){
-				buttons += '<button type="button" class="linkMaterials btn btn-info" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
+			if (c.type != "TUTORIA") {
+				buttons += '<button type="button" class="showMaterials btn btn-info has-spinner" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'" data-toggle="button">\
+                    <span class="spinner"><span class="glyphicon glyphicon-refresh"></span></span> \
 			    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
 			  	</button>\
 			  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('__TEACHING_PLAN__')+'" title="'+_('__TEACHING_PLAN__')+'">\
@@ -484,6 +505,7 @@ var UI = new function() {
 			text += get_general_link(root_url_ssl + '/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
 			text += get_general_link(root_url_ssl + '/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
 			text += get_general_link(root_url_ssl + '/cgibin/hola?t=grups_tb/grups.tmpl&domainFather=grc&s=', _('__WORKING_GROUPS__'));
+            text += get_general_link(root_url_ssl + '/webapps/classroom/081_common/jsp/aules_estudiant.jsp?domainPontCode=ant&s=', _('__OLD_CLASSROOMS__'));
 
 			text += '</div>';
 
@@ -911,8 +933,25 @@ var UI = new function() {
 		}
 	}
 
+    this.fill_materials = function(classcode, data) {
+        var text = "";
+        for (var x in data.dades) {
+            var material = data.dades[x];
+            console.log(material);
+            text += '<li>'+material.titol + ' ('+material.idioma    +') -';
+            for (var y in material.formats) {
+                var format = material.formats[y];
+                text += ' ['+format.tipus._name+']';
+            }
+            text += '</li>';
+        }
+
+        if (text != "") {
+            $('#materials_'+classcode).html('<ul>'+text+'</ul>');
+        }
+    }
+
 	this.fill_users = function(classcode, data) {
-		$('#users_'+classcode).html(data);
 		var text = "";
 		var connected = "";
 		var idp = get_idp();

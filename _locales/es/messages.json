@@ -110,6 +110,9 @@
     "__WORKING_GROUPS__" : {
         "message" : "Grupos de trabajo"
     },
+    "__OLD_CLASSROOMS__" : {
+        "message" : "Aulas antiguas"
+    },
     "__FINAL_TESTS__" : {
         "message" : "Pruebas de evaluación final en $seu$ el día $date$",
         "placeholders": {

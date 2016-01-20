@@ -41,14 +41,6 @@ function save_idp(idp){
 	Storage.set_option("idp", idp);
 }
 
-function get_exped(){
-	return Storage.get_option_int("exped", false);
-}
-
-function save_exped(exped){
-	Storage.set_option("exped", exped);
-}
-
 // OPTIONS - UNIVERSITY
 function get_uni(){
 	return Storage.get_option("uni", 'UOCc');
