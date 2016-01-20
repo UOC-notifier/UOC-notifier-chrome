@@ -111,7 +111,7 @@
         "message" : "Grupos de trabajo"
     },
     "__OLD_CLASSROOMS__" : {
-        "message" : "Aulas antiguas"
+        "message" : "Aulas anteriores"
     },
     "__FINAL_TESTS__" : {
         "message" : "Pruebas de evaluación final en $seu$ el día $date$",
@@ -168,6 +168,9 @@
     },
     "__EQUIPMENT__" : {
         "message" : "Materiales"
+    },
+    "__LINK_TO_EQUIPMENT__" : {
+      "message" : "Enlace a los materiales"
     },
     "__TEACHING_PLAN__" : {
         "message" : "Plan Docente"
@@ -237,6 +240,9 @@
     },
     "__ONLY_ASSIGNMENTS__" : {
         "message" : "Mostrar sólo tareas"
+    },
+    "__NOTHING_AHEAD_" : {
+      "message" : "No hay tareas a la vista"
     },
     "__DAYS__" : {
         "message" : "dias"

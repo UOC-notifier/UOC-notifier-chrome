@@ -169,17 +169,20 @@
     "__EQUIPMENT__" : {
         "message" : "Equipment"
     },
+    "__LINK_TO_EQUIPMENT__" : {
+      "message" : "Link to Equipment"
+    },
     "__TEACHING_PLAN__" : {
-        "message" : "Teaching plan"
+        "message" : "Teaching Plan"
     },
     "__GOTO_CAMPUS__" : {
-        "message" : "Go to campus"
+        "message" : "Go to Campus"
     },
     "__GOTO_CLASS__" : {
-        "message" : "Go to classroom"
+        "message" : "Go to Classroom"
     },
     "__GOTO_RES__" : {
-        "message" : "Go to resource"
+        "message" : "Go to Resource"
     },
     "__START__" : {
         "message" : "Start"
@@ -203,7 +206,7 @@
         "message" : "Agenda"
     },
     "__LINKS_TO_CAMPUS__" : {
-        "message" : "Links to campus"
+        "message" : "Links to Campus"
     },
     "__UOC__" : {
         "message" : "UOC"
@@ -237,6 +240,9 @@
     },
     "__ONLY_ASSIGNMENTS__" : {
         "message" : "Show only assignments"
+    },
+    "__NOTHING_AHEAD_" : {
+      "message" : "No tasks ahead"
     },
     "__DAYS__" : {
         "message" : "days"

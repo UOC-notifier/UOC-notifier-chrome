@@ -37,6 +37,12 @@ function retrieve_final_grades(classroom) {
 		return;
 	}
 
+	// Stop retrieving this when exams are not done
+	if (classroom.exams && classroom.exams.date && !isBeforeToday(classroom.exams.date) && !isToday(classroom.exams.date)) {
+		Debug.print('Exam not done, not retrieving final grades for '+classroom.acronym);
+		return;
+	}
+
 	var args = {
 		"F": "edu.uoc.gat.cexped.AppFactory",
 		"I": [{
@@ -85,6 +91,19 @@ function retrieve_final_exams_event() {
 		return;
 	}
 
+	// Stop retrieving this when exams are over
+	var classrooms = Classes.get_notified();
+	var exams = false;
+	for(var x in classrooms) {
+		var classroom = classrooms[x];
+		if (classroom.exams && classroom.exams.date) {
+			exams = compareDates(exams, classroom.exams.date) > 0 ? exams : classroom.exams.date;
+		}
+	}
+	if (exams && isBeforeToday(exams)) {
+		return;
+	}
+
 	var any = Classes.get_max_any();
 	var args = {
 		"F": "edu.uoc.gepaf.fullpersonalpaf.AppFactory",
@@ -94,7 +113,7 @@ function retrieve_final_exams_event() {
 		}]
 	};
 	// Always GAT_EXP, not dependant on UOCi
-	Queue.request( '/tren/trenacc/webapp/GEPAF.FULLPERSONAL/gwtRequest', args, 'json', false, function(resp) {
+	Queue.request('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/gwtRequest', args, 'json', false, function(resp) {
 		try {
 			var objects = resp.O;
 			for (var x in objects) {
@@ -465,6 +484,12 @@ function retrieve_stats(classroom) {
 		return;
 	}
 
+	// Stop retrieving this when exams are not done
+	if (classroom.exams && classroom.exams.date && !isBeforeToday(classroom.exams.date) && !isToday(classroom.exams.date)) {
+		Debug.print('Exam not done, not retrieving stats for '+classroom.acronym);
+		return;
+	}
+
 	var args = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
 				assig: classroom.subject_code,
 				pAnyAcademic: classroom.any
@@ -548,7 +573,7 @@ function retrieve_materials(classroom, button) {
 	};
 	Queue.set_after_function('nosave');
 	Queue.request('/webapps/mymat/listMaterialsAjax.action', args, 'GET', false, function(data) {
-		UI.fill_materials(classroom.code, data);
+		UI.fill_materials(classroom, data);
 		$(button).removeClass('spin');
     });
 }

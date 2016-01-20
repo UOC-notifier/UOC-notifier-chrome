@@ -72,8 +72,7 @@ var UI = new function() {
 			        .attr('title', _('__MAIL__'));
 		}
 		$('#button_mail').click(function() {
-			var url = root_url + '/WebMail/listMails.do';
-			open_tab(url);
+			open_tab('/WebMail/listMails.do');
 		});
 
 		$('#update').click( function() {
@@ -101,11 +100,10 @@ var UI = new function() {
 		});
 	}
 
-	function handleEvents(){
+	function handleEvents() {
 		$('.linkCampus').unbind( "click" )
                 .click(function(){
-                    var url = root_url + '/cgi-bin/uocapp';
-                    open_tab(url);
+                    open_tab('/cgi-bin/uocapp');
                 });
 
 		$('.linkAula').unbind( "click" )
@@ -113,7 +111,7 @@ var UI = new function() {
                     var classroom_code = $(this).parents('.classroom').attr('classroom');
                     var classroom = Classes.search_code(classroom_code);
 
-                    var url = root_url + '/webapps/classroom/'+classroom.template+'/frameset.jsp';
+                    var url = '/webapps/classroom/'+classroom.template+'/frameset.jsp';
                     var data = {domainCode: classroom.code};
                     open_tab(url, data);
                 });
@@ -123,34 +121,31 @@ var UI = new function() {
                     var classroom_code = $(this).parents('.classroom').attr('classroom');
                     var classroom = Classes.search_code(classroom_code);
 
-                    var url = root_url + '/webapps/rac/listEstudiant.action';
                     var data = {domainId: classroom.domain};
-                    open_tab(url, data);
+                    open_tab('/webapps/rac/listEstudiant.action', data);
                 });
 
 		$('.linkEstads').unbind( "click" )
                 .click(function(){
                     var classroom_code = $(this).parents('.classroom').attr('classroom');
                     var classroom = Classes.search_code(classroom_code);
-                    var url = root_url + '/tren/trenacc';
                     var data = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
                                 assig: classroom.subject_code,
                                 pAnyAcademic: classroom.any};
-                    open_tab(url, data);
+                    open_tab('/tren/trenacc', data);
                 });
 
 		$('.linkDocent').unbind( "click" )
                 .click(function(){
                     var classroom_code = $(this).parents('.classroom').attr('classroom');
                     var classroom = Classes.search_code(classroom_code);
-                    var url = root_url + '/webapps/classroom/download.do';
                     var data = {nav: 'pladocent',
                                 domainId: classroom.domain,
                                 format: 'html',
                                 app: 'aulaca',
                                 precarrega: false
                             };
-                    open_tab(url, data);
+                    open_tab('/webapps/classroom/download.do', data);
                 });
 
 		$('.linkResource').unbind( "click" )
@@ -162,7 +157,7 @@ var UI = new function() {
                     data = {};
                 } else {
                     var code = $(this).parents('.resource').attr('resource');
-                    url = root_url + '/webapps/bustiaca/listMails.do';
+                    url = root_url+'/webapps/bustiaca/listMails.do';
                     data = {l: code};
                 }
                 open_tab(url, data);
@@ -172,18 +167,15 @@ var UI = new function() {
             .click(function(){
                 var link = $(this).parents('.event').attr('link');
                 if(link && link != 'undefined'){
-                    var url = link;
-                    var data = {};
-                    open_tab(url, data);
+                    open_tab(link);
                 }
             });
 
 		$('.linkMail').unbind( "click" )
             .click(function(){
                 var mail = $(this).attr('mail');
-                var url = root_url+"/WebMail/writeMail.do";
                 var data = {to: mail};
-                open_tab(url, data);
+                open_tab('/WebMail/writeMail.do', data);
             });
 
 		$('.showUsers').unbind( "click" )
@@ -208,7 +200,7 @@ var UI = new function() {
             .click(function(){
                 var classroom_code = $(this).parents('.classroom').attr('classroom');
                 var classroom = Classes.search_code(classroom_code);
-                /*if (classroom.subject_code) {
+                if (classroom.subject_code) {
                     var elem = $('#materials_'+classroom.code);
                     //$('#users_'+classroom.code).addClass('hidden');
                     if ( elem.hasClass('hidden') ) {
@@ -221,13 +213,12 @@ var UI = new function() {
                         $(this).removeClass('spin');
                         elem.addClass('hidden');
                     }
-                } else {*/
-                    var url = root_url + '/webapps/classroom/student.do';
+                } else {
                     var data = {nav: 'recursos-estudiant',
                                 domainId: classroom.domain,
                                 domainCode: classroom.code};
-                    open_tab(url, data);
-                //}
+                    open_tab('/webapps/classroom/student.do', data);
+                }
             });
 	}
 
@@ -260,7 +251,7 @@ var UI = new function() {
 					exams += '<div><a href="#" class="linkResource" title="'+classroom.exams.placePS+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__PS__') + ' ' + classroom.exams.timePS + '</a></div>';
 				}
 				if (exams != "") {
-					var link = root_url+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
+					var link = root_url_ssl+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
 
 					var limit = get_today_limit();
 					nearexams = isNearDate(classroom.exams.date, limit);
@@ -468,7 +459,7 @@ var UI = new function() {
 	function tools() {
 		if ($('#detail_campus').html() == "") {
 		    var gat =  get_gat();
-		    var root_url_gate = root_url_ssl+'/tren/trenacc?modul='+gat;
+		    var root_url_gate = '/tren/trenacc?modul='+gat;
 
 		    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
 		    text += '<div class="row-fluid clearfix">';
@@ -491,7 +482,7 @@ var UI = new function() {
 
 			text += '<div class="row-fluid clearfix"><strong>'+_('__PERSONAL__')+'</strong></div>';
 			text += '<div class="row-fluid clearfix">';
-			text += get_general_link(root_url_ssl + '/app/guaita/calendari?perfil=estudiant&s=', _('__NEW_AGENDA__'));
+			text += get_general_link('/app/guaita/calendari?perfil=estudiant&s=', _('__NEW_AGENDA__'));
 			var domainId = "";
 			var classrooms = Classes.get_notified();
 			for(var i in classrooms){
@@ -502,29 +493,29 @@ var UI = new function() {
 			}
 			var link = root_url_ssl + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s=';
 			text += get_general_link(link, _('__OLD_AGENDA__'));
-			text += get_general_link(root_url_ssl + '/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
-			text += get_general_link(root_url_ssl + '/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
-			text += get_general_link(root_url_ssl + '/cgibin/hola?t=grups_tb/grups.tmpl&domainFather=grc&s=', _('__WORKING_GROUPS__'));
-            text += get_general_link(root_url_ssl + '/webapps/classroom/081_common/jsp/aules_estudiant.jsp?domainPontCode=ant&s=', _('__OLD_CLASSROOMS__'));
+			text += get_general_link('/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
+			text += get_general_link('/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
+			text += get_general_link('/cgibin/hola?t=grups_tb/grups.tmpl&domainFather=grc&s=', _('__WORKING_GROUPS__'));
+            text += get_general_link('/webapps/classroom/081_common/jsp/aules_estudiant.jsp?domainPontCode=ant&s=', _('__OLD_CLASSROOMS__'));
 
 			text += '</div>';
 
 		    $('#detail_campus').html(text);
 
-		    $('.linkResource').unbind( "click" );
-			$('.linkResource').click(function(){
-				var link = $(this).parents('.resource').attr('link');
-                var url, data;
-				if(link && link != undefined){
-					url = link;
-					data = {};
-				} else {
-					var code = $(this).parents('.resource').attr('resource');
-					url = root_url + '/webapps/bustiaca/listMails.do';
-					data = {l: code};
-				}
-				open_tab(url, data);
-			});
+            $('.linkResource').unbind( "click" )
+                .click(function(){
+                    var link = $(this).parents('.resource').attr('link');
+                    var url, data;
+                    if(link && link != 'undefined'){
+                        url = link;
+                        data = {};
+                    } else {
+                        var code = $(this).parents('.resource').attr('resource');
+                        url = root_url+'/webapps/bustiaca/listMails.do';
+                        data = {l: code};
+                    }
+                    open_tab(url, data);
+                });
 		}
 
 		function get_general_link(link, title){
@@ -648,7 +639,7 @@ var UI = new function() {
 			}
 
 			if (content_pacs == "" && content_today == "") {
-				$('#button_pacs').remove();
+				$('#detail_pacs').html(_('__NOTHING_AHEAD_'));
 			}
 
 			$('#show_upcomming').unbind( "click" );
@@ -667,9 +658,7 @@ var UI = new function() {
 			$('.linkEvent').click(function(){
 				var link = $(this).parents('.event').attr('link');
 				if(link && link != 'undefined'){
-					var url = link;
-					var data = {};
-					open_tab(url, data);
+					open_tab(link);
 				}
 			});
 
@@ -922,34 +911,92 @@ var UI = new function() {
 	function open_tab(url, data){
 		session = Session.get();
 		if(session){
-			if(url.indexOf('?') == -1){
+			if (url.indexOf('?') == -1) {
 				if(!data) data = {};
 				data.s = session;
 				url += '?'+uri_data(data);
-			} else {
+			} else if (url[url.length-1] == '=') {
 				url += session;
 			}
+            if (url[0] == '/') {
+                url = root_url_ssl + url;
+            }
 			open_new_tab(url);
 		}
 	}
 
-    this.fill_materials = function(classcode, data) {
+    this.fill_materials = function(classroom, data) {
         var text = "";
         for (var x in data.dades) {
             var material = data.dades[x];
-            console.log(material);
-            text += '<li>'+material.titol + ' ('+material.idioma    +') -';
-            for (var y in material.formats) {
-                var format = material.formats[y];
-                text += ' ['+format.tipus._name+']';
-            }
-            text += '</li>';
+			if (material.defecte) {
+				text += '<li code="'+material.codMaterial+'">' + material.titol + ' -';
+				for (var y in material.formats) {
+					var format = material.formats[y];
+					text += ' '+get_icon_link(format)
+				}
+				text += '</li>';
+			}
         }
 
         if (text != "") {
-            $('#materials_'+classcode).html('<ul>'+text+'</ul>');
+            text = '<ul>'+text+'</ul>';
         }
-    }
+
+        var url = '/webapps/classroom/student.do?nav=recursos-estudiant&domainId='+classroom.domain+'&domainCode='+classroom.code+'&s=';
+        text = '<a href="#" class="linkMaterials" link="'+url+'">'+_('__LINK_TO_EQUIPMENT__')+'</a>'+ text;
+
+        $('#materials_'+classroom.code).html(text);
+
+        $('.linkMaterials').unbind( "click" )
+            .click(function(){
+                var link = $(this).attr('link');
+                if (link && link != 'undefined') {
+                    open_tab(link);
+                }
+            });
+
+		function get_icon_link(format) {
+			var icon = false;
+			switch(format.tipus._name) {
+				case 'PDF':
+					icon = 'file';
+					break;
+				case 'AUDIOLLIBRE':
+					icon = 'headphones';
+					break;
+				case 'VIDEOLLIBRE':
+					icon = 'facetime-video';
+					break;
+				case 'WEB':
+					icon = 'link';
+					break;
+				case 'EPUB':
+					icon = 'book';
+					break;
+				case 'MOBIPOCKET':
+					icon = 'phone';
+					break;
+				case 'HTML5':
+					icon = 'cloud';
+					break;
+				case 'PROGRAMARI_EN_LINIA':
+					icon = 'wrench';
+					break;
+			}
+
+			var description = format.tipus.nom;
+			if (format.tipus.desc && description != format.tipus.desc) {
+				description += ': '+format.tipus.desc;
+			}
+			if (icon) {
+				icon = '<span class="glyphicon glyphicon-'+icon+'" aria-hidden="true" title="'+ description+'"></span>';
+			} else {
+				icon = '[' + description + ']';
+			}
+			return '<a href="#" class="linkMaterials" link="'+format.url+'">'+icon+'</a></span>';
+		}
+    };
 
 	this.fill_users = function(classcode, data) {
 		var text = "";
@@ -985,14 +1032,10 @@ var UI = new function() {
 
 		if (text != "") {
 			$('#users_'+classcode).html('<ul>'+text+'</ul>');
-			$('.linkMail').unbind( "click" );
-			$('.linkMail').click(function(){
+			$('.linkMail').unbind( "click" ).click(function(){
 				var mail = $(this).attr('mail');
-				var url = root_url+"/WebMail/writeMail.do";
-				var data = {
-					to: mail
-				};
-				open_tab(url, data);
+				var data = {to: mail};
+				open_tab('/WebMail/writeMail.do', data);
 			});
 		}
 	}

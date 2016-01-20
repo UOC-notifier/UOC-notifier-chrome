@@ -169,6 +169,9 @@
     "__EQUIPMENT__" : {
         "message" : "Materials"
     },
+    "__LINK_TO_EQUIPMENT__" : {
+      "message" : "Enllaç als materials"
+    },
     "__TEACHING_PLAN__" : {
         "message" : "Pla Docent"
     },
@@ -237,6 +240,9 @@
     },
     "__ONLY_ASSIGNMENTS__" : {
         "message" : "Mostra només tasques"
+    },
+    "__NOTHING_AHEAD_" : {
+      "message" : "No hi ha tasques a la vista"
     },
     "__DAYS__" : {
         "message" : "dies"
