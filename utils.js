@@ -157,10 +157,8 @@ function get_url_withoutattr(url, parameter) {
         }
 
         url= urlparts[0]+'?'+pars.join('&');
-        return url;
-    } else {
-        return url;
     }
+    return url;
 }
 
 function uri_data(map){
@@ -173,13 +171,14 @@ function uri_data(map){
 
 function get_real_url(url) {
     if(url.indexOf('/') == 0){
-        return root_url + url;
+        return url;
     } else if(url.indexOf('http://') == -1 && url.indexOf('https://') == -1){
-        return root_url + '/' + url;
+        return '/' + url;
     }
     return url;
 }
 
+// NOT USED
 function get_url_base(url) {
     //prefer to use l.search if you have a location/link object
     url = get_real_url(url);
@@ -191,10 +190,12 @@ function get_url_base(url) {
     }
 }
 
+// NOT USED
 function get_url_with_data(url, data) {
     return get_real_url(url) + '?' + uri_data(data);
 }
 
+// NOT USED
 function get_html_realtext(text) {
     return $('<textarea />').html(text).text();
 }

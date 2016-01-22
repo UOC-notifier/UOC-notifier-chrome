@@ -18,9 +18,9 @@ function check_messages(after_check_fnc) {
 
 		retrieve_old_classrooms();
 
-		retrieve_agenda();
-
 		retrieve_gradeinfo();
+
+		retrieve_agenda();
 
 		var classrooms = Classes.get_notified();
 		for(var i in classrooms) {
@@ -33,7 +33,7 @@ function check_messages(after_check_fnc) {
 }
 
 function retrieve_final_grades(classroom) {
-	if (!classroom.exped || !classroom.subject_code || classroom.final_grades || !classroom.all_events_completed()) {
+	if (!classroom.exped || !classroom.subject_code || classroom.final_grades || !classroom.all_events_completed(true)) {
 		return;
 	}
 
@@ -263,8 +263,8 @@ function parse_classroom(classr) {
 		for(var j in classr.widget.eines) {
 			var resourcel = classr.widget.eines[j];
 			var resource = new Resource(resourcel.nom, resourcel.resourceId, resourcel.idTipoLink);
-			classroom.add_resource(resource);
 			resource.set_link(resourcel.viewItemsUrl);
+			classroom.add_resource(resource);
 			retrieve_resource(classroom, resource);
 		}
 	}
@@ -295,7 +295,7 @@ function parse_classroom(classr) {
 				args.canCreateEvent = false;
 			}
 
-			evnt.link = root_url_ssl + urlbase+'?'+uri_data(args)+'&s=';
+			evnt.link = urlbase+'?'+uri_data(args)+'&s=';
 			evnt.start = act.startDateStr;
 			evnt.end = act.deliveryDateStr;
 			evnt.solution = act.solutionDateStr;
@@ -480,7 +480,7 @@ function retrieve_gradeinfo() {
 }
 
 function retrieve_stats(classroom) {
-	if (!classroom.subject_code || classroom.stats || !classroom.all_events_completed()) {
+	if (!classroom.subject_code || classroom.stats || !classroom.all_events_completed(true)) {
 		return;
 	}
 
@@ -634,6 +634,9 @@ function retrieve_agenda() {
 					case 23:
 						evnt.type = 'STUDY_GUIDE';
 						evnt.start = date;
+						break;
+					case 27:
+						evnt.solution = date;
 						break;
 					case 29:
 						evnt.end = date;

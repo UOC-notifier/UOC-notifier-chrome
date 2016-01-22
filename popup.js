@@ -103,7 +103,8 @@ var UI = new function() {
 	function handleEvents() {
 		$('.linkCampus').unbind( "click" )
                 .click(function(){
-                    open_tab('/cgi-bin/uocapp');
+                    // Need to be HTTP
+                    open_tab('/cgi-bin/uocapp', false, true);
                 });
 
 		$('.linkAula').unbind( "click" )
@@ -157,10 +158,11 @@ var UI = new function() {
                     data = {};
                 } else {
                     var code = $(this).parents('.resource').attr('resource');
-                    url = root_url+'/webapps/bustiaca/listMails.do';
+                    url = '/webapps/bustiaca/listMails.do';
                     data = {l: code};
                 }
-                open_tab(url, data);
+                // Need to be HTTP
+                open_tab(url, data, true);
             });
 
 		$('.linkEvent').unbind( "click" )
@@ -245,18 +247,25 @@ var UI = new function() {
 			if (classroom.exams && classroom.exams.date && !isBeforeToday(classroom.exams.date)) {
 
 				if (classroom.exams.timeEX) {
-					exams += '<div><a href="#" class="linkResource" title="'+classroom.exams.placeEX+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__EX__') + ' ' + classroom.exams.timeEX + '</a></div>';
+					exams += '<div><a href="#" class="linkEvent" title="'+classroom.exams.placeEX+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__EX__') + ' ' + classroom.exams.timeEX + '</a></div>';
 				}
 				if (classroom.exams.timePS) {
-					exams += '<div><a href="#" class="linkResource" title="'+classroom.exams.placePS+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__PS__') + ' ' + classroom.exams.timePS + '</a></div>';
+					exams += '<div><a href="#" class="linkEvent" title="'+classroom.exams.placePS+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__PS__') + ' ' + classroom.exams.timePS + '</a></div>';
 				}
 				if (exams != "") {
-					var link = root_url_ssl+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
+					var link = '/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
 
 					var limit = get_today_limit();
 					nearexams = isNearDate(classroom.exams.date, limit);
 					var clas = nearexams ? 'success' : 'warning';
-					exams = '<div class="resource alert alert-'+clas+'" link="'+link+'">'+ _('__FINAL_TESTS__', [classroom.exams.date, classroom.exams.seu]) + exams + '</div>';
+					exams = '<div class="event alert alert-'+clas+'" link="'+link+'">'+ _('__FINAL_TESTS__', [classroom.exams.date, classroom.exams.seu]) + exams + '</div>';
+                    $('.linkEvent').unbind( "click" )
+                        .click(function(){
+                            var link = $(this).parents('.event').attr('link');
+                            if(link && link != 'undefined'){
+                                open_tab(link);
+                            }
+                        });
 				}
 			}
 
@@ -310,7 +319,7 @@ var UI = new function() {
 			}
 			var events_html = '';
 			var show_module_dates = get_show_module_dates();
-			if (c.all_events_completed()) {
+			if (c.all_events_completed(false)) {
 				for(var i in c.events){
 					var ev = c.events[i];
 					if (show_module_dates || ev.is_assignment()) {
@@ -459,25 +468,25 @@ var UI = new function() {
 	function tools() {
 		if ($('#detail_campus').html() == "") {
 		    var gat =  get_gat();
-		    var root_url_gate = '/tren/trenacc?modul='+gat;
+		    var url_gate = '/tren/trenacc?modul='+gat;
 
 		    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
 		    text += '<div class="row-fluid clearfix">';
-		    text += get_general_link(root_url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
-		    text += get_general_link(root_url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
-		    text += get_general_link(root_url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
-		    text += get_general_link(root_url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
-		    text += get_general_link(root_url + '/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
-		    text += get_general_link(root_url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);
-		    text += get_general_link(root_url+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=', _('__EXAM_SELECT__'), -1);
-			//text += get_general_link(root_url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
-			//text += get_general_link(root_url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
+		    text += get_general_link(url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
+		    text += get_general_link(url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
+		    text += get_general_link(url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
+		    text += get_general_link(url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
+		    text += get_general_link('/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
+		    text += get_general_link(url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);
+		    text += get_general_link('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=', _('__EXAM_SELECT__'), -1);
+			//text += get_general_link(url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
+			//text += get_general_link(url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
 		    text += '</div>';
 
 			text += '<div class="row-fluid clearfix"><strong>'+_('__ENROLL__')+'</strong></div>';
 			text += '<div class="row-fluid clearfix">';
-			text += get_general_link(root_url_gate+'.MATPREMATRICULA/inici&s=', _('__ENROLL_PROP__'));
-			text += get_general_link(root_url_gate+'.MATMATRICULA/inici&s=', _('__ENROLL__'));
+			text += get_general_link(url_gate+'.MATPREMATRICULA/inici&s=', _('__ENROLL_PROP__'));
+			text += get_general_link(url_gate+'.MATMATRICULA/inici&s=', _('__ENROLL__'));
 			text += '</div>';
 
 			text += '<div class="row-fluid clearfix"><strong>'+_('__PERSONAL__')+'</strong></div>';
@@ -491,7 +500,7 @@ var UI = new function() {
 					break;
 				}
 			}
-			var link = root_url_ssl + '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s=';
+			var link = '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s=';
 			text += get_general_link(link, _('__OLD_AGENDA__'));
 			text += get_general_link('/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
 			text += get_general_link('/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
@@ -502,24 +511,15 @@ var UI = new function() {
 
 		    $('#detail_campus').html(text);
 
-            $('.linkResource').unbind( "click" )
+            $('.linkTool').unbind( "click" )
                 .click(function(){
                     var link = $(this).parents('.resource').attr('link');
-                    var url, data;
-                    if(link && link != 'undefined'){
-                        url = link;
-                        data = {};
-                    } else {
-                        var code = $(this).parents('.resource').attr('resource');
-                        url = root_url+'/webapps/bustiaca/listMails.do';
-                        data = {l: code};
-                    }
-                    open_tab(url, data);
+                    open_tab(link, {});
                 });
 		}
 
 		function get_general_link(link, title){
-			return '<div class="col-xs-6 resource" link="'+link+'"><a href="#" class="linkResource">'+title+'</a></div>';
+			return '<div class="col-xs-6 resource" link="'+link+'"><a href="#" class="linkTool">'+title+'</a></div>';
 		}
 	}
 
@@ -562,7 +562,7 @@ var UI = new function() {
 					}
 					var evnt = new CalEvent(name, '', 'UOC');
 					evnt.start = classroom.exams.date;
-					evnt.link = root_url+'/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
+					evnt.link = '/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
 					events_today.push(evnt);
 				}
 			}
@@ -642,32 +642,32 @@ var UI = new function() {
 				$('#detail_pacs').html(_('__NOTHING_AHEAD_'));
 			}
 
-			$('#show_upcomming').unbind( "click" );
-			$('#show_upcomming').click(function(){
-				$('#content_today').show();
-				$('#content_pacs').hide();
-			});
+			$('#show_upcomming').unbind( "click" )
+                .click(function(){
+    				$('#content_today').show();
+    				$('#content_pacs').hide();
+    			});
 
-			$('#assignments').unbind( "click" );
-			$('#assignments').click(function(){
-				$('#content_today').hide();
-				$('#content_pacs').show();
-			});
+			$('#assignments').unbind( "click" )
+                .click(function(){
+    				$('#content_today').hide();
+    				$('#content_pacs').show();
+    			});
 
-		   	$('.linkEvent').unbind( "click" );
-			$('.linkEvent').click(function(){
-				var link = $(this).parents('.event').attr('link');
-				if(link && link != 'undefined'){
-					open_tab(link);
-				}
-			});
+		   	$('.linkEvent').unbind( "click" )
+                .click(function(){
+    				var link = $(this).parents('.event').attr('link');
+    				if(link && link != 'undefined'){
+    					open_tab(link);
+    				}
+    			});
 
-			$('.sort_pacs').unbind( "click" );
-			$('.sort_pacs').click(function(){
-				var sorting = $(this).attr('by');
-				save_sorting(sorting);
-				UI.pacs(true);
-			});
+			$('.sort_pacs').unbind( "click" )
+                .click(function(){
+    				var sorting = $(this).attr('by');
+    				save_sorting(sorting);
+    				UI.pacs(true);
+    			});
 		}
 	};
 
@@ -908,7 +908,7 @@ var UI = new function() {
 		return "btn-warning";
 	}
 
-	function open_tab(url, data){
+	function open_tab(url, data, nossl){
 		session = Session.get();
 		if(session){
 			if (url.indexOf('?') == -1) {
@@ -919,7 +919,11 @@ var UI = new function() {
 				url += session;
 			}
             if (url[0] == '/') {
-                url = root_url_ssl + url;
+                if (nossl) {
+                    url = root_url + url;
+                } else {
+                    url = root_url_ssl + url;
+                }
             }
 			open_new_tab(url);
 		}
@@ -1032,11 +1036,12 @@ var UI = new function() {
 
 		if (text != "") {
 			$('#users_'+classcode).html('<ul>'+text+'</ul>');
-			$('.linkMail').unbind( "click" ).click(function(){
-				var mail = $(this).attr('mail');
-				var data = {to: mail};
-				open_tab('/WebMail/writeMail.do', data);
-			});
+			$('.linkMail').unbind( "click" )
+                .click(function(){
+    				var mail = $(this).attr('mail');
+    				var data = {to: mail};
+    				open_tab('/WebMail/writeMail.do', data);
+    			});
 		}
 	}
 };
