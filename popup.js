@@ -476,7 +476,7 @@ var UI = new function() {
 		    text += get_general_link(url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
 		    text += get_general_link(url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
 		    text += get_general_link(url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
-		    text += get_general_link('/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
+		    text += get_general_link(root_url+'/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
 		    text += get_general_link(url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);
 		    text += get_general_link('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=', _('__EXAM_SELECT__'), -1);
 			//text += get_general_link(url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
