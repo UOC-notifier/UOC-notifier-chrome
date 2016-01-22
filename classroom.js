@@ -314,27 +314,46 @@ function Classroom(title, code, domain, type, template) {
 	this.add_grade = function(name, grade, prov) {
 		grade = grade.replace('.', ',');
 		var g = new Grade(name, grade, prov);
-		for (var i in this.grades) {
-			if (this.grades[i].name == g.name) {
-				if (!this.grades[i].prov && prov) {
-					// Change to not provisional not allowed
-					return false;
-				}
 
-				if (this.grades[i].grade != g.grade || (!prov && this.grades[i].prov)) {
-					this.grades[i].grade = grade;
-					if (!prov) {
-						// Only change when it becomes def
-						this.grades[i].prov = false;
-					}
-					return this.grades[i];
-				}
+		// Stop notifying warning FE grades if EX is not present
+		if (g.grade == 'D 2' && g.name == 'FE' && g.prov) {
+			var exfound = this.get_grade_index('EX');
+			if (exfound === false) {
+				Debug.print('Provisional Grade D 2 of FE detected without EX');
 				return false;
 			}
 		}
-		this.grades.push(g);
-		return g;
+
+		var i = this.get_grade_index(g.name);
+		if (i === false) {
+			this.grades.push(g);
+			return g;
+		}
+
+		if (!this.grades[i].prov && prov) {
+			// Change to not provisional not allowed
+			return false;
+		}
+
+		if (this.grades[i].grade != g.grade || (!prov && this.grades[i].prov)) {
+			this.grades[i].grade = grade;
+			if (!prov) {
+				// Only change when it becomes def
+				this.grades[i].prov = false;
+			}
+			return this.grades[i];
+		}
+		return false;
 	};
+
+	this.get_grade_index = function(name) {
+		for (var i in this.grades) {
+			if (this.grades[i].name == name) {
+				return i;
+			}
+		}
+		return false;
+	}
 
 	this.add_resource = function(resource) {
 		if(!this.notify) return;
