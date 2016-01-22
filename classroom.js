@@ -622,7 +622,8 @@ function Grade(title, grade, prov) {
 			return title.toUpperCase();
 		}
 
-		title = removeAccents(title.toLowerCase());
+		title = get_html_realtext(title);
+		title = remove_accents(title.toLowerCase());
 
 		switch (title) {
 			case 'qualificacio davaluacio continuada':
@@ -634,74 +635,8 @@ function Grade(title, grade, prov) {
 			case 'qualificacio final dactivitats practiques':
 			case 'calificacion final de actividades practicas':
 				return 'P';
-			case 'qualificacio final davaluacio continuada':
-			case 'calificacion final de evaluacion continuada':
-				return 'FC';
-			case 'prova de sintesi':
-			case 'prueba de sintesis':
-				return 'PS';
-			case 'prova de validacio':
-			case 'prueba de validacion':
-				return 'PV';
-			case 'examen':
-				return 'EX';
-			case 'prova final':
-			case 'prueba final':
-				return 'PF';
-			case 'qualificacio final dexamens (p+ex)':
-			case 'calificacion final de examenes (p+ex)':
-				return 'FE';
-			case 'qualificacio final de lassignatura':
-			case 'calificacion final de la asignatura':
-				return 'FA';
 		}
 		return false;
-	}
-	function removeAccents (str) {
-		//http://www.tedmontgomery.com/tutorial/htmlchrc.html
-		var removeMap = [
-			{'replace':'', 'origin':'\''},
-			{'replace':'', 'origin':'&#39;'},
-			{'replace':'a', 'origin':/[ÀÁàá]/g},
-			{'replace':'a', 'origin':'&#192;'},
-			{'replace':'a', 'origin':'&#193;'},
-			{'replace':'a', 'origin':'&#224;'},
-			{'replace':'a', 'origin':'&#225;'},
-			{'replace':'e', 'origin':/[ÈÉèé]/g},
-			{'replace':'e', 'origin':'&#232;'},
-			{'replace':'e', 'origin':'&#200;'},
-			{'replace':'e', 'origin':'&#201;'},
-			{'replace':'e', 'origin':'&#233;'},
-			{'replace':'i', 'origin':/[ÍíÏï]/g},
-			{'replace':'i', 'origin':'&#205;'},
-			{'replace':'i', 'origin':'&#237;'},
-			{'replace':'i', 'origin':'&#207;'},
-			{'replace':'i', 'origin':'&#239;'},
-			{'replace':'o', 'origin':/[ÓÒóò]/g},
-			{'replace':'o', 'origin':'&#211;'},
-			{'replace':'o', 'origin':'&#243;'},
-			{'replace':'o', 'origin':'&#210;'},
-			{'replace':'o', 'origin':'&#242;'},
-			{'replace':'u', 'origin':/[ÚúÜü]/g},
-			{'replace':'u', 'origin':'&#218;'},
-			{'replace':'u', 'origin':'&#250;'},
-			{'replace':'u', 'origin':'&#220;'},
-			{'replace':'u', 'origin':'&#252;'},
-			{'replace':'c', 'origin':/[Çç]/g},
-			{'replace':'c', 'origin':'&#199;'},
-			{'replace':'c', 'origin':'&#231;'},
-			{'replace':'n', 'origin':/[Ññ]/g},
-			{'replace':'n', 'origin':'&#209;'},
-			{'replace':'n', 'origin':'&#241;'},
-			{'replace':'(', 'origin':'&#40;'},
-			{'replace':')', 'origin':'&#41;'},
-			{'replace':'+', 'origin':'&#43;'}
-		];
-
-		for (var i in removeMap) {
-			str = str.replace(removeMap[i].origin, removeMap[i].replace);
-		}
-		return str;
 	}
 }
 

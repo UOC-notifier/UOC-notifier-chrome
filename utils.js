@@ -195,9 +195,27 @@ function get_url_with_data(url, data) {
     return get_real_url(url) + '?' + uri_data(data);
 }
 
-// NOT USED
 function get_html_realtext(text) {
     return $('<textarea />').html(text).text();
+}
+
+function remove_accents (str) {
+    //http://www.tedmontgomery.com/tutorial/htmlchrc.html
+    var removeMap = [
+        {'replace':'', 'origin':'\''},
+        {'replace':'a', 'origin':/[ÀÁàá]/g},
+        {'replace':'e', 'origin':/[ÈÉèé]/g},
+        {'replace':'i', 'origin':/[ÍíÏï]/g},
+        {'replace':'o', 'origin':/[ÓÒóò]/g},
+        {'replace':'u', 'origin':/[ÚúÜü]/g},
+        {'replace':'c', 'origin':/[Çç]/g},
+        {'replace':'n', 'origin':/[Ññ]/g}
+    ];
+
+    for (var i in removeMap) {
+        str = str.replace(removeMap[i].origin, removeMap[i].replace);
+    }
+    return str;
 }
 
 
