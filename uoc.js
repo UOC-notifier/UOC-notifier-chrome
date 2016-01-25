@@ -397,55 +397,62 @@ function retrieve_gradeinfo() {
 					}
 
 					var eventid = $(this).find('pacId').text().trim();
-					if (!classroom) {
-						classroom = Classes.get_class_by_event(eventid);
+					if (eventid) {
 						if (!classroom) {
-							return;
-						}
+							classroom = Classes.get_class_by_event(eventid);
+							if (!classroom) {
+								return;
+							}
 
-						// Save the real subject code
-						if (subject_code.length > 0) {
-							classroom.subject_code = subject_code;
-						}
-					}
-
-					if (!classroom.notify) {
-						return;
-					}
-					classroom.exped = exped;
-
-					var evnt = classroom.get_event(eventid);
-					if (evnt && evnt.is_assignment()) {
-						var changed = false;
-
-						var committed = $(this).find('listaEntregas>entrega').length > 0;
-						if (committed) {
-							evnt.committed = true;
-							var viewed = $(this).find('listaEntregas>entrega').last().find('fechaDescargaConsultor').html();
-							evnt.viewed = viewed && viewed.length ? viewed: false;
-							changed = true;
-						}
-
-						var comments = $(this).find('listaComentarios>comentario').length > 0;
-						if (comments) {
-							var lastcomment = $(this).find('listaComentarios>comentario').last();
-							evnt.commenttext = lastcomment.find('texto').html();
-							evnt.commentdate= lastcomment.find('fechaComentario').html();
-							changed = true;
-						}
-
-						var grade = $(this).find('nota').text().trim();
-						if (grade.length > 0 && grade != '-') {
-							if (evnt.graded != grade) {
-								evnt.graded = grade;
-								changed = true;
-								evnt.notify(classroom.get_acronym());
+							// Save the real subject code
+							if (subject_code.length > 0) {
+								classroom.subject_code = subject_code;
 							}
 						}
-						if (changed) {
-							classroom.add_event(evnt);
+
+						if (!classroom.notify) {
+							return;
 						}
-					} else {
+						classroom.exped = exped;
+
+						var evnt = classroom.get_event(eventid);
+						if (evnt && evnt.is_assignment()) {
+							var changed = false;
+
+							var committed = $(this).find('listaEntregas>entrega').length > 0;
+							if (committed) {
+								evnt.committed = true;
+								var viewed = $(this).find('listaEntregas>entrega').last().find('fechaDescargaConsultor').html();
+								evnt.viewed = viewed && viewed.length ? viewed: false;
+								changed = true;
+							}
+
+							var comments = $(this).find('listaComentarios>comentario').length > 0;
+							if (comments) {
+								var lastcomment = $(this).find('listaComentarios>comentario').last();
+								evnt.commenttext = lastcomment.find('texto').html();
+								evnt.commentdate= lastcomment.find('fechaComentario').html();
+								changed = true;
+							}
+
+							var grade = $(this).find('nota').text().trim();
+							if (grade.length > 0 && grade != '-') {
+								if (evnt.graded != grade) {
+									evnt.graded = grade;
+									changed = true;
+									evnt.notify(classroom.get_acronym());
+								}
+							}
+							if (changed) {
+								classroom.add_event(evnt);
+							}
+						}
+					} else if(classroom) {
+						if (!classroom.notify) {
+							return;
+						}
+						classroom.exped = exped;
+
 						var nota = $(this).find('nota').text().trim();
 						if (nota.length > 0 && nota != '-') {
 							var name = $(this).find('descripcion').text().trim();
