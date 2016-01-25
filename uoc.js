@@ -378,7 +378,7 @@ function retrieve_gradeinfo() {
 		$(data).find('files>file').each(function() {
 			var exped = $(this).children('id').first().text().trim();
 
-			$(data).find('listaAsignaturas asignatura').each(function() {
+			$(this).find('listaAsignaturas asignatura').each(function() {
 				// If has a children of same type
 				if ($(this).has('asignatura').length > 0) {
 					return;
