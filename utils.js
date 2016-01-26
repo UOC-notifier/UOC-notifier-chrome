@@ -14,6 +14,10 @@ function b64_to_utf8(str) {
 }
 
 function getDate_hyphen(date) {
+    var sp = date.split('T');
+    if (sp.length == 2) {
+        date = sp[0];
+    }
     var sp = date.split('-');
     if (sp.length <= 2) {
         return "";

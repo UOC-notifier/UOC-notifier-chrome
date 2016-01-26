@@ -53,7 +53,7 @@ function retrieve_final_grades(classroom) {
 	// Always GAT_EXP, not dependant on UOCi
 	Queue.request( '/tren/trenacc/webapp/GAT_EXP.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
 		try {
-			var grades = resp.O.pop().P;
+			var grades = resp.O.shift().P;
 			var prov = grades.numConvocatoriaActual <= 0;
 			var types = ['C', 'P', 'FC', 'PS', 'PV', 'EX', 'PF',  'FE', 'FA'];
 
@@ -262,10 +262,12 @@ function parse_classroom(classr) {
 	if (classr.widget.eines.length > 0) {
 		for(var j in classr.widget.eines) {
 			var resourcel = classr.widget.eines[j];
-			var resource = new Resource(resourcel.nom, resourcel.resourceId, resourcel.idTipoLink);
-			resource.set_link(resourcel.viewItemsUrl);
-			classroom.add_resource(resource);
-			retrieve_resource(classroom, resource);
+			if (resourcel.nom) {
+				var resource = new Resource(resourcel.nom, resourcel.resourceId, resourcel.idTipoLink);
+				resource.set_link(resourcel.viewItemsUrl);
+				classroom.add_resource(resource);
+				retrieve_resource(classroom, resource);
+			}
 		}
 	}
 
@@ -526,6 +528,9 @@ function retrieve_resource(classroom, resource) {
 		try {
 			var num_msg_pendents = data.resource.newItems;
 	        var num_msg_totals = data.resource.totalItems;
+	        if (num_msg_pendents == 0 && num_msg_totals == 0 && data.resource.missatgesNousBlog) {
+				num_msg_pendents = num_msg_totals = 1;
+	        }
 			resource.set_messages(num_msg_pendents, num_msg_totals);
 			resource.set_pos(data.resource.pos);
 		} catch(err) {
