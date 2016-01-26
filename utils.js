@@ -233,9 +233,31 @@ function get_acronym(text) {
     for (var x in words) {
         if (nowords.indexOf(words[x].toLowerCase()) < 0) {
             if (words[x] == words[x].toUpperCase()) {
-                acronym += words[x];
+                switch(words[x]) {
+                    case 'I':
+                        acronym += '1';
+                        break;
+                    case 'II':
+                        acronym += '2';
+                        break;
+                    case 'III':
+                        acronym += '3';
+                        break;
+                    case 'IV':
+                        acronym += '4';
+                        break;
+                    case 'V':
+                        acronym += '5';
+                        break;
+                    default:
+                        acronym += words[x];
+                }
             } else {
                 acronym += words[x].charAt(0);
+            }
+        } else {
+            if (words[x] == 'I') {
+                acronym += 1;
             }
         }
     }

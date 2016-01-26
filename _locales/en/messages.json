@@ -51,6 +51,9 @@
     "__VERSION__" : {
         "message" : "Version"
     },
+    "__CLASSROOM__" : {
+        "message" : "Classroom"
+    },
 
     //Popup
     "__GRADE_RESUME__" : {

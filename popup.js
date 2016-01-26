@@ -230,7 +230,7 @@ var UI = new function() {
 		this.build = function() {
 			var title = c.title;
 			if (c.aula) {
-				title += ' ('+c.aula+')';
+				title += ' <span title="'+_('__CLASSROOM__')+' '+c.aula+'">('+c.aula+')</span>';
 			}
 
 			var resources_html = "";
@@ -931,15 +931,23 @@ var UI = new function() {
 
     this.fill_materials = function(classroom, data) {
         var text = "";
+        var lasttitle = false;
         for (var x in data.dades) {
             var material = data.dades[x];
 			if (material.defecte) {
-				text += '<li code="'+material.codMaterial+'">' + material.titol + ' -';
-				for (var y in material.formats) {
-					var format = material.formats[y];
-					text += ' '+get_icon_link(format)
-				}
-				text += '</li>';
+                if (lasttitle && lasttitle == material.titol) {
+                    for (var y in material.formats) {
+                        var format = material.formats[y];
+                        text += ' '+get_icon_link(format)
+                    }
+                } else {
+    				text += '<li code="'+material.codMaterial+'">' + material.titol + ' -';
+    				for (var y in material.formats) {
+    					var format = material.formats[y];
+    					text += ' '+get_icon_link(format)
+    				}
+                    lasttitle = material.titol;
+                }
 			}
         }
 
