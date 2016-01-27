@@ -19,6 +19,7 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: #ccc;
+  padding-right: 0 !important;
 }
 .panel{
 	margin:4px;
@@ -142,10 +143,10 @@ a:hover {
     }
 }
 
-.well ul {
+.modal-body ul {
 	padding-left: 20px;
 }
-.well li {
+.modal-body li {
 	padding-left: 0;
 }
 </style>
@@ -202,6 +203,18 @@ a:hover {
 				<div id="content_today"></div>
 			</div>
 		</div>
+	</div>
+	<div class="modal fade" id="uocModal" tabindex="-1" role="dialog" aria-labelledby="uocModalTitle">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="uocModalTitle"></h4>
+	      </div>
+	      <div class="modal-body" id="uocModalBody">
+	      </div>
+	    </div>
+	  </div>
 	</div>
 	<div id="classrooms"></div>
 </body>

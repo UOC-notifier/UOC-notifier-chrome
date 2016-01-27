@@ -361,8 +361,11 @@
           }
         }
     },
+    "__SHOW_COMMENT__" : {
+        "message" : "Mostrar comentario"
+    },
     "__COMMENT__" : {
-        "message" : "Comentario (el día $date$ a las $time$)",
+        "message" : "Comentario del día $date$ a las $time$",
         "placeholders": {
           "date": {
             "content": "$1"

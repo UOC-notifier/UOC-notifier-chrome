@@ -574,7 +574,7 @@ function retrieve_users(classroom, button) {
 	};
 	Queue.set_after_function('nosave');
 	Queue.request('/webapps/aulaca/classroom/UsersList.action', args, 'GET', false, function(data) {
-		UI.fill_users(classroom.code, data);
+		UI.fill_users(classroom, data);
 		$(button).removeClass('spin');
     });
 }
@@ -586,6 +586,22 @@ function retrieve_materials(classroom, button) {
 	Queue.set_after_function('nosave');
 	Queue.request('/webapps/mymat/listMaterialsAjax.action', args, 'GET', false, function(data) {
 		UI.fill_materials(classroom, data);
+		$(button).removeClass('spin');
+    });
+}
+
+function retrieve_pac_stats(classroom, button) {
+	var args = {
+		codiTercers : classroom.subject_code,
+		anyAcademic : classroom.any,
+		numAula: classroom.aula,
+		type: 't' // If not present only shows the current classroom
+	};
+
+	Queue.set_after_function('nosave');
+	Queue.request('/webapps/rac/getEstadisticasAsignaturaAjax.action', args, 'GET', false, function(data) {
+		console.log(data);
+		//UI.fill_pac_stats(classroom, data);
 		$(button).removeClass('spin');
     });
 }

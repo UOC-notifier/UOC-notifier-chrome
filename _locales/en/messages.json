@@ -361,8 +361,11 @@
           }
         }
     },
+    "__SHOW_COMMENT__" : {
+        "message" : "Show comment"
+    },
     "__COMMENT__" : {
-        "message" : "Comment (on $date$ at $time$)",
+        "message" : "Commented on $date$ at $time$",
         "placeholders": {
           "date": {
             "content": "$1"
@@ -420,7 +423,7 @@
         "message" : "Final"
     },
     "__FE__": {
-        "message" : "Final Greade of Exams (P+EX)"
+        "message" : "Final Grade of Exams (P+EX)"
     },
     "__FA__": {
         "message" : "Final Grade of the Subject"

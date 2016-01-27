@@ -9,7 +9,7 @@ var UI = new function() {
 				$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__WAITING_TO_LOGIN__')+'</div></div>');
 				check_messages(build);
 
-				$('#options').click( function() {
+				$('#options').unbind( "click" ).click( function() {
 					open_new_tab("options.html");
 				});
 				return;
@@ -45,21 +45,21 @@ var UI = new function() {
 
 		// Setup News
 		if (get_show_news()) {
-			$('#button_news').click(news);
+			$('#button_news').unbind( "click" ).click(news);
 		} else {
 			$('#button_news').remove();
 		}
 
 		// Setup agenda
 		if (get_show_agenda()) {
-			$('#button_agenda').click(agenda);
+			$('#button_agenda').unbind( "click" ).click(agenda);
 		} else {
 			$('#button_agenda').remove();
 		}
 
-		$('#button_campus').click(tools);
+		$('#button_campus').unbind( "click" ).click(tools);
 
-		$('#button_pacs').click(UI.pacs);
+		$('#button_pacs').unbind( "click" ).click(UI.pacs);
 
 		var mails = get_mails_unread();
 		if (mails > 0) {
@@ -71,16 +71,16 @@ var UI = new function() {
 			        .addClass('btn-success')
 			        .attr('title', _('__MAIL__'));
 		}
-		$('#button_mail').click(function() {
+		$('#button_mail').unbind( "click" ).click(function() {
 			open_tab('/WebMail/listMails.do');
 		});
 
-		$('#update').click( function() {
+		$('#update').unbind( "click" ).click( function() {
 			$('#update').addClass('spin');
 			check_messages(build);
 		});
 
-		$('#options').click( function() {
+		$('#options').unbind( "click" ).click( function() {
 			open_new_tab("options.html");
 		});
 
@@ -153,7 +153,7 @@ var UI = new function() {
             .click(function(){
                 var link = $(this).parents('.resource').attr('link');
                 var url, data;
-                if(link && link != 'undefined'){
+                if(link && link != undefined){
                     url = link;
                     data = {};
                 } else {
@@ -166,9 +166,9 @@ var UI = new function() {
             });
 
 		$('.linkEvent').unbind( "click" )
-            .click(function(){
+            .click(function() {
                 var link = $(this).parents('.event').attr('link');
-                if(link && link != 'undefined'){
+                if(link && link != undefined){
                     open_tab(link);
                 }
             });
@@ -184,17 +184,11 @@ var UI = new function() {
             .click(function(){
                 var classroom_code = $(this).parents('.classroom').attr('classroom');
                 var classroom = Classes.search_code(classroom_code);
-                var elem = $('#users_'+classroom.code);
-                //$('#materials_'+classroom.code).addClass('hidden');
-                if ( elem.hasClass('hidden') ) {
-                    if ( elem.text() == '') {
-                        $(this).addClass('spin');
-                        retrieve_users(classroom, this);
-                    }
-                    elem.removeClass('hidden');
+                if (!classroom.users) {
+                    $(this).addClass('spin');
+                    retrieve_users(classroom, this);
                 } else {
-                    $(this).removeClass('spin');
-                    elem.addClass('hidden');
+                    UI.show_users(classroom);
                 }
             });
 
@@ -203,17 +197,11 @@ var UI = new function() {
                 var classroom_code = $(this).parents('.classroom').attr('classroom');
                 var classroom = Classes.search_code(classroom_code);
                 if (classroom.subject_code) {
-                    var elem = $('#materials_'+classroom.code);
-                    //$('#users_'+classroom.code).addClass('hidden');
-                    if ( elem.hasClass('hidden') ) {
-                        if ( elem.text() == '') {
-                            $(this).addClass('spin');
-                            retrieve_materials(classroom, this);
-                        }
-                        elem.removeClass('hidden');
+                    if (!classroom.materials) {
+                        $(this).addClass('spin');
+                        retrieve_materials(classroom, this);
                     } else {
-                        $(this).removeClass('spin');
-                        elem.addClass('hidden');
+                        UI.show_materials(classroom);
                     }
                 } else {
                     var data = {nav: 'recursos-estudiant',
@@ -221,6 +209,23 @@ var UI = new function() {
                                 domainCode: classroom.code};
                     open_tab('/webapps/classroom/student.do', data);
                 }
+            });
+
+        $('.showComments').unbind( "click" )
+             .click(function(){
+                var eventid = $(this).parents('.event').attr('eventid');
+                if(eventid && eventid != undefined){
+                    var classroom = Classes.get_class_by_event(eventid);
+                    if (classroom) {
+                        var ev = classroom.get_event(eventid);
+                        if (ev) {
+                            var title = classroom.get_acronym() +': '+ ev.name;
+                            var text = '<strong>'+_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+'</strong><br>' +ev.commenttext;
+                            UI.show_modal(title, text);
+                        }
+                    }
+                }
+                return false;
             });
 	}
 
@@ -262,14 +267,14 @@ var UI = new function() {
                     $('.linkEvent').unbind( "click" )
                         .click(function(){
                             var link = $(this).parents('.event').attr('link');
-                            if(link && link != 'undefined'){
+                            if(link && link != undefined){
                                 open_tab(link);
                             }
                         });
 				}
 			}
 
-			var text = classrooms_buttons() + users() + materials();
+			var text = classrooms_buttons();
 			if (nearexams) {
 				text += exams;
 			}
@@ -292,7 +297,7 @@ var UI = new function() {
 		};
 
 		function resource(resource) {
-			if(resource.link != 'undefined'){
+			if(resource.link != undefined){
 				var link = 'link="'+resource.link+'"';
 			}
 			if (resource.has_message_count()) {
@@ -304,14 +309,6 @@ var UI = new function() {
 				return '<li class="resource" '+link+' resource="'+resource.code+'"><a href="#" class="linkResource">'+resource.title+'</a></li>';
 			}
 		}
-
-		function users() {
-			return '<div id="users_'+c.code+'" class="hidden row-fluid well"></div>';
-		}
-
-        function materials() {
-            return '<div id="materials_'+c.code+'" class="hidden row-fluid well"></div>';
-        }
 
 		function events() {
 			if (c.events.length == 0 && c.grades.length == 0) {
@@ -379,7 +376,7 @@ var UI = new function() {
 		    }
 
 			if (c.type != "TUTORIA") {
-				buttons += '<button type="button" class="showMaterials btn btn-info has-spinner" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'" data-toggle="button">\
+				buttons += '<button type="button" class="showMaterials btn btn-info has-spinner" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
                     <span class="spinner"><span class="glyphicon glyphicon-refresh"></span></span> \
 			    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
 			  	</button>\
@@ -388,7 +385,7 @@ var UI = new function() {
 			  	</button>';
 			}
 
-			buttons += '<button type="button" class="showUsers btn btn-info has-spinner" aria-label="'+_('__USERS__')+'" title="'+_('__USERS__')+'" data-toggle="button">\
+			buttons += '<button type="button" class="showUsers btn btn-info has-spinner" aria-label="'+_('__USERS__')+'" title="'+_('__USERS__')+'">\
 					<span class="spinner"><span class="glyphicon glyphicon-refresh"></span></span> \
 			    	<span class="glyphicon glyphicon-user" aria-hidden="true"></span>\
 			  	</button>';
@@ -657,7 +654,7 @@ var UI = new function() {
 		   	$('.linkEvent').unbind( "click" )
                 .click(function(){
     				var link = $(this).parents('.event').attr('link');
-    				if(link && link != 'undefined'){
+    				if(link && link != undefined){
     					open_tab(link);
     				}
     			});
@@ -675,180 +672,90 @@ var UI = new function() {
 		var ev = evnt;
 
 		this.pacs_event = function() {
-			if(ev.link != 'undefined'){
-				var link = 'link="'+ev.link+'"';
-			}
-
-			var eventstate = "";
-			if (ev.has_started()) {
-				if (ev.has_ended()) {
-					return "";
-				} if (ev.committed) {
-					eventstate = ' warning running';
-				} else {
-					eventstate = ' danger running';
-				}
+			if (ev.has_started() && ev.has_ended()) {
+				return "";
 			}
 			var dstart = eventdate(ev.start, "");
 			var dend = eventdate(ev.end, "end");
-
-			var title = "";
-			if (ev.committed) {
-				if (ev.viewed) {
-					title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
-				} else {
-					title = icon(_('__COMMITTED__'), 'save');
-				}
-			} else if(ev.has_ended()) {
-				title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
-			} else {
-				title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
-			}
-			if (ev.subject != undefined) {
-				title += ev.subject + ' - ';
-			}
-			title += ev.name;
-			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+'</tr>';
+			return common_event(dstart+dend, true);
 		};
 
 		this.classroom_event = function() {
-			if(ev.link != 'undefined') {
-				var link = 'link="'+ev.link+'"';
-			}
-
-			var eventstate = "";
-			if (ev.has_started()) {
-				if (ev.has_ended()) {
-					eventstate = ' success';
-				} else if (ev.committed || !ev.is_assignment()) {
-					eventstate = ' warning running';
-				} else {
-					eventstate = ' danger running';
-				}
-			}
 			var dstart = eventdate(ev.start, "");
 			var dend = eventdate(ev.end, "end");
 			var dsol = eventdate(ev.solution, "");
-            var dgrade;
-			if (ev.graded) {
-				var grad = ev.graded;
-				if (ev.commenttext) {
-					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
-				}
-				dgrade = eventtext(grad, "graded", ev.grading);
-			} else {
-				dgrade = eventdate(ev.grading, "");
-			}
+            var dgrade = get_grade_td();
 
-			var title = "";
-			if (ev.is_assignment()) {
-				if (ev.committed) {
-					if (ev.viewed) {
-						title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
-					} else {
-						title = icon(_('__COMMITTED__'), 'save');
-					}
-				} else if(ev.has_ended()){
-					title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
-				} else {
-					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
-				}
-			} else {
-				title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
-			}
-			title += ev.name;
-			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
+            return common_event(dstart+dend+dsol+dgrade);
 		};
 
 		this.today_event = function(limit) {
-			if(ev.link != 'undefined') {
-				var link = 'link="'+ev.link+'"';
-			}
-
-			var eventstate = "";
-			if (ev.has_started()) {
-				if (ev.has_ended()) {
-					eventstate = ' success';
-				} else if (ev.committed || !ev.is_assignment()) {
-					eventstate = ' warning running';
-				} else {
-					eventstate = ' danger running';
-				}
-			}
-
 			var dstart = eventdate(ev.start, isNearDate(ev.start, limit) ? "near" : "");
 			var dend = eventdate(ev.end, isNearDate(ev.end, limit) ? "end near" : "end");
 			var dsol = eventdate(ev.solution, isNearDate(ev.solution, limit) ? "near" : "");
-            var dgrade;
-			if (ev.graded) {
-				var grad = ev.graded;
-				if (ev.commenttext) {
-					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
-				}
-				dgrade = eventtext(grad, "graded", ev.grading);
-			} else {
-				dgrade = eventdate(ev.grading, isNearDate(ev.grading, limit) ? "near" : "");
-			}
+            var dgrade = get_grade_td(limit);
 
-			var title = "";
-			if (ev.is_assignment()) {
-				if (ev.committed) {
-					if (ev.viewed) {
-						title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
-					} else {
-						title = icon(_('__COMMITTED__'), 'save');
-					}
-				} else if(ev.has_ended()){
-					title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
-				} else {
-					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
-				}
-			} else if (ev.is_uoc()) {
-				title = colored_icon(_('__'+ev.type+'__'), 'education', '');
-			} else {
-				title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
-			}
-			if (ev.subject != undefined) {
-				title += ev.subject + ' - ';
-			}
-			title += ev.name;
-			return '<tr class="event'+eventstate+'" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dstart+dend+dsol+dgrade+'</tr>';
+			return common_event(dstart+dend+dsol+dgrade, true);
 		};
 
 		this.classroom_event_grade = function() {
-			if(ev.link != 'undefined'){
-				var link = 'link="'+ev.link+'"';
-			}
-            var dgrade;
-			if (ev.graded) {
-				var grad = ev.graded;
-				if (ev.commenttext) {
-					grad += " "+icon(_('__COMMENT__', [getDate(ev.commentdate), getTime(ev.commentdate)])+"\n"+ev.commenttext, 'comment');
-				}
-				dgrade = eventtext(grad, "graded", ev.grading);
-			} else {
-				dgrade = eventdate(ev.grading, "");
-			}
-
-			var title = "";
-			if (ev.is_assignment()) {
-				if (ev.committed) {
-					if (ev.viewed) {
-						title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
-					} else {
-						title = icon(_('__COMMITTED__'), 'save');
-					}
-				} else if(ev.has_ended()){
-					title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
-				} else {
-					title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
-				}
-			} else {
-				title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
-			}
-			title += ev.name;
-			return '<tr class="event success" '+link+'"><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+dgrade+'</tr>';
+            var dgrade = get_grade_td();
+            return common_event(dgrade);
 		};
+
+        function get_grade_td(limit) {
+            if (ev.graded) {
+                var grad = ev.graded;
+                if (ev.commenttext) {
+                    grad += " "+icon(_('__SHOW_COMMENT__'), 'comment showComments');
+                }
+                return eventtext(grad, "graded", ev.grading);
+            }
+            if (limit) {
+                return eventdate(ev.grading, isNearDate(ev.grading, limit) ? "near" : "");
+            }
+            return eventdate(ev.grading, "");
+        }
+
+        function common_event(tds, show_subject) {
+            var link = ev.link != undefined ? 'link="'+ev.link+'"' : "";
+
+            var eventstate = "";
+            if (ev.has_started()) {
+                if (ev.has_ended()) {
+                    eventstate = 'success';
+                } else if (ev.committed || !ev.is_assignment()) {
+                    eventstate = 'warning running';
+                } else {
+                    eventstate = 'danger running';
+                }
+            }
+
+            var title = "";
+            if (ev.is_assignment()) {
+                if (ev.committed) {
+                    if (ev.viewed) {
+                        title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+                    } else {
+                        title = icon(_('__COMMITTED__'), 'save');
+                    }
+                } else if(ev.has_ended()){
+                    title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
+                } else {
+                    title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
+                }
+            } else if (ev.is_uoc()) {
+                title = colored_icon(_('__'+ev.type+'__'), 'education', '');
+            } else {
+                title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
+            }
+            if (show_subject && ev.subject != undefined) {
+                title += ev.subject + ' - ';
+            }
+            title += ev.name;
+            var eventId = 'eventid="'+ev.eventId+'"';
+            return '<tr class="event '+eventstate+'" '+link+' '+eventId+'><td class="name"><a href="#" class="linkEvent">'+title+'</a></td>'+tds+'</tr>';
+        }
 
 		function eventdate(d, clas) {
 			var fdate;
@@ -957,16 +864,8 @@ var UI = new function() {
 
         var url = '/webapps/classroom/student.do?nav=recursos-estudiant&domainId='+classroom.domain+'&domainCode='+classroom.code+'&s=';
         text = '<a href="#" class="linkMaterials" link="'+url+'">'+_('__LINK_TO_EQUIPMENT__')+'</a>'+ text;
-
-        $('#materials_'+classroom.code).html(text);
-
-        $('.linkMaterials').unbind( "click" )
-            .click(function(){
-                var link = $(this).attr('link');
-                if (link && link != 'undefined') {
-                    open_tab(link);
-                }
-            });
+        classroom.materials = text;
+        this.show_materials(classroom);
 
 		function get_icon_link(format) {
 			var icon = false;
@@ -1010,7 +909,7 @@ var UI = new function() {
 		}
     };
 
-	this.fill_users = function(classcode, data) {
+	this.fill_users = function(classroom, data) {
 		var text = "";
 		var connected = "";
 		var idp = get_idp();
@@ -1042,16 +941,42 @@ var UI = new function() {
 		}
 		text = connected + text;
 
-		if (text != "") {
-			$('#users_'+classcode).html('<ul>'+text+'</ul>');
-			$('.linkMail').unbind( "click" )
+        classroom.users = text;
+        this.show_users(classroom);
+	};
+
+    this.show_materials = function(classroom) {
+        if (classroom.materials != "") {
+            this.show_modal(classroom.get_acronym()+': '+_('__EQUIPMENT__'), classroom.materials);
+
+            $('.linkMaterials').unbind( "click" )
                 .click(function(){
-    				var mail = $(this).attr('mail');
-    				var data = {to: mail};
-    				open_tab('/WebMail/writeMail.do', data);
-    			});
-		}
-	}
+                    var link = $(this).attr('link');
+                    if (link && link != undefined) {
+                        open_tab(link);
+                    }
+                });
+        }
+    };
+
+    this.show_users = function(classroom) {
+        if (classroom.users != "") {
+            this.show_modal(classroom.get_acronym()+': '+_('__USERS__'), classroom.users);
+
+            $('.linkMail').unbind( "click" )
+                .click(function(){
+                    var mail = $(this).attr('mail');
+                    var data = {to: mail};
+                    open_tab('/WebMail/writeMail.do', data);
+                });
+        }
+    };
+
+    this.show_modal = function(title, text) {
+        $('#uocModalTitle').html(title);
+        $('#uocModalBody').html(text);
+        $('#uocModal').modal('show');
+    };
 };
 
 $(document).ready(function() {
