@@ -312,7 +312,6 @@ function Classroom(title, code, domain, type, template) {
 
 	// Adds a final grade returning if it changed
 	this.add_grade = function(name, grade, prov) {
-		grade = grade.replace('.', ',');
 		var g = new Grade(name, grade, prov);
 
 		// Stop notifying warning FE grades if EX is not present
@@ -336,7 +335,7 @@ function Classroom(title, code, domain, type, template) {
 		}
 
 		if (this.grades[i].grade != g.grade || (!prov && this.grades[i].prov)) {
-			this.grades[i].grade = grade;
+			this.grades[i].grade = g.grade;
 			if (!prov) {
 				// Only change when it becomes def
 				this.grades[i].prov = false;
@@ -557,14 +556,15 @@ function Resource(title, code, type) {
 }
 
 function Grade(title, grade, prov) {
-	this.grade = grade;
+	this.grade = grade.replace('.', ',');
 	this.prov = prov;
 
+	title = title.trim();
 	var code = get_code(title);
 	if (!code) {
 		this.name = title;
 		this.pos = 10;
-		Debug.error('Grade type not recognized: '+this.name);
+		Debug.error('Grade name not recognized: '+this.name);
 	} else {
 		this.name = code;
 		switch (code) {
@@ -597,7 +597,7 @@ function Grade(title, grade, prov) {
 				break;
 			default:
 				this.pos = 10;
-				Debug.error('Grade type not recognized: '+this.name + ' with code ' + code);
+				Debug.error('Grade code not recognized: '+this.name);
 		}
 	}
 
@@ -623,6 +623,7 @@ function Grade(title, grade, prov) {
 		}
 
 		title = get_html_realtext(title);
+		title = title.replace('  ', ' ', title);
 		title = remove_accents(title.toLowerCase());
 
 		switch (title) {
@@ -636,6 +637,7 @@ function Grade(title, grade, prov) {
 			case 'calificacion final de actividades practicas':
 				return 'P';
 		}
+		Debug.error("Grade title not found: "+title);
 		return false;
 	}
 }

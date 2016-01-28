@@ -403,13 +403,13 @@
         "message" : "Tens problemes? Visita les"
     },
     "__C__": {
-        "message" : "Qualificació d'Avaluació Continuada"
+        "message" : "Nota d'Avaluació Continuada"
     },
     "__P__": {
-        "message" : "Qualificació final d'activitats pràctiques"
+        "message" : "Nota final d'activitats pràctiques"
     },
     "__FC__": {
-        "message" : "Qualificació final d'Avaluació continuada"
+        "message" : "Nota final d'Avaluació Continuada"
     },
     "__PS__": {
         "message" : "Prova de Síntesi"
@@ -424,9 +424,9 @@
         "message" : "Prova Final"
     },
     "__FE__": {
-        "message" : "Qualificació final d'Exàmens (P+EX)"
+        "message" : "Nota final d'Exàmens (P+EX)"
     },
     "__FA__": {
-        "message" : "Qualificació final de l'Assignatura"
+        "message" : "Nota final de l'assignatura"
     }
 }

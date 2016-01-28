@@ -528,9 +528,9 @@ function retrieve_resource(classroom, resource) {
 		try {
 			var num_msg_pendents = data.resource.newItems;
 	        var num_msg_totals = data.resource.totalItems;
-	        if (num_msg_pendents == 0 && num_msg_totals == 0 && data.resource.missatgesNousBlog) {
+	        /*if (num_msg_pendents == 0 && num_msg_totals == 0 && data.resource.missatgesNousBlog) {
 				num_msg_pendents = num_msg_totals = 1;
-	        }
+	        }*/
 			resource.set_messages(num_msg_pendents, num_msg_totals);
 			resource.set_pos(data.resource.pos);
 		} catch(err) {

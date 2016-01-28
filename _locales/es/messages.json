@@ -402,13 +402,13 @@
         "message" : "Tienes problemas? Visita las"
     },
     "__C__": {
-        "message" : "Calificación de Evaluación Continuada"
+        "message" : "Nota de Evaluación Continuada"
     },
     "__P__": {
-        "message" : "Calificación final de actividades prácticas"
+        "message" : "Nota final de actividades prácticas"
     },
     "__FC__": {
-        "message" : "Calificación final de Evaluación continuada"
+        "message" : "Nota final de Evaluación Continuada"
     },
     "__PS__": {
         "message" : "Prueba de Síntesis"
@@ -423,9 +423,9 @@
         "message" : "Prueba Final"
     },
     "__FE__": {
-        "message" : "Calificación final de Exámenes (P+EX)"
+        "message" : "Nota final de Exámenes (P+EX)"
     },
     "__FA__": {
-        "message" : "Calificación final de la Asignatura"
+        "message" : "Nota final de la Asignatura"
     }
 }
