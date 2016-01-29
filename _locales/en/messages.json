@@ -54,6 +54,12 @@
     "__CLASSROOM__" : {
         "message" : "Classroom"
     },
+    "__RESET_CLASSROOMS__" : {
+        "message" : "Reiniciar aulas"
+    },
+    "__RESET_CONFIRM__" : {
+        "message" : "This will erase all classroom information to download it again, are you sure?"
+    },
 
     //Popup
     "__GRADE_RESUME__" : {

@@ -54,6 +54,12 @@
     "__CLASSROOM__" : {
         "message" : "Aula"
     },
+    "__RESET_CLASSROOMS__" : {
+        "message" : "Reinicia les aules"
+    },
+    "__RESET_CONFIRM__" : {
+        "message" : "Això esborrarà la informació de les aules per tornar-les a descarregar, esteu segurs?"
+    },
 
     //Popup
     "__GRADE_RESUME__" : {

@@ -7,6 +7,10 @@ $(document).ready(function(){
 		save_login();
 		return false;
 	});
+	$('#reset_btn').on('click',function(){
+		reset_classrooms();
+		return false;
+	});
 	$('#version').html(get_version());
 });
 
@@ -111,6 +115,15 @@ function save_login(){
 	$("#alertstatus").removeClass('alert-danger');
 	$("#alertstatus").addClass('alert-success');
 	$("#alertstatus").show();
+}
+
+function reset_classrooms() {
+	var sure = confirm(_("__RESET_CONFIRM__"));
+	if (sure) {
+		console.log('Reset classes...');
+		reset_classes();
+		save_login();
+	}
 }
 
 function after_check_messages() {

@@ -195,6 +195,10 @@ function reset_session(){
 	Session.reset_retrieve();
 }
 
+function reset_classes(){
+	Storage.unset_option("classes");
+}
+
 function get_working() {
 	return Storage.get_option_bool("working", false);
 }

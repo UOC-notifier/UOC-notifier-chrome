@@ -54,11 +54,13 @@ function retrieve_final_grades(classroom) {
 	Queue.request( '/tren/trenacc/webapp/GAT_EXP.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
 		try {
 			var grades = false;
+			var numConvoc = 0;
 			if (classroom.any) {
 				for (var x in resp.O) {
 					if (resp.O[x].P.anyAcademico == classroom.any) {
 						grades = resp.O[x].P;
-						break;
+					} else {
+						numConvoc = Math.max(numConvoc, resp.O[x].P.numConvocatoriaActual);
 					}
 				}
 			}
@@ -68,7 +70,7 @@ function retrieve_final_grades(classroom) {
 			}
 			console.log("Grades found!", grades);
 
-			var prov = grades.numConvocatoriaActual <= 0;
+			var prov = grades.numConvocatoriaActual <= numConvoc;
 			var types = ['C', 'P', 'FC', 'PS', 'PV', 'EX', 'PF',  'FE', 'FA'];
 
 			for(var i in types) {
