@@ -790,26 +790,7 @@ var Session = new function() {
 					        processData: false
 					    })
 					    .done(function(resp) {
-					    	Debug.log(resp);
-					    	var matchs = resp.match(/campusSessionId = ([^\n]*)/);
-							if (matchs) {
-								var session = matchs[1];
-								if (!get_working()) {
-									notify(_('__UOC_WORKING__'));
-								}
-								save_session(session);
-								Debug.print('Session! '+session);
-								Queue.run();
-								if (typeof login_success == 'function') {
-									login_success();
-								}
-							} else {
-								Debug.error('ERROR: Cannot fetch session');
-								if (typeof login_failed == 'function') {
-									login_failed();
-								}
-								not_working();
-							}
+					    	parse_session(resp);
 					    })
 					    .fail(function() {
 					        Debug.error('ERROR: Cannot login');
@@ -818,34 +799,40 @@ var Session = new function() {
 					        retrieving = false;
 					    });
 					} else {
-						var matchs = resp.match(/campusSessionId = ([^\n]*)/);
-						if (matchs) {
-							var session = matchs[1];
-							if (!get_working()) {
-								notify(_('__UOC_WORKING__'));
-							}
-							save_session(session);
-							Debug.print('Session! '+session);
-							Queue.run();
-							if (typeof login_success == 'function') {
-								login_success();
-							}
-						} else {
-							Debug.error('ERROR: Cannot fetch session');
-							if (typeof login_failed == 'function') {
-								login_failed();
-							}
-							not_working();
-						}
+						parse_session(resp);
 					}
 				})
 				.fail(function() {
 			        Debug.error('ERROR: Cannot renew session');
+			        not_working();
 			    })
 			    .always(function() {
 			        retrieving = false;
 			    });
 			}
+		}
+	}
+
+	function parse_session(resp) {
+		Debug.log(resp);
+		var matchs = resp.match(/campusSessionId = ([^\n]*)/);
+		if (matchs) {
+			var session = matchs[1];
+			if (!get_working()) {
+				notify(_('__UOC_WORKING__'));
+			}
+			save_session(session);
+			Debug.print('Session! '+session);
+			Queue.run();
+			if (typeof login_success == 'function') {
+				login_success();
+			}
+		} else {
+			Debug.error('ERROR: Cannot fetch session');
+			if (typeof login_failed == 'function') {
+				login_failed();
+			}
+			not_working();
 		}
 	}
 };
