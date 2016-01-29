@@ -53,7 +53,21 @@ function retrieve_final_grades(classroom) {
 	// Always GAT_EXP, not dependant on UOCi
 	Queue.request( '/tren/trenacc/webapp/GAT_EXP.CEXPEDWEB/gwtRequest', args, 'json', false, function(resp) {
 		try {
-			var grades = resp.O.shift().P;
+			var grades = false;
+			if (classroom.any) {
+				for (var x in resp.O) {
+					if (resp.O[x].P.anyAcademico == classroom.any) {
+						grades = resp.O[x].P;
+						break;
+					}
+				}
+			}
+
+			if (!grades) {
+				grades = resp.O.shift().P;
+			}
+			console.log("Grades found!", grades);
+
 			var prov = grades.numConvocatoriaActual <= 0;
 			var types = ['C', 'P', 'FC', 'PS', 'PV', 'EX', 'PF',  'FE', 'FA'];
 
