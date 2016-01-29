@@ -623,18 +623,18 @@ function Grade(title, grade, prov) {
 		}
 
 		title = get_html_realtext(title);
-		title = title.replace('  ', ' ', title);
-		title = remove_accents(title.toLowerCase());
+		title = title.toLowerCase();
+		title = title.replace(/[^\w\s]/gi, '');
 
 		switch (title) {
-			case 'qualificacio davaluacio continuada':
-			case 'calificacion de evaluacion continuada':
-			case 'calificacion final':
+			case 'qualificaci davaluaci continuada':
+			case 'calificacin de evaluacin continuada': // Not used
+			case 'calificacin final':
 				return 'C';
-			case 'nota final activitats practiques':
-			case 'nota final de actividades practicas':
-			case 'qualificacio final dactivitats practiques':
-			case 'calificacion final de actividades practicas':
+			case 'nota final activitats prctiques':
+			case 'nota final de actividades prcticas':
+			case 'qualificaci final dactivitats prctiques': // Not used
+			case 'calificacin final de actividades prcticas':  // Not used
 				return 'P';
 		}
 		Debug.error("Grade title not found: "+title);

@@ -974,7 +974,7 @@ var UI = new function() {
 
     this.show_modal = function(title, text) {
         $('#uocModalTitle').html(title);
-        $('#uocModalBody').html(text);
+        $('#uocModalBody').html(get_html_realtext(text));
         $('#uocModal').modal('show');
     };
 };
