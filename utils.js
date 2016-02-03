@@ -313,7 +313,7 @@ var Queue = new function(){
                     executing = true;
                     var pet = queue.shift();
                     Debug.print('Run ' + pet.url);
-                    ajax_do(session, pet.url, pet.data, pet.type, pet.reset, pet.success);
+                    ajax_do(session, pet.url, pet.data, pet.type, pet.reset, pet.success, pet.fail);
                 } else {
                     Debug.print('End of queue');
                     if (after_function != 'nosave') {
@@ -334,14 +334,15 @@ var Queue = new function(){
         queue = [];
     };
 
-    this.request = function(url, data, type, reset_on_fail, handler) {
+    this.request = function(url, data, type, reset_on_fail, handler, fail_handler) {
         if (url) {
             var pet = {
                 url: url,
                 data: data,
                 type: type,
                 reset: reset_on_fail,
-                success: handler
+                success: handler,
+                fail: fail_handler
             };
             queue.push(pet);
             Debug.print('Queued ' + url);
@@ -353,7 +354,7 @@ var Queue = new function(){
         after_function = fnc;
     };
 
-    function ajax_do(session, url, data, type, reset_on_fail, handler){
+    function ajax_do(session, url, data, type, reset_on_fail, handler, fail_handler){
         if (!data) {
             data = {};
         }
@@ -392,6 +393,10 @@ var Queue = new function(){
                 Debug.log(resp);
                 if (reset_on_fail) {
                     reset_session();
+                }
+
+                if (fail_handler) {
+                    fail_handler();
                 }
             })
             .always(function() {

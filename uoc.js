@@ -1,4 +1,8 @@
 function check_messages(after_check_fnc) {
+	if (get_check_nexttime()) {
+		save_check_nexttime(false);
+	}
+
 	Queue.set_after_function(after_check_fnc);
 
 	retrieve_mail();
@@ -14,22 +18,26 @@ function check_messages(after_check_fnc) {
 		for (var x in data.classrooms) {
 			parse_classroom(data.classrooms[x]);
 		}
-		Classes.purge_old();
+		keep_checking();
+	}, keep_checking);
+}
 
-		retrieve_old_classrooms();
+function keep_checking() {
+	Classes.purge_old();
 
-		retrieve_gradeinfo();
+	retrieve_old_classrooms();
 
-		retrieve_agenda();
+	retrieve_gradeinfo();
 
-		var classrooms = Classes.get_notified();
-		for(var i in classrooms) {
-			retrieve_final_grades(classrooms[i]);
-			retrieve_stats(classrooms[i]);
-		}
+	retrieve_agenda();
 
-		retrieve_final_exams_event();
-	});
+	var classrooms = Classes.get_notified();
+	for(var i in classrooms) {
+		retrieve_final_grades(classrooms[i]);
+		retrieve_stats(classrooms[i]);
+	}
+
+	retrieve_final_exams_event();
 }
 
 function retrieve_final_grades(classroom) {

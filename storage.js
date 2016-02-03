@@ -236,6 +236,15 @@ function save_check_mail(save){
 	}
 }
 
+function get_check_nexttime(){
+	return Storage.get_option_bool("check_nexttime", false);
+}
+
+function save_check_nexttime(check_nexttime){
+	Storage.set_option("check_nexttime", check_nexttime);
+	reset_alarm();
+}
+
 // RUNNING - LOG
 function get_debug() {
 	return Storage.get_option_bool("debug", false);

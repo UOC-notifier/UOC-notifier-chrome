@@ -1,22 +1,25 @@
-function setup_alarm() {
-	chrome.alarms.get('refresh', function(alarm) {
+function reset_alarm() {
+	chrome.alarms.clear('uocnotifier');
+
+	chrome.alarms.get('uocnotifier', function(alarm) {
 		if (!alarm) {
 			var delay = get_interval();
-			chrome.alarms.create('refresh', {periodInMinutes: delay});
+			if (get_check_nexttime()) {
+				delay = 1;
+			}
+			chrome.alarms.create('uocnotifier', {periodInMinutes: delay});
 		}
 	});
 }
 
-function reset_alarm() {
-	chrome.alarms.clear('refresh');
-	setup_alarm();
-}
-
 function onAlarm(alarm) {
-	if (alarm && alarm.name == 'refresh') {
-		chrome.idle.queryState(3000 ,function(state) {
+	if (alarm && alarm.name == 'uocnotifier') {
+		chrome.idle.queryState(300 ,function(state) {
 			if (state == 'active') {
 				check_messages();
+			} else {
+				console.log(state + ',check it later');
+				save_check_nexttime(true);
 			}
 		});
 	}
@@ -38,11 +41,12 @@ var Start = new function() {
 	};
 
 	function startup() {
+		console.log('Startup');
 		started = true;
 		reset_session();
 		if (has_username_password()) {
 			check_messages(show_PAC_notifications);
-			setup_alarm();
+			reset_alarm();
 			return true;
 		}
 		return false;
