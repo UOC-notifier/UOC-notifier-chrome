@@ -9,9 +9,7 @@ function setBadge(number, color) {
 function popup_notification(title, icon, body, timeout) {
     var notification = new Notification(title, { icon: window.location.origin +icon, body: body });
     if (timeout) {
-        notification.onshow = function() {setTimeout(function(){
-            notification.close();
-        }, 3000)};
+        setTimeout(notification.close.bind(notification), timeout);
     }
 }
 

@@ -35,6 +35,14 @@ var Classes = new function() {
 		return events;
 	};
 
+	this.reset = function() {
+		reset_classes();
+		classes = [];
+		this.messages = 0;
+		this.notified_messages = 0;
+		events = [];
+	}
+
 	this.save = function() {
 		this.count_messages();
 		set_messages();

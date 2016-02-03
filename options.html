@@ -86,7 +86,7 @@
           <label for="check_interval" class="translate">__INTERVAL__</label>
           <div class="input-group">
             <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
-            <input id="check_interval" type="number" min="5" class="form-control translateph" placeholder="__INTERVAL__">
+            <input id="check_interval" type="number" min="5" step="5" class="form-control translateph" placeholder="__INTERVAL__">
             <span class="input-group-addon translate">__MINUTES__</span>
           </div>
         </div>
@@ -107,9 +107,9 @@
           <label>&nbsp;</label>
           <div class="input-group">
             <span class="input-group-addon">
-              <input id="notification" type="checkbox">
+              <input id="check_mail" type="checkbox">
             </span>
-            <label for="notification" class="form-control translate">__NOTIFICATION__</label>
+            <label for="check_mail" class="form-control translate">__CHECK_MAIL__</label>
           </div>
         </div>
       </div>
@@ -117,17 +117,6 @@
 
     <h3 class="translate">__SHOW__</h3>
     <div class="row">
-      <div class="col-xs-6">
-        <div class="form-group">
-          <label>&nbsp;</label>
-          <div class="input-group">
-            <span class="input-group-addon">
-              <input id="show_news" type="checkbox">
-            </span>
-            <label for="show_news" class="form-control translate">__NEWS__</label>
-          </div>
-        </div>
-      </div>
       <div class="col-xs-6">
         <div class="form-group">
           <label>&nbsp;</label>
@@ -160,10 +149,22 @@
           </div>
         </div>
       </div>
+      <div class="col-xs-6">
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div class="input-group">
+            <span class="input-group-addon">
+              <input id="notification" type="checkbox">
+            </span>
+            <label for="notification" class="form-control translate">__NOTIFICATION__</label>
+          </div>
+        </div>
+      </div>
     </div>
 
 
     <h3 class="translate">__CLASS_NOTIFY__</h3>
+    <div class="alert alert-warning translate">__DISABLE_UNUSED_CLASSROOMS__</div>
     <div id="tclassrooms"></div>
 
     <footer>

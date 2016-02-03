@@ -22,6 +22,14 @@ var UI = new function() {
 	};
 
 	function build() {
+        var messages = get_icon();
+        if (messages > 0) {
+            var color = messages >= get_critical() ? '#AA0000' : '#EB9316';
+            setBadge(messages, color);
+        } else {
+            setBadge("");
+        }
+
 		$('#update').removeClass('spin');
 
 		classrooms = Classes.get_notified();
@@ -44,11 +52,7 @@ var UI = new function() {
 		$('#classrooms').html(class_html);
 
 		// Setup News
-		if (get_show_news()) {
-			$('#button_news').unbind( "click" ).click(news);
-		} else {
-			$('#button_news').remove();
-		}
+		$('#button_news').unbind( "click" ).click(news);
 
 		// Setup agenda
 		if (get_show_agenda()) {
@@ -274,10 +278,14 @@ var UI = new function() {
 				}
 			}
 
-			var text = classrooms_buttons();
-			if (nearexams) {
-				text += exams;
-			}
+            var text = classrooms_buttons();
+            if (nearexams) {
+                text += exams;
+            }
+
+            if (classroom.exams && classroom.stats) {
+                text += '<div class="event alert alert-warning ">'+ _('__END_OF_CLASSROOMS__') + '</div>';
+            }
 
 			text += resources_html + events();
 

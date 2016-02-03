@@ -130,15 +130,6 @@ function save_notification(notify){
 	Storage.set_option("notification", notify);
 }
 
-//OPTIONS - SHOW NEWS
-function get_show_news(){
-	return Storage.get_option_bool("show_news", true);
-}
-
-function save_show_news(show){
-	Storage.set_option("show_news", show);
-}
-
 //OPTIONS - SHOW AGENDA
 function get_show_agenda(){
 	return Storage.get_option_bool("show_agenda", true);
@@ -216,6 +207,14 @@ function save_icon(number){
 	Storage.set_option("messages_icon", number);
 }
 
+function get_news(){
+	return Storage.get_option_bool("news", false);
+}
+
+function save_news(news){
+	Storage.set_option("news", news);
+}
+
 // RUNNING - UNREAD MAILS
 function get_mails_unread() {
 	return Storage.get_option_int("mails_unread", 0);
@@ -223,6 +222,18 @@ function get_mails_unread() {
 
 function save_mails_unread(number){
 	Storage.set_option("mails_unread", number);
+}
+
+function get_check_mail() {
+	return get_mails_unread() >= 0;
+}
+
+function save_check_mail(save){
+	if (save) {
+		save_mails_unread(0);
+	} else {
+		save_mails_unread(-1);
+	}
 }
 
 // RUNNING - LOG

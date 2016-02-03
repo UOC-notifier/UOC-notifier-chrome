@@ -434,5 +434,14 @@
     },
     "__FA__": {
         "message" : "Nota final de l'assignatura"
+    },
+    "__END_OF_CLASSROOMS__" : {
+        "message" : "Aquesta aula ja ha finalitzat la docència, si la desactives a les <a href=\"options.html\" target=\"_blank\">opcions</a> faràs l'extensió més lleugera"
+    },
+    "__DISABLE_UNUSED_CLASSROOMS__" : {
+        "message" : "Desactiva les aules que no facis servir per fer l'extensió més lleugera"
+    },
+    "__CHECK_MAIL__" : {
+        "message" : "Comprova si hi ha correu (desactiva'l si tens una redirecció)"
     }
 }

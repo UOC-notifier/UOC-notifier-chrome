@@ -14,7 +14,11 @@ function reset_alarm() {
 
 function onAlarm(alarm) {
 	if (alarm && alarm.name == 'refresh') {
-		check_messages();
+		chrome.idle.queryState(3000 ,function(state) {
+			if (state == 'active') {
+				check_messages();
+			}
+		});
 	}
 }
 

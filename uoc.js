@@ -164,21 +164,23 @@ function retrieve_final_exams_event() {
 }
 
 function retrieve_mail() {
-	var args = {
-		'app:mobile': true,
-		'app:cache': false,
-		'app:only' : 'bustia'
-	};
-	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
-		$(resp).find('item').each(function() {
-    		var description = $(this).find('description').first().text();
-    		var matches = description.match(/:([0-9]+):([0-9]+)$/);
-			if (matches && matches[1]) {
-				save_mail(matches[1]);
-			}
-		});
+	if (get_check_mail()) {
+		var args = {
+			'app:mobile': true,
+			'app:cache': false,
+			'app:only' : 'bustia'
+		};
+		Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
+			$(resp).find('item').each(function() {
+	    		var description = $(this).find('description').first().text();
+	    		var matches = description.match(/:([0-9]+):([0-9]+)$/);
+				if (matches && matches[1]) {
+					save_mail(matches[1]);
+				}
+			});
 
-	});
+		});
+	}
 }
 
 function save_mail(mails) {
@@ -195,18 +197,26 @@ function set_messages() {
 	var messages = Classes.notified_messages;
 	save_icon(messages);
 
+	var color = undefined;
+
 	// Set icon
 	if (messages > 0) {
-		var color = messages >= get_critical() ? '#AA0000' : '#EB9316';
-		setBadge(messages, color);
-		if (old_messages < messages && messages >= get_critical()) {
+		if (messages > old_messages && messages >= get_critical()) {
 			notify(_('__NOTIFICATION_UNREAD__', [messages]));
 		}
-	} else {
-		setBadge("");
+		color = messages >= get_critical() ? '#AA0000' : '#EB9316';
 	}
 
 	Debug.print("Check messages: Old "+old_messages+" New "+messages);
+
+	var news = get_news();
+	if (news) {
+		color = '#9E5A9E';
+	} else if (messages <= 0) {
+		messages = "";
+	}
+
+	setBadge(messages, color);
 }
 
 function show_PAC_notifications() {
@@ -226,12 +236,13 @@ function show_PAC_notifications() {
 }
 
 function notify(str, time) {
+	save_news(true);
 	if (get_notification() && str.length > 0) {
 		if (time == undefined) {
 			time = 3000;
 		}
 		Debug.print(str);
-		popup_notification('UOC Notifier', "/img/logo128.png", str, time);
+		popup_notification("", "/img/logo128.png", str, time);
 	}
 }
 

@@ -26,7 +26,7 @@ function populate_classrooms(){
 		var notify = $(this).prop('checked');
 		save_notify_classroom(classroom_code, notify);
 	});
-	$(".alert").hide();
+	$("#alertstatus").hide();
 }
 
 function populate_classroom(classroom){
@@ -73,13 +73,13 @@ function populate_options(){
 		save_notification(ischecked);
 	});
 
-	option = get_show_news();
+	option = get_check_mail();
 	if (option) {
-		$('#show_news').attr('checked','checked');
+		$('#check_mail').attr('checked','checked');
 	}
-	$('#show_news').on('click', function(){
-		var ischecked = $('#show_news').is(':checked');
-		save_show_news(ischecked);
+	$('#check_mail').on('click', function(){
+		var ischecked = $('#check_mail').is(':checked');
+		save_check_mail(ischecked);
 	});
 
 	option = get_show_agenda();
@@ -121,13 +121,14 @@ function reset_classrooms() {
 	var sure = confirm(_("__RESET_CONFIRM__"));
 	if (sure) {
 		console.log('Reset classes...');
-		reset_classes();
+		Classes.reset();
+		populate_classrooms();
 		save_login();
 	}
 }
 
 function after_check_messages() {
-	$(".alert").hide();
+	$("#alertstatus").hide();
 	populate_classrooms();
 }
 

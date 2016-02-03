@@ -433,5 +433,14 @@
     },
     "__FA__": {
         "message" : "Final Grade of the Subject"
+    },
+    "__END_OF_CLASSROOMS__" : {
+        "message" : "The activity of this classroom has ended, you can disable it in <a href=\"options.html\" target=\"_blank\">options</a> to ease its load"
+    },
+    "__DISABLE_UNUSED_CLASSROOMS__" : {
+        "message" : "Disable the classroom you don't use in order to ease the load"
+    },
+    "__CHECK_MAIL__" : {
+        "message" : "Check for new mail (disable it if you have a redirection)"
     }
 }

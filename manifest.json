@@ -19,6 +19,6 @@
    "manifest_version": 2,
    "name": "__MSG_TITLE__",
    "options_page": "options.html",
-   "permissions": [ "http://cv.uoc.edu/", "https://cv.uoc.edu/", "notifications", "alarms"],
-   "version": "1.99"
+   "permissions": [ "http://cv.uoc.edu/", "https://cv.uoc.edu/", "notifications", "alarms", "idle"],
+   "version": "1.100"
 }
