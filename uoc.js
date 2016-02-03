@@ -76,7 +76,8 @@ function retrieve_final_grades(classroom) {
 			if (!grades) {
 				grades = resp.O.shift().P;
 			}
-			console.log("Grades found!", grades);
+			Debug.print("Grades found!");
+			Debug.print(grades);
 
 			var prov = grades.numConvocatoriaActual <= numConvoc;
 			var types = ['C', 'P', 'FC', 'PS', 'PV', 'EX', 'PF',  'FE', 'FA'];
@@ -635,7 +636,7 @@ function retrieve_pac_stats(classroom, button) {
 
 	Queue.set_after_function('nosave');
 	Queue.request('/webapps/rac/getEstadisticasAsignaturaAjax.action', args, 'GET', false, function(data) {
-		console.log(data);
+		Debug.print(data);
 		//UI.fill_pac_stats(classroom, data);
 		$(button).removeClass('spin');
     });

@@ -29,6 +29,7 @@ var UI = new function() {
         } else {
             setBadge("");
         }
+        save_news(false);
 
 		$('#update').removeClass('spin');
 
@@ -283,7 +284,7 @@ var UI = new function() {
                 text += exams;
             }
 
-            if (classroom.exams && classroom.stats) {
+            if (classroom.final_grades && classroom.stats) {
                 text += '<div class="event alert alert-warning ">'+ _('__END_OF_CLASSROOMS__') + '</div>';
             }
 
