@@ -505,7 +505,7 @@ function retrieve_gradeinfo() {
 				if (classroom) {
 					var nota = $(this).find('notaFinal').text().trim();
 					if (nota.length > 0 && nota != '-') {
-						var grade = classroom.add_grade('FA', nota, false);
+						var grade = classroom.add_grade('FA', nota, true);
 						if (grade) {
 							grade.notify(classroom.get_acronym());
 						}
