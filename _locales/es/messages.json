@@ -441,6 +441,6 @@
         "message" : "Desactiva las aulas que no uses para hacer la extensión más ligera"
     },
     "__CHECK_MAIL__" : {
-        "message" : "Comprueba si hay correo (desactiva-lo si tienes una redirección)"
+        "message" : "Comprueba si hay correo (desactívalo si tienes una redirección)"
     }
 }
