@@ -441,6 +441,10 @@ function parse_classroom_old(classr) {
 }
 
 function retrieve_gradeinfo() {
+	if (Classes.is_all_graded()) {
+		return;
+	}
+
 	Queue.request('/rb/inici/api/enrollment/rac.xml', {}, 'GET', false, function(data) {
 		$(data).find('files>file').each(function() {
 			var exped = $(this).children('id').first().text().trim();

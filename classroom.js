@@ -93,7 +93,6 @@ var Classes = new function() {
 		return false;
 	};
 
-
 	this.get_class_by_event = function(eventid) {
 		for(var i in classes) {
 			if (classes[i].notify) {
@@ -267,6 +266,17 @@ var Classes = new function() {
 			this.all_messages += classrooms[i].all_messages;
 		}
 	};
+
+	this.is_all_graded = function() {
+		for (var i in classes) {
+			if (classes[i].notify) {
+				if (!classes[i].has_all_grades()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	this.load();
 };
@@ -469,6 +479,23 @@ function Classroom(title, code, domain, type, template) {
 
 	this.has_events = function() {
 		return this.events.length > 0;
+	};
+
+	this.has_all_grades = function() {
+		if (this.final_grades){
+			return true;
+		}
+		if (!this.has_events()) {
+			return true;
+		}
+		for (var i in this.events) {
+			if (this.events[i].is_assignment()) {
+				if (!this.events[i].is_completed() || !this.events[i].graded) {
+					return false;
+				}
+			}
+		}
+		return true;
 	};
 
 	this.all_events_completed = function(only_assignments) {
