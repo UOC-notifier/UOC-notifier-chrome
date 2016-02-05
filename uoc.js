@@ -1,9 +1,5 @@
 function check_messages(after_check_fnc) {
-	if (get_check_nexttime()) {
-		save_check_nexttime(false);
-	}
-
-	reset_alarm();
+	save_check_nexttime(false);
 
 	Queue.set_after_function(after_check_fnc);
 
