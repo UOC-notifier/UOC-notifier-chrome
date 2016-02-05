@@ -97,7 +97,7 @@ function save_today(today){
 
 // OPTIONS - CHECK INTERVAL
 function get_interval(){
-	return Storage.get_option_int("check_interval", 5);
+	return Storage.get_option_int("check_interval", 20);
 }
 
 function save_interval(minutes){

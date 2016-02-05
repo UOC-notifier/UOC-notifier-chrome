@@ -188,13 +188,13 @@ var Classes = new function() {
 				classr.subject_code = classl.subject_code;
 				classr.exped = classl.exped;
 				classr.stats = classl.stats;
-				classr.final_grades = classl.final_grades;
 				classr.exams = classl.exams;
 				classr.consultor = classl.consultor;
 				classr.consultormail = classl.consultormail;
 				classr.consultorlastviewed = classl.consultorlastviewed;
 				classr.set_notify(classl.notify);
 				if (classl.notify) {
+					classr.final_grades = classl.final_grades;
 					for (var j in classl.resources) {
 						var resourcel = classl.resources[j];
 						var resource = new Resource(resourcel.title, resourcel.code, resourcel.type);
