@@ -52,6 +52,25 @@ var UI = new function() {
 		}
 		$('#classrooms').html(class_html);
 
+        // Announcements
+        var announcements = get_announcements();
+        if (announcements) {
+            var title = announcements.title;
+            if (announcements.link != "") {
+                title = '<a target="_blank" href="'+announcements.link+'">'+title+'</a>';
+            }
+            var temp_html = '<div class="panel panel-warning" id="panel_announcements">\
+            <div class="panel-heading" data-target="#detail_announcements" data-toggle="collapse"> \
+            <button type="button" class="close" aria-label="Close"><span aria-hidden="true" id="close_announcements">&times;</span></button>\
+            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> <strong>'+title+'</strong></div>\
+            <div class="panel-body bg-warning text-warning collapse" id="detail_announcements">'+announcements.description+'<div class="pull-right">'+announcements.date+'</div>\
+            </div></div>';
+            $('#announcements').html(temp_html);
+            $('#close_announcements').unbind( "click" ).click(function() {
+                $("#panel_announcements").hide();
+            });
+        }
+
 		// Setup News
 		$('#button_news').unbind( "click" ).click(news);
 

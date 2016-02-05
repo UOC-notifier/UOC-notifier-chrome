@@ -25,3 +25,17 @@ function get_version() {
     var manifest = chrome.runtime.getManifest();
     return manifest.version;
 }
+
+function reset_alarm() {
+    chrome.alarms.clear('uocnotifier');
+
+    chrome.alarms.get('uocnotifier', function(alarm) {
+        if (!alarm) {
+            var delay = get_interval();
+            if (get_check_nexttime()) {
+                delay = 1;
+            }
+            chrome.alarms.create('uocnotifier', {periodInMinutes: delay});
+        }
+    });
+}

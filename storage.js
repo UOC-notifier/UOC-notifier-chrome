@@ -215,6 +215,27 @@ function save_news(news){
 	Storage.set_option("news", news);
 }
 
+function get_announcements(){
+	var announcements = Storage.get_option("announcements", false);
+	announcements = JSON.parse(announcements);
+	return announcements;
+}
+
+function save_announcements(title, description, link, date){
+	if (title != "" && description != "") {
+		var announcements = {
+			title : title,
+			description : description,
+			link: link,
+			date: date
+		};
+		announcements = JSON.stringify(announcements);
+		Storage.set_option("announcements", announcements);
+	} else {
+		Storage.unset_option("announcements");
+	}
+}
+
 // RUNNING - UNREAD MAILS
 function get_mails_unread() {
 	return Storage.get_option_int("mails_unread", 0);

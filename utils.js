@@ -140,6 +140,13 @@ function get_url_attr(url, attr){
     return false;
 }
 
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
+
 function get_url_withoutattr(url, parameter) {
     //prefer to use l.search if you have a location/link object
     url = get_real_url(url);
