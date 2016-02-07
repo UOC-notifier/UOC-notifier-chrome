@@ -5,7 +5,6 @@
     "DESCRIPTION" : {
         "message" : "UOC notifier for Google Chrome"
     },
-    //Options
     "__LOGIN__" : {
         "message" : "Log in"
     },
@@ -60,8 +59,6 @@
     "__RESET_CONFIRM__" : {
         "message" : "This will erase all classroom information to download it again, are you sure?"
     },
-
-    //Popup
     "__GRADE_RESUME__" : {
         "message" : "Grades resume"
     },

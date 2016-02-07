@@ -5,7 +5,6 @@
     "DESCRIPTION" : {
         "message" : "Notificador de la UOC para Google Chrome"
     },
-    //Options
     "__LOGIN__" : {
         "message" : "Entrada"
     },
@@ -60,8 +59,6 @@
     "__RESET_CONFIRM__" : {
         "message" : "Esta acción eliminará toda la información de las aulas para volverlas a descargar, ¿estás seguro?"
     },
-
-    //Popup
     "__GRADE_RESUME__" : {
         "message" : "Resumen de notas"
     },

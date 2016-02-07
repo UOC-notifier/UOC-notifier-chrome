@@ -5,7 +5,6 @@
     "DESCRIPTION" : {
         "message" : "Notificador de la UOC per Google Chrome"
     },
-    //Options
     "__LOGIN__" : {
         "message" : "Entrada"
     },
@@ -60,8 +59,6 @@
     "__RESET_CONFIRM__" : {
         "message" : "Això esborrarà la informació de les aules per tornar-les a descarregar, esteu segurs?"
     },
-
-    //Popup
     "__GRADE_RESUME__" : {
         "message" : "Resum de notes"
     },
@@ -392,7 +389,6 @@
     "__INCORRECT_USER__" : {
         "message" : "L'usuari/contrasenya no és correcte.<br>Si aquest error persisteix, fes login <a href=\"https://cv.uoc.edu/webapps/cas/login?renew=true\" target=\"_blank\">aquí</a>"
     },
-
     "__NO_USER_PASSWORD__" : {
         "message" : "No hi ha usuari i password..."
     },
