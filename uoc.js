@@ -179,11 +179,15 @@ function retrieve_announcements() {
 		'app:only' : 'avisos'
 	};
 	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
+		var title = "";
+		var description = "";
+		var link = "";
+		var date = "";
 		$(resp).find('item').each(function() {
-			var title = $(this).find('title').first().text();
-    		var description = $(this).find('description').first().text();
-    		var link = $(this).find('link').first().text();
-    		var date = new Date($(this).find('pubDate').first().text());
+			title = $(this).find('title').first().text();
+    		description = $(this).find('description').first().text();
+    		link = $(this).find('link').first().text();
+    		date = new Date($(this).find('pubDate').first().text());
 
     		var y = date.getFullYear() - 2000;
 		    var m = date.getMonth() + 1;
@@ -191,9 +195,8 @@ function retrieve_announcements() {
 		    var h = date.getHours();
 		    var mm = date.getMinutes();
     		var date = addZero(d)+'/'+addZero(m)+'/'+addZero(y) + ' - '+h+':'+addZero(mm);
-
-    		save_announcements(title, description, link, date);
 		});
+		save_announcements(title, description, link, date);
 	});
 }
 
@@ -885,3 +888,5 @@ var Session = new function() {
 		}
 	}
 };
+// TODO http://cv.uoc.edu/webapps/classroom/servlet/GroupServlet?dtId=MULTI&dtIdList=&s=
+// //http://cv.uoc.edu/webapps/classroom/servlet/GroupServlet?dtId=MULTI&dtIdList=%27TUTORIA%27&s=
