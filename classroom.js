@@ -25,9 +25,6 @@ var Classes = new function() {
 				events[idx].eventId = evnt.eventId;
 				if (evnt.type)  events[idx].type = evnt.type;
 				if (evnt.start) events[idx].start = evnt.start;
-				if (evnt.end) events[idx].end = evnt.end;
-				if (evnt.solution) events[idx].solution = evnt.solution;
-				if (evnt.grading) events[idx].grading = evnt.grading;
 				return;
 			}
 		}
@@ -470,6 +467,7 @@ function Classroom(title, code, domain, type, template) {
 		if (ev.eventId == undefined) {
 			return;
 		}
+
 		var idx = this.get_event_idx(ev.eventId);
 		if (idx >= 0) {
 			this.event_merge(idx, ev);

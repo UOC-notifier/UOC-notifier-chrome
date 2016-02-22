@@ -413,10 +413,12 @@ var UI = new function() {
 			  	</button>';
 			}
 
-			buttons += '<button type="button" class="showUsers btn btn-info has-spinner" aria-label="'+_('__USERS__')+'" title="'+_('__USERS__')+'">\
-					<span class="spinner"><span class="glyphicon glyphicon-refresh"></span></span> \
-			    	<span class="glyphicon glyphicon-user" aria-hidden="true"></span>\
-			  	</button>';
+            if (c.type == "TUTORIA" || c.any) {
+    			buttons += '<button type="button" class="showUsers btn btn-info has-spinner" aria-label="'+_('__USERS__')+'" title="'+_('__USERS__')+'">\
+    					<span class="spinner"><span class="glyphicon glyphicon-refresh"></span></span> \
+    			    	<span class="glyphicon glyphicon-user" aria-hidden="true"></span>\
+    			  	</button>';
+            }
 
 			if (c.consultor) {
 				var title = _('__TEACHER__')+': '+c.consultor;

@@ -340,7 +340,9 @@ function parse_classroom(classr) {
 	if (classr.activitats.length > 0) {
 		for (var y in classr.activitats) {
 			var act = classr.activitats[y];
-			var evnt = new CalEvent(act.name, act.eventId, 'ASSIGNMENT');
+
+			var eventtype = act.eventTypeId == 31 ? 'MODULE' : 'ASSIGNMENT'
+			var evnt = new CalEvent(act.name, act.eventId, eventtype);
 
 			var args = {};
 			var urlbase;
@@ -426,6 +428,12 @@ function parse_classroom_old(classr) {
 				if (classroom && classroom.any) {
 					return;
 				}
+				var aul = title.lastIndexOf(" aula ");
+				var aulanum = false;
+				if (aul > 0) {
+					aulanum = title.substr(aul + 6);
+					title = title.substr(0, aul);
+				}
 				if (!classroom) {
 					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
 				} else {
@@ -433,6 +441,9 @@ function parse_classroom_old(classr) {
 					classroom.domain = classr.domainid;
 					classroom.type = classr.domaintypeid;
 					classroom.template = classr.pt_template;
+				}
+				if (aulanum) {
+					classroom.aula = aulanum;
 				}
 				classroom.domainassig = classr.domainfatherid;
 
@@ -728,9 +739,13 @@ function retrieve_agenda() {
 				}
 
 				evnt = classroom.get_event(id[0]);
-				if (evnt && evnt.is_assignment()) {
+				if (evnt && evnt.is_assignment() && classroom.any) {
 					// The Assignments are processed in other parts
 					return;
+				}
+
+				if (!classroom.any && json.EVENT_COLOR){
+					classroom.color = json.EVENT_COLOR;
 				}
 
 				if (!evnt) {
@@ -743,7 +758,6 @@ function retrieve_agenda() {
 				switch (parseInt(json.EVENT_TYPE)) {
 					case 22:
 					case 26:
-						evnt.type = 'MODULE';
 						evnt.start = date;
 						break;
 					case 23:
@@ -754,6 +768,7 @@ function retrieve_agenda() {
 						evnt.solution = date;
 						break;
 					case 19:
+						evnt.type = 'ASSIGNMENT';
 						evnt.grading = date;
 						break;
 					case 29:
