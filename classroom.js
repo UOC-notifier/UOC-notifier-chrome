@@ -25,6 +25,9 @@ var Classes = new function() {
 				events[idx].eventId = evnt.eventId;
 				if (evnt.type)  events[idx].type = evnt.type;
 				if (evnt.start) events[idx].start = evnt.start;
+				if (evnt.end) events[idx].end = evnt.end;
+				if (evnt.solution) events[idx].solution = evnt.solution;
+				if (evnt.grading) events[idx].grading = evnt.grading;
 				return;
 			}
 		}
@@ -46,12 +49,16 @@ var Classes = new function() {
 	this.save = function() {
 		this.count_messages();
 		set_messages();
-		Debug.print(classes);
-		Debug.print(events);
 		classes.sort(function(a, b) {
-			if (a.notify != b.notify) {
-				return b.notify - a.notify;
+			if (a.subject_code && !b.subject_code) {
+				return -1;
+			} else if(b.subject_code && !a.subject_code) {
+				return 1;
 			}
+
+			if(a.any > b.any) return -1;
+		    if(a.any < b.any) return 1;
+
 			if (a.type != b.type) {
 				if (a.type == 'TUTORIA') {
 					return 1;
@@ -71,6 +78,8 @@ var Classes = new function() {
 			}
 		}
 
+		Debug.print(classes);
+		Debug.print(events);
 		Storage.set_option("classes", JSON.stringify(classes));
 		Storage.set_option("events", JSON.stringify(events));
 	};
@@ -447,6 +456,15 @@ function Classroom(title, code, domain, type, template) {
 			this.messages += this.resources[idx].messages;
 		}
 	};
+
+	this.delete_old_resources = function() {
+		Debug.log('Delete old resources for '+this.acronym);
+		for (var i in this.resources) {
+			if(this.resources[i].type == 'OLD') {
+				this.resources.splice(i, 1);
+			}
+		}
+	}
 
 	this.add_event = function(ev) {
 		if (ev.eventId == undefined) {

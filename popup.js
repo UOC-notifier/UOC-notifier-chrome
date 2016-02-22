@@ -497,9 +497,9 @@ var UI = new function() {
 
 		    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
 		    text += '<div class="row-fluid clearfix">';
-		    text += get_general_link(url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
+		    //text += get_general_link(url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
 		    text += get_general_link(url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
-		    text += get_general_link(url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
+		    //text += get_general_link(url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
 		    text += get_general_link(url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
 		    text += get_general_link(root_url+'/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
 		    text += get_general_link(url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);

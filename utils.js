@@ -216,7 +216,7 @@ function get_acronym(text) {
     }
     var words = text.split(/[\s, '´:\(\)\-]+/);
     var acronym = "";
-    var nowords = ['de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd'];
+    var nowords = ['amb', 'con', 'de', 'a', 'per', 'para', 'en', 'la', 'el', 'y', 'i', 'les', 'las', 'l', 'd'];
     for (var x in words) {
         if (nowords.indexOf(words[x].toLowerCase()) < 0) {
             if (words[x] == words[x].toUpperCase()) {
