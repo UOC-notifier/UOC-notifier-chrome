@@ -59,10 +59,10 @@ var UI = new function() {
             if (announcements.link != "") {
                 title = '<a target="_blank" href="'+announcements.link+'">'+title+'</a>';
             }
-            var temp_html = '<div class="panel panel-warning" id="panel_announcements">\
-            <div class="panel-heading" data-target="#detail_announcements" data-toggle="collapse"> \
+            var temp_html = '<div class="panel panel-warning collapsible" id="panel_announcements">\
+            <div class="panel-heading collapsed" data-target="#detail_announcements" data-toggle="collapse"> \
             <button type="button" class="close" aria-label="Close"><span aria-hidden="true" id="close_announcements">&times;</span></button>\
-            <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> <strong>'+title+'</strong></div>\
+            <span class="title"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>&nbsp;'+title+'</span></div>\
             <div class="panel-body bg-warning text-warning collapse" id="detail_announcements">'+announcements.description+'<div class="pull-right">'+announcements.date+'</div>\
             </div></div>';
             $('#announcements').html(temp_html);
@@ -96,7 +96,7 @@ var UI = new function() {
 			        .attr('title', _('__MAIL__'));
 		}
 		$('#button_mail').unbind( "click" ).click(function() {
-			open_tab('/WebMail/listMails.do');
+			open_tab('/WebMail/attach.do', null, true);
 		});
 
 		$('#update').unbind( "click" ).click( function() {
@@ -313,10 +313,10 @@ var UI = new function() {
 				text += exams;
 			}
 
-			return '<div class="classroom panel panel-warning" classroom="'+c.code+'">  \
-						<div class="panel-heading container-fluid" '+color(c.color)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+c.code+'">	\
+			return '<div class="classroom panel collapsible" classroom="'+c.code+'">  \
+						<div class="panel-heading container-fluid collapsed" '+color(c.color)+' data-parent="#classrooms" data-toggle="collapse" data-target="#detail_'+c.code+'">	\
 							<div class="row">\
-								<div class="col-xs-9">' + title + '</div> \
+								<div class="col-xs-9 title">' + title + '</div> \
 								<div class="col-xs-3">' + badge(c.messages, 'linkAula', '-', _('__GOTO_CLASS__')) + '</div> \
 							</div> \
 						</div>\
@@ -777,7 +777,7 @@ var UI = new function() {
             } else if (ev.is_uoc()) {
                 title = colored_icon(_('__'+ev.type+'__'), 'education', '');
             } else {
-                title = colored_icon(_('__'+ev.type+'__'), 'triangle-right', '');
+                title = colored_icon(_('__'+ev.type+'__'), 'menu-right', '');
             }
             if (show_subject && ev.subject != undefined) {
                 title += ev.subject + ' - ';
@@ -832,7 +832,7 @@ var UI = new function() {
 
 	function color(col){
 		if(col){
-			return 'style="border-color:#'+col+'; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.20) 100%), #'+col+' no-repeat; color:white;"';
+			return 'style="border-color:#'+col+'; background-color: #'+col+';"';
 		}
 		return "";
 	}
