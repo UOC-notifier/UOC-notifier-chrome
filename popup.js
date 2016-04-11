@@ -635,11 +635,19 @@ var UI = new function() {
 			var content_today = "";
 		   	if (events_today.length > 0) {
 				events_today.sort(function(a, b){
-					var comp = compareDates(a.end, b.end);
-					if (comp == 0) {
-						return compareDates(a.start, b.start);
-					}
-					return comp;
+                    if (isBeforeToday(a.start) && isBeforeToday(b.start)) {
+    					var comp = compareDates(a.end, b.end);
+    					if (comp == 0) {
+    						return compareDates(a.start, b.start);
+    					}
+    					return comp;
+                    }
+
+                    var comp = compareDates(a.start, b.start);
+                    if (comp == 0) {
+                        return compareDates(a.end, b.end);
+                    }
+                    return comp;
 				});
 
 				for (var m in events_today) {
@@ -765,7 +773,7 @@ var UI = new function() {
             if (ev.is_assignment()) {
                 if (ev.committed) {
                     if (ev.viewed) {
-                        title = icon(_('__COMMITTED_VIEWED__', [getDate(ev.viewed), getTime(ev.viewed)]), 'saved');
+                        title = icon(_('__COMMITTED_VIEWED__', {date: getDate(ev.viewed), time: getTime(ev.viewed)}), 'saved');
                     } else {
                         title = icon(_('__COMMITTED__'), 'save');
                     }

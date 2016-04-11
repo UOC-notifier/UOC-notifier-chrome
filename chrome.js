@@ -18,6 +18,13 @@ function open_new_tab(url) {
 }
 
 function translate(str, params){
+    if (typeof params == 'object') {
+        var params_arr = [];
+        for (x in params) {
+            params_arr.push(params[x]);
+        }
+        params = params_arr;
+    }
     return chrome.i18n.getMessage(str, params);
 }
 
@@ -39,3 +46,22 @@ function reset_alarm() {
         }
     });
 }
+
+$( document ).ready(function() {
+    $('.translate').each(function() {
+        var text = $(this).text();
+        $(this).text(_(text));
+    });
+    $('.translateph').each(function() {
+        var text = $(this).attr('placeholder');
+        $(this).attr('placeholder', _(text));
+    });
+    $('.translatetit').each(function() {
+        var text = $(this).attr('title');
+        $(this).attr('title', _(text));
+    });
+    $('.translateal').each(function() {
+        var text = $(this).attr('aria-label');
+        $(this).attr('aria-label', _(text));
+    });
+});

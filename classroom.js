@@ -428,6 +428,13 @@ function Classroom(title, code, domain, type, template) {
 			}
 			return comp;
 		});
+
+		this.messages = 0;
+		for (var i in this.resources) {
+			if(this.resources[i].messages != '-') {
+				this.messages += this.resources[i].messages;
+			}
+		}
 	};
 
 	this.get_index = function(code) {
@@ -440,18 +447,12 @@ function Classroom(title, code, domain, type, template) {
 	};
 
 	this.resource_merge = function(idx, resource) {
-		if (this.resources[idx].messages != '-') {
-			this.messages -= this.resources[idx].messages;
-		}
 		this.resources[idx].set_messages(resource.messages, resource.all_messages);
 		this.resources[idx].set_pos(resource.pos);
 		this.resources[idx].link = resource.link;
 		this.resources[idx].code = resource.code;
 		this.resources[idx].title = resource.title;
 		this.resources[idx].type = resource.type;
-		if (this.resources[idx].messages != '-') {
-			this.messages += this.resources[idx].messages;
-		}
 	};
 
 	this.delete_old_resources = function() {
@@ -662,9 +663,9 @@ function Grade(title, grade, prov) {
 
 	this.notify = function(acronym) {
 		if (this.prov) {
-			notify(_('__FINAL_GRADE_PROV__', [this.grade, this.get_title(), acronym]), 0);
+			notify(_('__FINAL_GRADE_PROV__', {grade: this.grade, final: this.get_title(), class: acronym}), 0);
 		} else {
-			notify(_('__FINAL_GRADE__', [this.grade, this.get_title(), acronym]), 0);
+			notify(_('__FINAL_GRADE__', {grade: this.grade, final: this.get_title(), class: acronym}), 0);
 		}
 	};
 
@@ -753,6 +754,6 @@ function CalEvent(name, id, type) {
 	};
 
 	this.notify = function(acronym) {
-		notify(_('__PRACT_GRADE__', [this.graded, this.name, acronym]), 0);
+		notify(_('__PRACT_GRADE__', {grade: this.graded, pract: this.name, class: acronym}), 0);
 	};
 }

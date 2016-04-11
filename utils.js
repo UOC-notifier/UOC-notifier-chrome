@@ -361,6 +361,10 @@ var Queue = new function(){
         after_function = fnc;
     };
 
+    this.set_after_fail = function(fnc){
+        login_failed = fnc;
+    };
+
     function ajax_do(session, url, data, type, reset_on_fail, handler, fail_handler){
         if (!data) {
             data = {};
@@ -422,22 +426,3 @@ function _(str, params) {
     Debug.error('String not translated: '+str);
     return str;
 }
-
-$( document ).ready(function() {
-    $('.translate').each(function() {
-        var text = $(this).text();
-        $(this).text(_(text));
-    });
-    $('.translateph').each(function() {
-        var text = $(this).attr('placeholder');
-        $(this).attr('placeholder', _(text));
-    });
-    $('.translatetit').each(function() {
-        var text = $(this).attr('title');
-        $(this).attr('title', _(text));
-    });
-    $('.translateal').each(function() {
-        var text = $(this).attr('aria-label');
-        $(this).attr('aria-label', _(text));
-    });
-});

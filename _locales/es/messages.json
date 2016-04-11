@@ -54,7 +54,10 @@
         "message" : "Aula"
     },
     "__RESET_CLASSROOMS__" : {
-        "message" : "Reset classrooms"
+        "message" : "Reiniciar las aulas"
+    },
+    "__RESET_SESSION__" : {
+        "message" : "Reiniciar la sessión"
     },
     "__RESET_CONFIRM__" : {
         "message" : "Esta acción eliminará toda la información de las aulas para volverlas a descargar, ¿estás seguro?"

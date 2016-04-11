@@ -11,6 +11,10 @@ $(document).ready(function(){
 		reset_classrooms();
 		return false;
 	});
+	$('#reset_session_btn').on('click',function(){
+		reset_session();
+		return false;
+	});
 	$('#version').html(get_version());
 });
 

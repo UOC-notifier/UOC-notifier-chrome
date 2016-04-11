@@ -56,6 +56,9 @@
     "__RESET_CLASSROOMS__" : {
         "message" : "Reinicia les aules"
     },
+    "__RESET_SESSION__" : {
+        "message" : "Reinicia la sessió"
+    },
     "__RESET_CONFIRM__" : {
         "message" : "Això esborrarà la informació de les aules per tornar-les a descarregar, esteu segurs?"
     },
