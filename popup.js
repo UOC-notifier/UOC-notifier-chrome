@@ -271,15 +271,18 @@ var UI = new function() {
 				resources_html = '<ul class="container-fluid resources">' + resources_html + '</ul>';
 			}
 
-			var exams = "";
+			var text, exams = "";
 			var nearexams = false;
 			if (classroom.exams && classroom.exams.date && !isBeforeToday(classroom.exams.date)) {
 
 				if (classroom.exams.timeEX) {
-					exams += '<div><a href="#" class="linkEvent" title="'+classroom.exams.placeEX+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__EX__') + ' ' + classroom.exams.timeEX + '</a></div>';
+                    text = _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.placeEX]);
+					exams += '<div><a href="#" class="linkEvent" title="'+text+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + text + '</a></div>';
+
 				}
 				if (classroom.exams.timePS) {
-					exams += '<div><a href="#" class="linkEvent" title="'+classroom.exams.placePS+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + _('__PS__') + ' ' + classroom.exams.timePS + '</a></div>';
+                    text = _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.placePS]);
+					exams += '<div><a href="#" class="linkEvent" title="'+text+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + text + '</a></div>';
 				}
 				if (exams != "") {
 					var link = '/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
@@ -423,7 +426,12 @@ var UI = new function() {
 			if (c.consultor) {
 				var title = _('__TEACHER__')+': '+c.consultor;
 				if (c.consultorlastviewed) {
-					title += "\n"+_('__VIEWED_LAST_TIME__', [getDate(c.consultorlastviewed), getTime(c.consultorlastviewed)]);
+                    var time = getTime(c.consultorlastviewed);
+                    if (time == '00:00') {
+                        title += "\n"+_('__VIEWED_LAST_DATE__', [getDate(c.consultorlastviewed)]);
+                    } else {
+                        title += "\n"+_('__VIEWED_LAST_TIME__', [getDate(c.consultorlastviewed), time]);
+                    }
 				}
                 var img, mail;
 				if (c.consultormail) {
@@ -576,13 +584,13 @@ var UI = new function() {
 					var name = _('__FINAL_TESTS_CLASS__', [classroom.get_acronym()]);
 					var title = "";
 					if (classroom.exams.timeEX) {
-						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.seu, classroom.exams.placeEX]);
+						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.placeEX]);
 					}
 					if (classroom.exams.timePS) {
 						if (title != "") {
 							title += "\n";
 						}
-						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.seu, classroom.exams.placePS]);
+						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.placePS]);
 					}
 					if (title != "") {
 						name = '<span title ="'+title+'">'+ name + '</span>';

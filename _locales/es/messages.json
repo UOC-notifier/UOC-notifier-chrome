@@ -142,7 +142,7 @@
         }
     },
     "__FINAL_TESTS_CLASS_TITLE__" : {
-        "message" : "$time$ $type$ en $seu$ $place$",
+        "message" : "$type$: $time$ en $place$",
         "placeholders": {
           "type": {
             "content": "$1"
@@ -150,11 +150,8 @@
           "time": {
             "content": "$2"
           },
-          "seu": {
-            "content": "$3"
-          },
           "place": {
-            "content": "$4"
+            "content": "$3"
           }
         }
     },
@@ -281,6 +278,14 @@
           },
           "time": {
             "content": "$2"
+          }
+        }
+    },
+    "__VIEWED_LAST_DATE__" : {
+        "message" : "Visto por última vez: $date$",
+        "placeholders": {
+          "date": {
+            "content": "$1"
           }
         }
     },

@@ -340,36 +340,61 @@ function parse_classroom(classr) {
 	// Parse events
 	if (classr.activitats.length > 0) {
 		for (var y in classr.activitats) {
+			var urlbase, link, eventtype;
+
 			var act = classr.activitats[y];
 
-			var eventtype = act.eventTypeId == 31 ? 'MODULE' : 'ASSIGNMENT'
-			var evnt = new CalEvent(act.name, act.eventId, eventtype);
-
-			var args = {};
-			var urlbase;
-			if (classr.presentation == "AULACA") {
-				urlbase = '/webapps/aulaca/classroom/Classroom.action';
-				args.classroomId = act.classroomId;
-				args.subjectId = act.subjectId;
-				args.activityId = act.eventId;
-				args.javascriptDisabled = false;
-			} else {
-				urlbase = '/webapps/classroom/081_common/jsp/eventFS.jsp';
-				args.domainId = act.domainId;
-				var aux = classr.domainCode.split('_');
-				args.domainTemplate = 'uoc_'+aux[0]+'_'+classr.codi;
-				args.idLang =  get_lang_code();
-				args.eventsId = act.eventId;
-				args.opId = 'view';
-				args.userTypeId = 'ESTUDIANT';
-				args.canCreateEvent = false;
+			switch(act.eventTypeId) {
+				case 31:
+					eventtype = 'MODULE';
+					break;
+				case 28: // Practica
+				case 29: // PAC
+					eventtype = 'ASSIGNMENT';
+					break;
+				case 23: // Old study guides...
+					Debug.error('Study guide found! :D');
+					eventtype = 'STUDY_GUIDE';
+					break;
+				default:
+					eventtype = 'ASSIGNMENT';
+					Debug.error('Unknown event type ' + act.eventTypeId);
+					Debug.print(act);
+					break;
 			}
 
-			evnt.link = urlbase+'?'+uri_data(args)+'&s=';
-			evnt.start = act.startDateStr;
-			evnt.end = act.deliveryDateStr;
-			evnt.solution = act.solutionDateStr;
-			evnt.grading = act.qualificationDateStr;
+			var evnt = new CalEvent(act.name, act.eventId, eventtype);
+
+			if (act.link) {
+				evnt.link = get_url_withoutattr(act.link,'s')+'&s=';
+			} else {
+				Debug.error('Link not found');
+				Debug.print(act);
+				var args = {};
+				if (classr.presentation == "AULACA") {
+					urlbase = '/webapps/aulaca/classroom/Classroom.action';
+					args.classroomId = act.classroomId;
+					args.subjectId = act.subjectId;
+					args.activityId = act.eventId;
+					args.javascriptDisabled = false;
+				} else {
+					urlbase = '/webapps/classroom/081_common/jsp/eventFS.jsp';
+					args.domainId = act.domainId;
+					var aux = classr.domainCode.split('_');
+					args.domainTemplate = 'uoc_'+aux[0]+'_'+classr.codi;
+					args.idLang =  get_lang_code();
+					args.eventsId = act.eventId;
+					args.opId = 'view';
+					args.userTypeId = 'ESTUDIANT';
+					args.canCreateEvent = false;
+				}
+				evnt.link = urlbase+'?'+uri_data(args)+'&s=';
+			}
+
+			evnt.start = getDate_hyphen(act.startDate);
+			evnt.end = getDate_hyphen(act.deliveryDate);
+			evnt.solution = getDate_hyphen(act.solutionDate);
+			evnt.grading = getDate_hyphen(act.qualificationDate);
 			classroom.add_event(evnt);
 		}
 	}
@@ -727,15 +752,21 @@ function retrieve_agenda() {
 					return;
 				}
 
+				// Classroom events now are parsed in other places.
+				// Legacy code ahead.
 				var id = json.guid.split('_');
 				var classroom = Classes.get_class_by_event(id[0]);
-				if (!classroom) {
-					var acronym = get_acronym(json.description);
-					classroom = Classes.get_class_by_acronym(acronym);
+				if (classroom) {
+					// Already parsed
+					return;
 				}
+
+				Debug.error('Unknown event ' + json.title);
+				var acronym = get_acronym(json.description);
+				classroom = Classes.get_class_by_acronym(acronym);
 				if (!classroom) {
-					Debug.log('Classroom not found');
-					Debug.log(json);
+					Debug.error('Classroom not found');
+					Debug.print(json);
 					return;
 				}
 

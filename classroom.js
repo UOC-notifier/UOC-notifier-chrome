@@ -16,7 +16,7 @@ var Classes = new function() {
 
 	this.add_event = function(evnt) {
 		// Do not add past events
-		if (isBeforeToday(evnt.start) || evnt.eventId == undefined) {
+		if (evnt.has_ended() || evnt.eventId == undefined) {
 			return;
 		}
 		for (var idx in events) {
@@ -265,11 +265,11 @@ var Classes = new function() {
 		this.notified_messages = 0;
 		this.messages = 0;
 		for (var i in classrooms) {
+			var messages = classrooms[i].count_messages();
 			if (classrooms[i].notify) {
-				this.notified_messages += classrooms[i].messages;
+				this.notified_messages += messages;
 			}
-			this.messages += classrooms[i].messages;
-			this.all_messages += classrooms[i].all_messages;
+			this.messages += messages;
 		}
 	};
 
@@ -428,13 +428,16 @@ function Classroom(title, code, domain, type, template) {
 			}
 			return comp;
 		});
+	};
 
+	this.count_messages = function() {
 		this.messages = 0;
 		for (var i in this.resources) {
 			if(this.resources[i].messages != '-') {
 				this.messages += this.resources[i].messages;
 			}
 		}
+		return this.messages;
 	};
 
 	this.get_index = function(code) {
