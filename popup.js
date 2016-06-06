@@ -29,7 +29,7 @@ var UI = new function() {
         } else {
             setBadge("");
         }
-        save_news(false);
+        save_has_news(false);
 
 		$('#update').removeClass('spin');
 
@@ -271,18 +271,18 @@ var UI = new function() {
 				resources_html = '<ul class="container-fluid resources">' + resources_html + '</ul>';
 			}
 
-			var text, exams = "";
+			var tit, exams = "";
 			var nearexams = false;
 			if (classroom.exams && classroom.exams.date && !isBeforeToday(classroom.exams.date)) {
 
 				if (classroom.exams.timeEX) {
-                    text = _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.placeEX]);
-					exams += '<div><a href="#" class="linkEvent" title="'+text+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + text + '</a></div>';
+                    tit = _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.placeEX]);
+					exams += '<div><a href="#" class="linkEvent" title="'+tit+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + tit + '</a></div>';
 
 				}
 				if (classroom.exams.timePS) {
-                    text = _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.placePS]);
-					exams += '<div><a href="#" class="linkEvent" title="'+text+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + text + '</a></div>';
+                    tit = _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.placePS]);
+					exams += '<div><a href="#" class="linkEvent" title="'+tit+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + tit + '</a></div>';
 				}
 				if (exams != "") {
 					var link = '/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=';
@@ -328,8 +328,9 @@ var UI = new function() {
 		};
 
 		function resource(resource) {
+            var link;
 			if(resource.link != undefined){
-				var link = 'link="'+resource.link+'"';
+				link = 'link="'+resource.link+'"';
 			}
 			if (resource.has_message_count()) {
 				return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
@@ -509,11 +510,11 @@ var UI = new function() {
 		    text += '<div class="row-fluid clearfix">';
 		    //text += get_general_link(url_gate+'.NOTESAVAL/NotesEstudiant.inici&s=', _('__GRADE_RESUME__'));
 		    text += get_general_link(url_gate+'.EXASOLREVISION/consrevision.consrevision&s=', _('__EXAM_REVISION__'));
-		    //text += get_general_link(url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'), -1);
-		    text += get_general_link(url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'), 1);
+		    //text += get_general_link(url_gate+'.PAPERETES/paperetes.paperetes&s=', _('__FINAL_GRADES__'));
+		    text += get_general_link(url_gate+'.ESTADNOTES/estadis.inici&s=', _('__STATS__'));
 		    text += get_general_link(root_url+'/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
-		    text += get_general_link(url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'), -1);
-		    text += get_general_link('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=', _('__EXAM_SELECT__'), -1);
+		    text += get_general_link(url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'));
+		    text += get_general_link('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=', _('__EXAM_SELECT__'));
 			//text += get_general_link(url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
 			//text += get_general_link(url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
 		    text += '</div>';
@@ -824,7 +825,7 @@ var UI = new function() {
 		}
 
 		function eventtext(text, clas, title) {
-			if (title == undefined) {
+			if (typeof title != "string") {
 				title = "";
 			} else {
 				var dsplit = title.split('/');
@@ -832,8 +833,8 @@ var UI = new function() {
 					title = dsplit[0]+'/'+dsplit[1];
 				}
 				title = ' title="'+title+'"';
-
 			}
+
 			return '<td><a href="#" class="linkEvent '+clas+'"'+title+'>'+text+'</a></td>';
 		}
 
@@ -891,13 +892,13 @@ var UI = new function() {
                 if (lasttitle && lasttitle == material.titol) {
                     for (var y in material.formats) {
                         var format = material.formats[y];
-                        text += ' '+get_icon_link(format)
+                        text += ' '+get_icon_link(format);
                     }
                 } else {
     				text += '<li code="'+material.codMaterial+'">' + material.titol + ' -';
     				for (var y in material.formats) {
     					var format = material.formats[y];
-    					text += ' '+get_icon_link(format)
+    					text += ' '+get_icon_link(format);
     				}
                     lasttitle = material.titol;
                 }

@@ -235,7 +235,7 @@ function set_messages() {
 	var messages = Classes.notified_messages;
 	save_icon(messages);
 
-	var color = undefined;
+	var color;
 
 	// Set icon
 	if (messages > 0) {
@@ -247,7 +247,7 @@ function set_messages() {
 
 	Debug.print("Check messages: Old "+old_messages+" New "+messages);
 
-	var news = get_news();
+	var news = has_news();
 	if (news) {
 		color = '#9E5A9E';
 	} else if (messages <= 0) {
@@ -274,7 +274,7 @@ function show_PAC_notifications() {
 }
 
 function notify(str, time) {
-	save_news(true);
+	save_has_news(true);
 	if (get_notification() && str.length > 0) {
 		if (time == undefined) {
 			time = 3000;
@@ -436,7 +436,7 @@ function parse_classroom_old(classr) {
 					classroom.domain = classr.domainid;
 					classroom.domainassig = classr.domainid;
 					classroom.type = classr.domaintypeid;
-					classroom.template = classr.pt_template
+					classroom.template = classr.pt_template;
 				}
 				classroom.aula = classr.codi_tercers;
 
@@ -932,7 +932,7 @@ var Session = new function() {
 			    });
 			}
 		}
-	}
+	};
 
 	function parse_session(resp) {
 		Debug.log(resp);

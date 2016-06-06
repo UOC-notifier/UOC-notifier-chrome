@@ -41,7 +41,7 @@ var Classes = new function() {
 		this.messages = 0;
 		this.notified_messages = 0;
 		events = [];
-	}
+	};
 
 	this.save = function() {
 		this.count_messages();
@@ -282,7 +282,7 @@ var Classes = new function() {
 			}
 		}
 		return true;
-	}
+	};
 
 	this.load();
 };
@@ -376,7 +376,7 @@ function Classroom(title, code, domain, type, template) {
 			}
 		}
 		return false;
-	}
+	};
 
 	this.add_resource = function(resource) {
 		if(!this.notify) return;
@@ -465,7 +465,7 @@ function Classroom(title, code, domain, type, template) {
 				this.resources.splice(i, 1);
 			}
 		}
-	}
+	};
 
 	this.add_event = function(ev) {
 		if (ev.eventId == undefined) {

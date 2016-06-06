@@ -20,7 +20,7 @@ function open_new_tab(url) {
 function translate(str, params){
     if (typeof params == 'object') {
         var params_arr = [];
-        for (x in params) {
+        for (var x in params) {
             params_arr.push(params[x]);
         }
         params = params_arr;
