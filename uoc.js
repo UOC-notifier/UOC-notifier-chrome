@@ -818,39 +818,6 @@ function retrieve_agenda() {
 	});
 }
 
-
-function retrieve_news() {
-	var args = {
-		up_isNoticiesInstitucionals : false,
-		up_maxDestacades : 2,
-		up_showImages : 0,
-		up_sortable : true,
-		up_maxAltres: 5,
-		up_rssUrlServiceProvider : '%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js',
-		up_target : 'noticies.jsp',
-		fromCampus : true
-		//up_title : 'Novetats%2520i%2520noticies',
-		//up_maximized: true,
-		//up_ck : 'nee',
-		//libs : '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js%3Ffeatures%3Dlibrary%3Asetprefs%3Adynamic-height',
-		//lang: get_lang(),
-		//country: 'ES',
-		//color: '',
-		//userType: 'UOC-ESTUDIANT-gr06-a',
-		//hp_theme: 'false'
-	};
-	Queue.set_after_function('nosave');
-	Queue.request('/webapps/widgetsUOC/widgetsNovetatsExternesWithProviderServlet', args, 'GET', false, function(resp) {
-		resp = resp.replace(/<img/gi, '<noload');
-		resp = resp.replace(/\[\+\]/gi, '');
-		var news = $('<div />').append(resp).find('#divMaximizedPart>ul').html();
-		if (news != undefined) {
-			$('#detail_news').html(news);
-			$('#button_news').removeClass('spin');
-		}
-	});
-}
-
 var Session = new function() {
 	var retrieving = false;
 	var session = false;

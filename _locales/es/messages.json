@@ -205,9 +205,6 @@
     "__GRADES__" : {
         "message" : "Notas"
     },
-    "__NEWS__" : {
-        "message" : "Noticias"
-    },
     "__AGENDA__" : {
         "message" : "Agenda"
     },

@@ -71,9 +71,6 @@ var UI = new function() {
             });
         }
 
-		// Setup News
-		$('#button_news').unbind( "click" ).click(news);
-
 		// Setup agenda
 		if (get_show_agenda()) {
 			$('#button_agenda').unbind( "click" ).click(agenda);
@@ -473,21 +470,6 @@ var UI = new function() {
 		}
 	}
 
-	function news() {
-		if($('#detail_news').html() == "") {
-			/*
-			if(!session) {
-				return false;
-			}
-
-			var libs = '/rb/inici/javascripts/prototype.js,/rb/inici/javascripts/effects.js,/rb/inici/javascripts/application.js,/rb/inici/javascripts/prefs.js,%2Frb%2Finici%2Fuser_modul%2Flibrary%2F944751.js';
-			var src = 'http://cv.uoc.edu/webapps/widgetsUOC/widgetsGetURLNovetatsExternesWithProviderServlet??up_isNoticiesInstitucionals=false&up_title=Novetats%2520i%2520noticies&up_maximized=true&up_maxDestacades=2&up_showImages=true&up_slide=false&up_sortable=true&up_ck=nee&up_rssUrlServiceProviderHTML=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant_widget_nou.js&up_maxAltres=5&up_rssUrlServiceProvider=%252Festudiant%252F_resources%252Fjs%252Fopencms_estudiant.js&up_fxml=html&up_target=noticies.jsp&libs='+libs+'&fromCampus=true&lang=ca&country=ES&color=&userType=UOC-ESTUDIANT-gr06-a&hp_theme=false&s='+session;
-			$('#detail_news').html('<iframe src="'+src+'"></iframe>');*/
-			$(this).addClass('spin');
-			retrieve_news();
-		}
-	}
-
 	function agenda() {
 		if($('#detail_agenda iframe').length == 0) {
 			if(!session) {
@@ -515,7 +497,7 @@ var UI = new function() {
 		    text += get_general_link(root_url+'/webapps/seleccioexpedient/cerca.html?s=', _('__EXPEDIENT__')); //Need no SSL
 		    text += get_general_link(url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'));
 		    text += get_general_link('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=', _('__EXAM_SELECT__'));
-			//text += get_general_link(url_gate + '.INFCONSULTA/inici&s=', _('Expediente antiguo (no funciona)'));
+			text += get_general_link(url_gate + '.INFCONSULTA/inici&s=', _('__OLD_EXPEDIENT__'));
 			//text += get_general_link(url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
 		    text += '</div>';
 
