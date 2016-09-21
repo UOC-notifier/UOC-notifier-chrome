@@ -304,11 +304,13 @@ function parse_classroom(classr) {
 	classroom.set_color(classr.color);
 	classroom.any = classr.anyAcademic;
 	classroom.aula = classr.numeralAula;
+	classroom.subject_code = classr.planCode;
 
 	var consultor = false;
 	if (classr.widget.consultor != undefined && classr.widget.consultor.nomComplert != undefined) {
 		consultor = classr.widget.consultor.nomComplert;
 	}
+
 	for (var x in classr.widget.referenceUsers) {
 		if (!consultor || classr.widget.referenceUsers[x].fullName == consultor) {
 			classroom.consultor = classr.widget.referenceUsers[x].fullName;
@@ -329,9 +331,10 @@ function parse_classroom(classr) {
 		for(var j in classr.widget.eines) {
 			var resourcel = classr.widget.eines[j];
 			if (resourcel.nom) {
-				var resource = new Resource(resourcel.nom, resourcel.resourceId, resourcel.idTipoLink);
+				var resource = new Resource(resourcel.nom, resourcel.resourceId);
 				resource.set_link(resourcel.viewItemsUrl);
-				classroom.add_resource(resource);
+				resource.set_pos(j);
+				resource = classroom.add_resource(resource);
 				retrieve_resource(classroom, resource);
 			}
 		}
@@ -480,7 +483,8 @@ function parse_classroom_old(classr) {
 			for (var j in classr.resources) {
 				var resourcel = classr.resources[j];
 				if (resourcel.title) {
-					var resource = new Resource(resourcel.title, resourcel.code, "OLD");
+					var resource = new Resource(resourcel.title, resourcel.code);
+					resource.type = "old";
 					resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
 					classroom.add_resource(resource);
 				}
@@ -526,9 +530,7 @@ function retrieve_gradeinfo() {
 							}
 
 							// Save the real subject code
-							if (subject_code.length > 0) {
-								classroom.subject_code = subject_code;
-							}
+							classroom.subject_code = subject_code;
 						}
 
 						if (!classroom.notify) {
@@ -632,9 +634,10 @@ function retrieve_stats(classroom) {
 }
 
 function retrieve_resource(classroom, resource) {
-	if (resource.type == "URL") {
+	if (resource.type == "externallink") {
 		return;
 	}
+
 	var args = {
 		sectionId : '-1',
 		pageSize : 0,
@@ -645,13 +648,13 @@ function retrieve_resource(classroom, resource) {
 	};
 	Queue.request('/webapps/aulaca/classroom/LoadResource.action', args, 'GET', false, function(data) {
 		try {
-			var num_msg_pendents = data.resource.newItems;
-	        var num_msg_totals = data.resource.totalItems;
-	        /*if (num_msg_pendents == 0 && num_msg_totals == 0 && data.resource.missatgesNousBlog) {
-				num_msg_pendents = num_msg_totals = 1;
-	        }*/
-			resource.set_messages(num_msg_pendents, num_msg_totals);
-			resource.set_pos(data.resource.pos);
+			resource.type = data.resource.widgetType;
+
+	        if (resource.type == "messagelist") {
+	        	resource.set_messages(data.resource.newItems, data.resource.totalItems);
+	        } else if (resource.type == "blog") {
+				resource.news = !!data.resource.missatgesNousBlog;
+	        }
 		} catch(err) {
     		Debug.error(err);
 		}

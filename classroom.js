@@ -202,10 +202,12 @@ var Classes = new function() {
 					classr.final_grades = classl.final_grades;
 					for (var j in classl.resources) {
 						var resourcel = classl.resources[j];
-						var resource = new Resource(resourcel.title, resourcel.code, resourcel.type);
+						var resource = new Resource(resourcel.title, resourcel.code);
 						resource.set_messages(resourcel.messages, resourcel.all_messages);
 						resource.set_pos(resourcel.pos);
 						resource.set_link(resourcel.link);
+						resource.type = resourcel.type;
+						resource.news = resourcel.news;
 						classr.add_resource(resource);
 					}
 					for (var k in classl.events) {
@@ -384,11 +386,13 @@ function Classroom(title, code, domain, type, template) {
 		var idx = this.get_index(resource.code);
 		if (idx >= 0) {
 			this.resource_merge(idx, resource);
+			return this.resources[idx];
 		} else {
 			this.resources.push(resource);
 			if (resource.messages != '-') {
 				this.messages += resource.messages;
 			}
+			return resource;
 		}
 	};
 
@@ -455,13 +459,14 @@ function Classroom(title, code, domain, type, template) {
 		this.resources[idx].link = resource.link;
 		this.resources[idx].code = resource.code;
 		this.resources[idx].title = resource.title;
-		this.resources[idx].type = resource.type;
+		this.resources[idx].type = resource.type || this.resources[idx].type;
+		this.resources[idx].news = resource.news || this.resources[idx].news;
 	};
 
 	this.delete_old_resources = function() {
 		Debug.log('Delete old resources for '+this.acronym);
 		for (var i in this.resources) {
-			if(this.resources[i].type == 'OLD') {
+			if(this.resources[i].type == 'old') {
 				this.resources.splice(i, 1);
 			}
 		}
@@ -546,17 +551,32 @@ function Classroom(title, code, domain, type, template) {
 	};
 }
 
-function Resource(title, code, type) {
+function Resource(title, code) {
 	this.title = title;
 	this.code = code;
-	this.type = type;
+	this.type = false;
 	this.messages =  '-';
 	this.all_messages =  '-';
 	this.link =  "";
 	this.pos = false;
+	this.news = false;
 
 	this.has_message_count = function() {
-		return !isNaN(this.all_messages);
+		if (this.type == "messagelist") {
+			if (isNaN(this.messages)) {
+				this.messages = 0;
+			}
+			if (isNaN(this.all_messages)) {
+				this.all_messages = 0;
+			}
+			return true;
+		}
+		return this.type == "old" && !isNaN(this.all_messages);
+	};
+
+	this.has_news = function() {
+		console.log(this);
+		return this.type == "blog" && this.news;
 	};
 
 	this.set_messages = function(messages, all_messages) {

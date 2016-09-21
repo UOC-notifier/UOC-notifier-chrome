@@ -334,7 +334,12 @@ var UI = new function() {
 							<div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
 							<div class="col-xs-4">'+badge(resource.messages, 'linkResource', resource.all_messages, _('__GOTO_RES__')) + '</div> \
 						</li>';
-			} else {
+			} else if (resource.has_news()) {
+                return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
+                            <div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
+                            <div class="col-xs-4 text-center"><span class="glyphicon glyphicon-flag" style="color:#a94442;"  aria-hidden="true" title="'+_('__NEWS__')+'"></span></div> \
+                        </li>';
+            } else {
 				return '<li class="resource" '+link+' resource="'+resource.code+'"><a href="#" class="linkResource">'+resource.title+'</a></li>';
 			}
 		}

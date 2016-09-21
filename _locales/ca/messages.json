@@ -107,6 +107,9 @@
     "__OLD_AGENDA__" : {
         "message" : "Agenda antiga"
     },
+    "__OLD_EXPEDIENT__" : {
+        "message" : "Expedient antic"
+    },
     "__NEW_AGENDA__" : {
         "message" : "Agenda nova"
     },
@@ -189,6 +192,9 @@
     },
     "__GOTO_RES__" : {
         "message" : "Vés al recurs"
+    },
+    "__NEWS__" : {
+        "message" : "Novetats"
     },
     "__START__" : {
         "message" : "Inici"
