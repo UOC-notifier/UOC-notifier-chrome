@@ -220,6 +220,7 @@ var Classes = new function() {
 						ev.link = evl.link;
 						ev.graded = evl.graded;
 						ev.committed = evl.committed;
+						ev.completed = evl.completed;
 						ev.viewed = evl.viewed;
 						ev.commenttext = evl.commenttext;
 						ev.commentdate = evl.commentdate;
@@ -545,6 +546,7 @@ function Classroom(title, code, domain, type, template) {
 		if (ev.solution) this.events[idx].solution = ev.solution;
 		if (ev.graded) this.events[idx].graded = ev.graded;
 		if (ev.committed) this.events[idx].committed = ev.committed;
+		if (ev.completed) this.events[idx].completed = ev.completed;
 		if (ev.viewed) this.events[idx].viewed = ev.viewed;
 		if (ev.commenttext) this.events[idx].commenttext = ev.commenttext;
 		if (ev.commentdate) this.events[idx].commentdate = ev.commentdate;
@@ -575,7 +577,6 @@ function Resource(title, code) {
 	};
 
 	this.has_news = function() {
-		console.log(this);
 		return this.type == "blog" && this.news;
 	};
 
@@ -725,6 +726,7 @@ function CalEvent(name, id, type) {
 	this.solution = false;
 	this.graded = false;
 	this.committed = false;
+	this.completed = false;
 	this.viewed = false;
 	this.commenttext = false;
 	this.commentdate = false;
@@ -775,6 +777,10 @@ function CalEvent(name, id, type) {
 	this.is_completed = function() {
 		return isBeforeToday(this.start) && isBeforeToday(this.end) && isBeforeToday(this.solution) && isBeforeToday(this.grading);
 	};
+
+	this.is_committed = function() {
+		return this.committed || this.completed;
+	}
 
 	this.notify = function(acronym) {
 		notify(_('__PRACT_GRADE__', {grade: this.graded, pract: this.name, class: acronym}), 0);

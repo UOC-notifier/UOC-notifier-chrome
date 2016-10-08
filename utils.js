@@ -406,6 +406,9 @@ var Queue = new function(){
             ajax_request.contentType = 'application/json; charset=UTF-8';
             ajax_request.processData = false;
             ajax_request.data = JSON.stringify(data);
+        } else if (type == 'POST') {
+            data.s = session;
+            ajax_request.data = data;
         } else {
             ajax_request.data = data;
         }

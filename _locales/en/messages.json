@@ -158,6 +158,9 @@
           }
         }
     },
+    "__COMPLETED__" : {
+        "message" : "Completed"
+    },
     "__COMMITTED__" : {
         "message" : "Committed"
     },

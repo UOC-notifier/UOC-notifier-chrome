@@ -354,7 +354,7 @@ var UI = new function() {
 				for(var i in c.events){
 					var ev = c.events[i];
 					if (show_module_dates || ev.is_assignment()) {
-						if (ev.is_assignment() || !ev.has_started() || !ev.has_ended()) {
+						if (ev.is_assignment() || !ev.has_started() || !ev.has_ended() || !ev.is_committed()) {
 							var eui = new EventUI(ev);
 							events_html += eui.classroom_event_grade();
 						}
@@ -371,7 +371,7 @@ var UI = new function() {
 				for(var k in c.events) {
 					var cev = c.events[k];
 					if (show_module_dates || cev.is_assignment()) {
-						if (cev.is_assignment() || !cev.has_started() || !cev.has_ended()) {
+						if (cev.is_assignment() || !cev.has_started() || !cev.has_ended() || !cev.is_committed()) {
 							var e = new EventUI(cev);
 							events_html += e.classroom_event();
 						}
@@ -756,12 +756,12 @@ var UI = new function() {
 
             var eventstate = "";
             if (ev.has_started()) {
-                if (ev.has_ended()) {
-                    eventstate = 'success';
-                } else if (ev.committed || !ev.is_assignment()) {
-                    eventstate = 'warning running';
+                eventstate = ev.has_ended() ? '' : 'running';
+
+                if (ev.is_committed()) {
+                    eventstate += ev.has_ended() ? ' success' : ' warning';
                 } else {
-                    eventstate = 'danger running';
+                    eventstate += ' danger';
                 }
             }
 
@@ -773,6 +773,8 @@ var UI = new function() {
                     } else {
                         title = icon(_('__COMMITTED__'), 'save');
                     }
+                } else if (ev.completed) {
+                    title = colored_icon(_('__'+ev.type+'__') + ': ' + _('__COMPLETED__'), 'check', '');
                 } else if(ev.has_ended()){
                     title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
                 } else {
@@ -781,7 +783,11 @@ var UI = new function() {
             } else if (ev.is_uoc()) {
                 title = colored_icon(_('__'+ev.type+'__'), 'education', '');
             } else {
-                title = colored_icon(_('__'+ev.type+'__'), 'menu-right', '');
+                if (ev.is_committed()) {
+                    title = colored_icon(_('__'+ev.type+'__') + ': ' + _('__COMPLETED__'), 'check', '');
+                } else {
+                    title = colored_icon(_('__'+ev.type+'__'), 'menu-right', '');
+                }
             }
             if (show_subject && ev.subject != undefined) {
                 title += ev.subject + ' - ';

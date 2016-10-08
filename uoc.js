@@ -400,6 +400,9 @@ function parse_classroom(classr) {
 			evnt.grading = getDate_hyphen(act.qualificationDate);
 			classroom.add_event(evnt);
 		}
+		if (!classroom.final_grades && !classroom.stats) {
+			retrieve_timeline(classroom);
+		}
 	}
 }
 
@@ -493,6 +496,24 @@ function parse_classroom_old(classr) {
 		Classes.add(classroom);
 	}
 }
+
+function retrieve_timeline(classroom) {
+	var args = {
+		classroomId: classroom.domain,
+		subjectId: classroom.domainassig,
+		javascriptDisabled: false
+	};
+	Queue.request('/webapps/aulaca/classroom/timeline/timeline', args, 'POST', false, function(data) {
+		for (var i in data.events) {
+			var event = data.events[i];
+			var class_event = classroom.get_event(event.id);
+			if (class_event) {
+				class_event.completed = event.completed
+			}
+		}
+	});
+}
+
 
 function retrieve_gradeinfo() {
 	if (Classes.is_all_graded()) {

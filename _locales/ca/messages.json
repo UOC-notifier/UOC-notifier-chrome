@@ -158,6 +158,9 @@
           }
         }
     },
+    "__COMPLETED__" : {
+        "message" : "Completat"
+    },
     "__COMMITTED__" : {
         "message" : "Entregat"
     },
