@@ -133,9 +133,9 @@ var UI = new function() {
                     var classroom_code = $(this).parents('.classroom').attr('classroom');
                     var classroom = Classes.search_code(classroom_code);
 
-                    var url = '/webapps/classroom/'+classroom.template+'/frameset.jsp';
-                    var data = {domainCode: classroom.code};
-                    open_tab(url, data);
+                    var data = {classroomId: classroom.domain,
+                                subjectId: classroom.domainassig};
+                    open_tab('/webapps/aulaca/classroom/Classroom.action', data);
                 });
 
 		$('.linkNotas').unbind( "click" )
@@ -225,10 +225,15 @@ var UI = new function() {
                         UI.show_materials(classroom);
                     }
                 } else {
+                    /* OLD FORMAT CLASS
                     var data = {nav: 'recursos-estudiant',
                                 domainId: classroom.domain,
                                 domainCode: classroom.code};
-                    open_tab('/webapps/classroom/student.do', data);
+                    open_tab('/webapps/classroom/student.do', data);*/
+
+                    var data = {classroomId: classroom.domain,
+                                subjectId: classroom.domainassig};
+                    open_tab('/webapps/aulaca/classroom/Materials.action', data);
                 }
             });
 
@@ -409,12 +414,13 @@ var UI = new function() {
 			    	<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></button>';
 		    }
 
-			if (c.type != "TUTORIA") {
-				buttons += '<button type="button" class="showMaterials btn btn-info has-spinner" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
+            buttons += '<button type="button" class="showMaterials btn btn-info has-spinner" aria-label="'+_('__EQUIPMENT__')+'" title="'+_('__EQUIPMENT__')+'">\
                     <span class="spinner"><span class="glyphicon glyphicon-refresh"></span></span> \
-			    	<span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
-			  	</button>\
-			  	<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('__TEACHING_PLAN__')+'" title="'+_('__TEACHING_PLAN__')+'">\
+                    <span class="glyphicon glyphicon-book" aria-hidden="true"></span>\
+            </button>';
+
+			if (c.type != "TUTORIA") {
+			  	buttons += '<button type="button" class="linkDocent btn btn-primary" aria-label="'+_('__TEACHING_PLAN__')+'" title="'+_('__TEACHING_PLAN__')+'">\
 			    	<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>\
 			  	</button>';
 			}
@@ -902,7 +908,7 @@ var UI = new function() {
             text = '<ul>'+text+'</ul>';
         }
 
-        var url = '/webapps/classroom/student.do?nav=recursos-estudiant&domainId='+classroom.domain+'&domainCode='+classroom.code+'&s=';
+        var url = '/webapps/aulaca/classroom/Materials.action?classroomId='+classroom.domain+'&subjectId='+classroom.domainassig+'&s=';
         text = '<a href="#" class="linkMaterials" link="'+url+'">'+_('__LINK_TO_EQUIPMENT__')+'</a>'+ text;
         classroom.materials = text;
         this.show_materials(classroom);
@@ -913,6 +919,9 @@ var UI = new function() {
 				case 'PDF':
 					icon = 'file';
 					break;
+                case 'PDF_GRAN':
+                    icon = 'text-height';
+                    break;
 				case 'AUDIOLLIBRE':
 					icon = 'headphones';
 					break;
@@ -945,7 +954,7 @@ var UI = new function() {
 			} else {
 				icon = '[' + description + ']';
 			}
-			return '<a href="#" class="linkMaterials" link="'+format.url+'">'+icon+'</a></span>';
+			return '<a href="#" class="linkMaterials" link="'+format.url+'">'+icon+'</a></span> ';
 		}
     };
 

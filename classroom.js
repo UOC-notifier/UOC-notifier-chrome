@@ -185,12 +185,13 @@ var Classes = new function() {
 			var classesl = JSON.parse(classroom);
 			for (var i in classesl) {
 				var classl = classesl[i];
-				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type, classl.template);
+				var classr = new Classroom(classl.title, classl.code, classl.domain, classl.type);
 				classr.domainassig = classl.domainassig;
 				classr.set_color(classl.color);
 				classr.any = classl.any;
 				classr.aula = classl.aula;
 				classr.subject_code = classl.subject_code;
+				classr.has_grades = classl.has_grades;
 				classr.exped = classl.exped;
 				classr.stats = classl.stats;
 				classr.exams = classl.exams;
@@ -290,14 +291,14 @@ var Classes = new function() {
 	this.load();
 };
 
-function Classroom(title, code, domain, type, template) {
+function Classroom(title, code, domain, type) {
 	this.title = title;
 	this.code = code;
 	this.domain = domain;
 	this.domainassig = domain;
 	this.type = type;
-	this.template = template;
 	this.subject_code = false;
+	this.has_grades = false;
 	this.exped = false;
 	this.color = false;
 	this.any = false;

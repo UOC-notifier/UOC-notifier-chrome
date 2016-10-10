@@ -293,13 +293,12 @@ function parse_classroom(classr) {
 			title = title.substr(0, aul);
 		}
 
-		classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId, classr.ptTemplate);
+		classroom = new Classroom(title, classr.domainCode, classr.domainId, classr.domainTypeId);
 		classroom.domainassig = classr.domainFatherId;
 	} else {
 		classroom.code = classr.domainCode;
 		classroom.domain = classr.domainId;
 		classroom.type = classr.domainTypeId;
-		classroom.template = classr.ptTemplate;
 	}
 	classroom.set_color(classr.color);
 	classroom.any = classr.anyAcademic;
@@ -435,14 +434,13 @@ function parse_classroom_old(classr) {
 				var sp = title.split(classr.codi_tercers);
 				title = sp[0].trim();
 				if (!classroom) {
-					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
+					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid);
 				} else {
 					classroom.title = title;
 					classroom.code = classr.code;
 					classroom.domain = classr.domainid;
 					classroom.domainassig = classr.domainid;
 					classroom.type = classr.domaintypeid;
-					classroom.template = classr.pt_template;
 				}
 				classroom.aula = classr.codi_tercers;
 
@@ -467,12 +465,11 @@ function parse_classroom_old(classr) {
 					title = title.substr(0, aul);
 				}
 				if (!classroom) {
-					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid, classr.pt_template);
+					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid);
 				} else {
 					classroom.code = classr.code;
 					classroom.domain = classr.domainid;
 					classroom.type = classr.domaintypeid;
-					classroom.template = classr.pt_template;
 				}
 				if (aulanum) {
 					classroom.aula = aulanum;
@@ -609,6 +606,7 @@ function retrieve_gradeinfo() {
 				});
 
 				if (classroom) {
+					classroom.has_grades = true;
 					var nota = $(this).find('notaFinal').text().trim();
 					if (nota.length > 0 && nota != '-') {
 						var grade = classroom.add_grade('FA', nota, true);
@@ -631,7 +629,7 @@ function retrieve_gradeinfo() {
 }
 
 function retrieve_stats(classroom) {
-	if (!classroom.subject_code || classroom.stats || !classroom.all_events_completed(true)) {
+	if (!classroom.has_grades || !classroom.subject_code || classroom.stats || !classroom.all_events_completed(true)) {
 		return;
 	}
 
@@ -766,81 +764,20 @@ function retrieve_agenda() {
 			items.each(function() {
 				var json = rssitem_to_json(this);
 
-				var title, evnt;
 				// General events
 				if (parseInt(json.EVENT_TYPE) == 16) {
-					title = json.title + ' ' + json.description;
-					evnt = new CalEvent(title, json.guid, 'UOC');
+					var title = json.title + ' ' + json.description;
+					var evnt = new CalEvent(title, json.guid, 'UOC');
 					evnt.start =  getDate_hyphen(json.pubDate);
 					Classes.add_event(evnt);
-					return;
 				}
-
 				// Classroom events now are parsed in other places.
-				// Legacy code ahead.
-				var id = json.guid.split('_');
-				var classroom = Classes.get_class_by_event(id[0]);
-				if (classroom) {
-					// Already parsed
-					return;
-				}
-
-				Debug.error('Unknown event ' + json.title);
-				var acronym = get_acronym(json.description);
-				classroom = Classes.get_class_by_acronym(acronym);
-				if (!classroom) {
-					Debug.error('Classroom not found');
-					Debug.print(json);
-					return;
-				}
-
-				evnt = classroom.get_event(id[0]);
-				if (evnt && evnt.is_assignment() && classroom.any) {
-					// The Assignments are processed in other parts
-					return;
-				}
-
-				if (!classroom.any && json.EVENT_COLOR){
-					classroom.color = json.EVENT_COLOR;
-				}
-
-				if (!evnt) {
-					title = json.title.split('[');
-					title = get_html_realtext(title[0].trim());
-					title = title.replace("\\'", "'");
-					evnt = new CalEvent(title, id[0], 'MODULE');
-				}
-				var date =  getDate_hyphen(json.pubDate);
-				switch (parseInt(json.EVENT_TYPE)) {
-					case 22:
-					case 26:
-						evnt.start = date;
-						break;
-					case 23:
-						evnt.type = 'STUDY_GUIDE';
-						evnt.start = date;
-						break;
-					case 27:
-						evnt.solution = date;
-						break;
-					case 19:
-						evnt.type = 'ASSIGNMENT';
-						evnt.grading = date;
-						break;
-					case 29:
-						evnt.end = date;
-						break;
-					default:
-						Debug.print('Unknown event type ' + json.EVENT_TYPE);
-						Debug.print(json);
-						return;
-				}
-				evnt.link = json.link+'&s=';
-				classroom.add_event(evnt);
+				//parse_agenda_event(json);
 			});
 		}
 	});
 }
+
 
 var Session = new function() {
 	var retrieving = false;
