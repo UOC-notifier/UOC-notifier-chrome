@@ -272,7 +272,7 @@ function rssitem_to_json(item) {
     $(item).children().each(function() {
         var tagname = $(this).prop("tagName");
         var element = $(this).text();
-        if (tagname == 'category') {
+        if (tagname == 'category' && $(this).attr('domain')) {
             tagname = $(this).attr('domain');
         } else {
             /*

@@ -55,19 +55,20 @@ var UI = new function() {
         // Announcements
         var announcements = get_announcements();
         if (announcements) {
-            var title = announcements.title;
-            if (announcements.link != "") {
-                title = '<a target="_blank" href="'+announcements.link+'">'+title+'</a>';
+            var announcements_html = "";
+            for (var x in announcements) {
+                var announcement = announcements[x];
+                var title = announcement.link != "" ? '<a target="_blank" href="'+announcement.link+'">'+announcement.title+'</a>' : announcement.title;
+                announcements_html += '<div class="panel panel-warning collapsible">\
+                <div class="panel-heading collapsed" data-target="#detail_announcements_'+x+'" data-toggle="collapse"> \
+                <button type="button" class="close" aria-label="Close"><span aria-hidden="true" class="close_announcements">&times;</span></button>\
+                <span class="title"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>&nbsp;'+title+'</span></div>\
+                <div class="panel-body bg-warning text-warning collapse" id="detail_announcements_'+x+'">'+announcement.description+'<div class="pull-right">'+announcement.date+'</div>\
+                </div></div>';
             }
-            var temp_html = '<div class="panel panel-warning collapsible" id="panel_announcements">\
-            <div class="panel-heading collapsed" data-target="#detail_announcements" data-toggle="collapse"> \
-            <button type="button" class="close" aria-label="Close"><span aria-hidden="true" id="close_announcements">&times;</span></button>\
-            <span class="title"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>&nbsp;'+title+'</span></div>\
-            <div class="panel-body bg-warning text-warning collapse" id="detail_announcements">'+announcements.description+'<div class="pull-right">'+announcements.date+'</div>\
-            </div></div>';
-            $('#announcements').html(temp_html);
-            $('#close_announcements').unbind( "click" ).click(function() {
-                $("#panel_announcements").hide();
+            $('#announcements').html(announcements_html);
+            $('.close_announcements').unbind( "click" ).click(function() {
+                $(this).parent().parent().parent().hide();
             });
         }
 

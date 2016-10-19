@@ -233,19 +233,9 @@ function get_announcements(){
 	return announcements;
 }
 
-function save_announcements(title, description, link, date){
-	if (title != "" && description != "") {
-		var announcements = {
-			title : title,
-			description : description,
-			link: link,
-			date: date
-		};
-		announcements = JSON.stringify(announcements);
-		Storage.set_option("announcements", announcements);
-	} else {
-		Storage.unset_option("announcements");
-	}
+function save_announcements(announcements){
+	announcements = JSON.stringify(announcements);
+	Storage.set_option("announcements", announcements);
 }
 
 // RUNNING - UNREAD MAILS

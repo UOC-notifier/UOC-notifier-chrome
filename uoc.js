@@ -180,24 +180,32 @@ function retrieve_announcements() {
 		'app:only' : 'avisos'
 	};
 	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
-		var title = "";
-		var description = "";
-		var link = "";
-		var date = "";
-		$(resp).find('item').each(function() {
-			title = $(this).find('title').first().text();
-    		description = $(this).find('description').first().text();
-    		link = $(this).find('link').first().text();
-    		date = new Date($(this).find('pubDate').first().text());
+		var announcements = [];
+		var items = $(resp).find('item category:contains(\'ANNOUNCEMENT\')').parents('item');
+		if (items.length > 0) {
+			items.each(function() {
+				var json = rssitem_to_json(this);
+				if (json.title != "" && json.description != "") {
+					var announcement = {
+						title: json.title,
+			    		description: json.description,
+			    		link: json.link
+			    	};
 
-    		var y = date.getFullYear() - 2000;
-		    var m = date.getMonth() + 1;
-		    var d = date.getDate();
-		    var h = date.getHours();
-		    var mm = date.getMinutes();
-    		var date = addZero(d)+'/'+addZero(m)+'/'+addZero(y) + ' - '+h+':'+addZero(mm);
-		});
-		save_announcements(title, description, link, date);
+			    	var date = new Date(json.pubDate);
+		    		var y = date.getFullYear() - 2000;
+				    var m = date.getMonth() + 1;
+				    var d = date.getDate();
+				    var h = date.getHours();
+				    var mm = date.getMinutes();
+
+		    		announcement.date = addZero(d)+'/'+addZero(m)+'/'+addZero(y) + ' - '+h+':'+addZero(mm);
+
+		    		announcements.push(announcement);
+		    	}
+			});
+		}
+		save_announcements(announcements);
 	});
 }
 
