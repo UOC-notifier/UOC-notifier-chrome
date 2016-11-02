@@ -204,23 +204,6 @@ function get_real_url(url) {
     return url;
 }
 
-// NOT USED
-function get_url_base(url) {
-    //prefer to use l.search if you have a location/link object
-    url = get_real_url(url);
-    var urlparts= url.split('?');
-    if (urlparts.length >= 2) {
-        return urlparts[0];
-    } else {
-        return url;
-    }
-}
-
-// NOT USED
-function get_url_with_data(url, data) {
-    return get_real_url(url) + '?' + uri_data(data);
-}
-
 function get_html_realtext(text) {
     return $('<textarea />').html(text).text();
 }

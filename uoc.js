@@ -26,7 +26,7 @@ function check_messages(after_check_fnc, after_check_fail) {
 function keep_checking() {
 	Classes.purge_old();
 
-	retrieve_old_classrooms();
+	retrieve_tutoria_from_rss();
 
 	retrieve_gradeinfo();
 
@@ -413,93 +413,75 @@ function parse_classroom(classr) {
 	}
 }
 
-function retrieve_old_classrooms() {
+function retrieve_tutoria_from_rss() {
 	var args = {
-		newStartingPage:0,
-		language: get_lang_code()
+		'app:mobile': true,
+		'app:cache': false,
+		'app:only' : 'aules'
 	};
-	Queue.request('/UOC2000/b/cgi-bin/hola', args, 'GET', false, function(resp) {
-		var index = resp.indexOf("aulas = ");
-		if (index != -1) {
-			var lastPage = resp.substring(index + 8);
-			var last = lastPage.indexOf(";");
-			lastPage = lastPage.substring(0,last);
-			var classrooms = eval(lastPage);
-			for (var i in classrooms) {
-				parse_classroom_old(classrooms[i]);
+	Queue.request('/rb/inici/grid.rss', args, 'GET', false, function(resp) {
+		$(resp).find('item').each(function() {
+			var item = $(this);
+			var category = item.find('category').first().text();
+			if (category.indexOf('AULA_TUTOR_DEFINITION') >= 0) {
+				var code = category.split('-')[0],
+					domainId = category.split('-')[1];
+					classroom = Classes.search_domainassig(domainId),
+					title = get_html_realtext(item.find('title').text()),
+					codiTercers = code.split('_')[0].toUpperCase() || false;
+
+				if (codiTercers) {
+					var aux = title.split(codiTercers)[0].trim();
+					title = aux ? aux : title;
+				}
+
+				if (!classroom) {
+					classroom = new Classroom(title, code, domainId, 'TUTORIA');
+				} else {
+					classroom.title = title;
+					classroom.code = code;
+					classroom.domain = domainId;
+					classroom.domainassig = domainId;
+					classroom.type = 'TUTORIA';
+				}
+				classroom.aula = codiTercers;
+
+				var tagColor = item.find('category:contains("MODUL_COLOR")').first().text();
+				if (tagColor) {
+					classroom.color = tagColor.split('#')[1].split('-')[0];
+				}
+
+				if (classroom.notify) {
+					retrieve_consultor(classroom);
+					try {
+						$(resp).find("item > category:contains('" + code + "-AULA'):contains('_RESOURCES')").each(function() {
+							var item = rssitem_to_json($(this).parent()),
+								title = get_html_realtext(item.title);
+
+							if (title) {
+								var resource = new Resource(title, "");
+								resource.set_link(item.url);
+								resource.code = get_url_attr(resource.link, 'l');
+								if (title != 'Microblog') {
+									resource.type = "old";
+									var messages = parseInt(item.description.split(':')[0]);
+										allmessages = parseInt(item.description.split(':')[1]);
+									resource.set_messages(messages, allmessages);
+								} else {
+									resource.type = "oldblog";
+								}
+								classroom.add_resource(resource);
+							}
+						});
+					} catch (err) {
+						Debug.error(err);
+					}
+				}
+
+				Classes.add(classroom);
 			}
-		}
+		});
 	});
-}
-
-function parse_classroom_old(classr) {
-	if (classr.title) {
-		var title = classr.shortname ? classr.shortname : classr.title;
-		var classroom;
-		switch (classr.domaintypeid) {
-			case 'TUTORIA':
-				classroom = Classes.search_domainassig(classr.domainid);
-				var sp = title.split(classr.codi_tercers);
-				title = sp[0].trim();
-				if (!classroom) {
-					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid);
-				} else {
-					classroom.title = title;
-					classroom.code = classr.code;
-					classroom.domain = classr.domainid;
-					classroom.domainassig = classr.domainid;
-					classroom.type = classr.domaintypeid;
-				}
-				classroom.aula = classr.codi_tercers;
-
-				retrieve_consultor(classroom);
-				break;
-			case 'ASSIGNATURA':
-				// Override title
-				classroom = Classes.search_domainassig(classr.domainid);
-				if (classroom) {
-					classroom.title = title;
-				}
-				return;
-			case 'AULA':
-				classroom = Classes.search_domainassig(classr.domainfatherid);
-				if (classroom && classroom.any) {
-					return;
-				}
-				var aul = title.lastIndexOf(" aula ");
-				var aulanum = false;
-				if (aul > 0) {
-					aulanum = title.substr(aul + 6);
-					title = title.substr(0, aul);
-				}
-				if (!classroom) {
-					classroom = new Classroom(title, classr.code, classr.domainid, classr.domaintypeid);
-				} else {
-					classroom.code = classr.code;
-					classroom.domain = classr.domainid;
-					classroom.type = classr.domaintypeid;
-				}
-				if (aulanum) {
-					classroom.aula = aulanum;
-				}
-				classroom.domainassig = classr.domainfatherid;
-
-				break;
-		}
-
-		if (classroom.notify && !classroom.any) {
-			for (var j in classr.resources) {
-				var resourcel = classr.resources[j];
-				if (resourcel.title) {
-					var resource = new Resource(resourcel.title, resourcel.code);
-					resource.type = "old";
-					resource.set_messages(resourcel.numMesPend, resourcel.numMesTot);
-					classroom.add_resource(resource);
-				}
-			}
-		}
-		Classes.add(classroom);
-	}
 }
 
 function retrieve_timeline(classroom) {
@@ -513,7 +495,7 @@ function retrieve_timeline(classroom) {
 			var event = data.events[i];
 			var class_event = classroom.get_event(event.id);
 			if (class_event) {
-				class_event.completed = event.completed
+				class_event.completed = event.completed;
 			}
 		}
 	});

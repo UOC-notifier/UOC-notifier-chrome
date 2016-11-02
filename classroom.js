@@ -468,7 +468,7 @@ function Classroom(title, code, domain, type) {
 	this.delete_old_resources = function() {
 		Debug.log('Delete old resources for '+this.acronym);
 		for (var i in this.resources) {
-			if(this.resources[i].type == 'old') {
+			if(this.resources[i].type == 'old' || this.resources[i].type == 'oldblog') {
 				this.resources.splice(i, 1);
 			}
 		}
@@ -578,7 +578,7 @@ function Resource(title, code) {
 	};
 
 	this.has_news = function() {
-		return this.type == "blog" && this.news;
+		return (this.type == "blog" || this.type == "oldblog") && this.news;
 	};
 
 	this.set_messages = function(messages, all_messages) {

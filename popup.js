@@ -126,7 +126,7 @@ var UI = new function() {
 		$('.linkCampus').unbind( "click" )
                 .click(function(){
                     // Need to be HTTP
-                    open_tab('/cgi-bin/uocapp', false, true);
+                    open_tab('/cgibin/uocapp', false, true);
                 });
 
 		$('.linkAula').unbind( "click" )
@@ -534,7 +534,6 @@ var UI = new function() {
 			text += get_general_link(link, _('__OLD_AGENDA__'));
 			text += get_general_link('/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
 			text += get_general_link('/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
-			text += get_general_link('/cgibin/hola?t=grups_tb/grups.tmpl&domainFather=grc&s=', _('__WORKING_GROUPS__'));
             text += get_general_link('/webapps/classroom/081_common/jsp/aules_estudiant.jsp?domainPontCode=ant&s=', _('__OLD_CLASSROOMS__'));
 
 			text += '</div>';
