@@ -256,6 +256,18 @@ var UI = new function() {
             });
 	}
 
+    function getFinalTestsTitle(exams, type) {
+        if (!exams['time'+type]) {
+            return "";
+        }
+        var typeName = type == 'EX' ? _('__EX__') : _('__PS__');
+
+        if (exams['place' + type]) {
+            return _('__FINAL_TESTS_CLASS_TITLE__', [typeName, exams['time'+type], exams['place' + type]]);
+        }
+        return _('__FINAL_TESTS_CLASS_TITLE_NOPLACE__', [typeName, exams['time'+type]]);
+    }
+
 	function ClassroomUI(classroom) {
 		var c = classroom;
 
@@ -278,13 +290,13 @@ var UI = new function() {
 			var nearexams = false;
 			if (classroom.exams && classroom.exams.date && !isBeforeToday(classroom.exams.date)) {
 
-				if (classroom.exams.timeEX) {
-                    tit = _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.placeEX]);
+                tit = getFinalTestsTitle(classroom.exams, 'EX');
+				if (tit) {
 					exams += '<div><a href="#" class="linkEvent" title="'+tit+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + tit + '</a></div>';
 
 				}
-				if (classroom.exams.timePS) {
-                    tit = _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.placePS]);
+                tit = getFinalTestsTitle(classroom.exams, 'PS');
+				if (tit) {
 					exams += '<div><a href="#" class="linkEvent" title="'+tit+'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + tit + '</a></div>';
 				}
 				if (exams != "") {
@@ -576,18 +588,11 @@ var UI = new function() {
 				// Final tests
 				if (classroom.exams && classroom.exams.date && isNearDate(classroom.exams.date, limit)) {
 					var name = _('__FINAL_TESTS_CLASS__', [classroom.get_acronym()]);
-					var title = "";
-					if (classroom.exams.timeEX) {
-						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__EX__'), classroom.exams.timeEX, classroom.exams.placeEX]);
-					}
-					if (classroom.exams.timePS) {
-						if (title != "") {
-							title += "\n";
-						}
-						title += _('__FINAL_TESTS_CLASS_TITLE__', [_('__PS__'), classroom.exams.timePS, classroom.exams.placePS]);
-					}
+                    var title = getFinalTestsTitle(classroom.exams, 'EX');
+                    title += title ? "\n" : "";
+                    title += getFinalTestsTitle(classroom.exams, 'PS');
 					if (title != "") {
-						name = '<span title ="'+title+'">'+ name + '</span>';
+						name = '<span title ="' + title + '">' + name + '</span>';
 					}
 					var evnt = new CalEvent(name, '', 'UOC');
 					evnt.start = classroom.exams.date;

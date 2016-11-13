@@ -158,6 +158,17 @@
           }
         }
     },
+    "__FINAL_TESTS_CLASS_TITLE_NOPLACE__" : {
+        "message" : "$type$: $time$",
+        "placeholders": {
+          "type": {
+            "content": "$1"
+          },
+          "time": {
+            "content": "$2"
+          }
+        }
+    },
     "__COMPLETED__" : {
         "message" : "Completed"
     },
