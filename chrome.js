@@ -28,6 +28,10 @@ function translate(str, params){
     return chrome.i18n.getMessage(str, params);
 }
 
+function get_ui_lang() {
+    return chrome.i18n.getUILanguage();
+}
+
 function get_version() {
     var manifest = chrome.runtime.getManifest();
     return manifest.version;

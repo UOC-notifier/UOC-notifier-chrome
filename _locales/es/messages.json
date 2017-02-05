@@ -17,9 +17,6 @@
     "__PASSWORD__" : {
         "message" : "Contraseña"
     },
-    "__UNI__" : {
-        "message" : "Universidad"
-    },
     "__INTERVAL__" : {
         "message" : "Intervalo de comprobación"
     },

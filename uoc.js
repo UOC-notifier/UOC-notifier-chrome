@@ -138,7 +138,6 @@ function retrieve_final_exams_event() {
 			"P": ['' + any, "1", '' + idp, "ESTUDIANT"]
 		}]
 	};
-	// Always GAT_EXP, not dependant on UOCi
 	Queue.request('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/gwtRequest', args, 'json', false, function(resp) {
 		try {
 			var objects = resp.O;
@@ -629,7 +628,7 @@ function retrieve_stats(classroom) {
 		return;
 	}
 
-	var args = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
+	var args = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
 				assig: classroom.subject_code,
 				pAnyAcademic: classroom.any
 			};

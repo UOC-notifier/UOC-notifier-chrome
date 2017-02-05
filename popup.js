@@ -72,12 +72,7 @@ var UI = new function() {
             });
         }
 
-		// Setup agenda
-		if (get_show_agenda()) {
-			$('#button_agenda').unbind( "click" ).click(agenda);
-		} else {
-			$('#button_agenda').remove();
-		}
+		$('#button_agenda').unbind( "click" ).click(agenda);
 
 		$('#button_campus').unbind( "click" ).click(tools);
 
@@ -152,7 +147,7 @@ var UI = new function() {
                 .click(function(){
                     var classroom_code = $(this).parents('.classroom').attr('classroom');
                     var classroom = Classes.search_code(classroom_code);
-                    var data = {modul: get_gat()+'.ESTADNOTES/estadis.assignatures',
+                    var data = {modul: 'GAT_EXP.ESTADNOTES/estadis.assignatures',
                                 assig: classroom.subject_code,
                                 pAnyAcademic: classroom.any};
                     open_tab('/tren/trenacc', data);
@@ -381,6 +376,9 @@ var UI = new function() {
 				for(var j in c.grades){
 					events_html += only_grade(c.grades[j], 1);
 				}
+                if (events_html == "") {
+                    return "";
+                }
 				return '<table class="table table-condensed events" id="events_'+c.code+'">  \
 						<thead><tr><th></th><th>'+_('__GRADE__')+'</th></tr></thead>\
 						<tbody>' + events_html + ' </tbody>\
@@ -472,7 +470,7 @@ var UI = new function() {
 		  		text += '<div class="btn-group btn-group-sm pull-left" role="group">'+buttons+'</div>';
 		  	}
 
-		  	if(c.has_events() && c.subject_code){
+		  	if(c.has_assignments() && c.subject_code){
 				text += '<div class="pull-right"><button type="button" class="linkNotas btn-sm btn btn-primary">\
 			    	<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> ' + _('__GRADES__') +'</button></div>';
 		    }
@@ -509,8 +507,7 @@ var UI = new function() {
 
 	function tools() {
 		if ($('#detail_campus').html() == "") {
-		    var gat =  get_gat();
-		    var url_gate = '/tren/trenacc?modul='+gat;
+		    var url_gate = '/tren/trenacc?modul=GAT_EXP';
 
 		    var text = '<div class="row-fluid clearfix"><strong>'+_('__GRADES__')+'</strong></div>';
 		    text += '<div class="row-fluid clearfix">';
@@ -542,10 +539,10 @@ var UI = new function() {
 					break;
 				}
 			}
-			var link = '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang=a&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s=';
+			var link = '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang='+get_lang_code()+'&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s=';
 			text += get_general_link(link, _('__OLD_AGENDA__'));
 			text += get_general_link('/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
-			text += get_general_link('/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
+			text += get_general_link('http://cv.uoc.edu/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
             text += get_general_link('/webapps/classroom/081_common/jsp/aules_estudiant.jsp?domainPontCode=ant&s=', _('__OLD_CLASSROOMS__'));
 
 			text += '</div>';

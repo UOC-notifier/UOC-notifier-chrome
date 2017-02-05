@@ -17,9 +17,6 @@
     "__PASSWORD__" : {
         "message" : "Contrasenya"
     },
-    "__UNI__" : {
-        "message" : "Universitat"
-    },
     "__INTERVAL__" : {
         "message" : "Interval de comprovació"
     },

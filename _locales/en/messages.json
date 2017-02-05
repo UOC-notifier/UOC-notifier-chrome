@@ -17,9 +17,6 @@
     "__PASSWORD__" : {
         "message" : "Password"
     },
-    "__UNI__" : {
-        "message" : "University"
-    },
     "__INTERVAL__" : {
         "message" : "Checking interval"
     },

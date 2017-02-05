@@ -508,6 +508,13 @@ function Classroom(title, code, domain, type) {
 		return this.events.length > 0;
 	};
 
+	this.has_assignments = function() {
+		var assignments = this.events.filter(function (event) {
+			return event.is_assignment();
+		});
+		return assignments.length > 0;
+	};
+
 	this.has_all_grades = function() {
 		if (this.final_grades){
 			return true;

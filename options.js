@@ -49,12 +49,6 @@ function populate_options(){
 	$('#username').val(option.username);
 	$('#pwd').val(option.password);
 
-	option = get_uni();
-	$('#uni').val(option)
-			.on('change', function(){
-				save_uni($(this).val());
-			});
-
 	option = get_interval();
 	$('#check_interval').val(option)
 			.on('change', function(){
@@ -84,15 +78,6 @@ function populate_options(){
 	$('#check_mail').on('click', function(){
 		var ischecked = $('#check_mail').is(':checked');
 		save_check_mail(ischecked);
-	});
-
-	option = get_show_agenda();
-	if (option) {
-		$('#show_agenda').attr('checked','checked');
-	}
-	$('#show_agenda').on('click', function(){
-		var ischecked = $('#show_agenda').is(':checked');
-		save_show_agenda(ischecked);
 	});
 
 	option = get_show_module_dates();

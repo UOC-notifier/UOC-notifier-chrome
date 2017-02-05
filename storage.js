@@ -41,37 +41,20 @@ function save_idp(idp){
 	Storage.set_option("idp", idp);
 }
 
-// OPTIONS - UNIVERSITY
-function get_uni(){
-	return Storage.get_option("uni", 'UOCc');
-}
-
-function get_gat(){
-	var uni =  get_uni();
-    if(uni == 'UOCi'){
-        return 'GAT_EXPIB';
-    }
-    return 'GAT_EXP';
-}
-
-function save_uni(uni){
-	Storage.set_option("uni",uni);
-}
-
 function get_lang() {
-	var uni =  get_uni();
-    if(uni == 'UOCi'){
-        return 'es';
-    }
-    return 'ca';
+	return get_ui_lang();
 }
 
 function get_lang_code() {
-	var uni =  get_uni();
-    if(uni == 'UOCi'){
-        return 'b';
+	switch (get_ui_lang()) {
+        case 'ca':
+            return 'a';
+        case 'en':
+            return 'c';
+        case 'es':
+        default:
+            return 'b';
     }
-    return 'a';
 }
 
 // OPTIONS - TODAY TAB
@@ -128,15 +111,6 @@ function get_notification(){
 
 function save_notification(notify){
 	Storage.set_option("notification", notify);
-}
-
-//OPTIONS - SHOW AGENDA
-function get_show_agenda(){
-	return Storage.get_option_bool("show_agenda", true);
-}
-
-function save_show_agenda(show){
-	Storage.set_option("show_agenda", show);
 }
 
 //OPTIONS - SHOW MODULE DATES
