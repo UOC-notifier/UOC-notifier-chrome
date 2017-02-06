@@ -140,7 +140,7 @@ var UI = new function() {
                     var classroom = Classes.search_code(classroom_code);
 
                     var data = {domainId: classroom.domain};
-                    open_tab('/webapps/rac/listEstudiant.action', data);
+                    open_tab('/webapps/rac/listEstudiant.action', data, true);
                 });
 
 		$('.linkEstads').unbind( "click" )
