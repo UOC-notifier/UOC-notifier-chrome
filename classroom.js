@@ -572,7 +572,7 @@ function Resource(title, code) {
 	this.news = false;
 
 	this.has_message_count = function() {
-		if (this.type == "messagelist") {
+		if (this.type == "messagelist" || this.type == "grupsdetreball") {
 			if (isNaN(this.messages)) {
 				this.messages = 0;
 			}
@@ -585,7 +585,7 @@ function Resource(title, code) {
 	};
 
 	this.has_news = function() {
-		return (this.type == "blog" || this.type == "oldblog") && this.news;
+		return (this.type == "blog" || this.type == "microblog" || this.type == "oldblog") && this.news;
 	};
 
 	this.set_messages = function(messages, all_messages) {
@@ -611,31 +611,20 @@ function Resource(title, code) {
 	};
 
 	this.set_pos = function(pos) {
-		if (pos) {
-			this.pos = parseInt(pos);
-		} else {
-			this.pos = false;
-		}
+		this.pos = pos ? parseInt(pos, 10) : false;
 	};
 
 	this.set_link = function(link) {
 		var url = get_url_attr(link, 'redirectUrl');
-		if (url) {
-			link = decodeURIComponent(url);
+		link = url ? url : link;
+
+		var pos = link.indexOf('&htm=/');
+		if (pos > 0) {
+			link = link.substr(pos + 5);
 		}
 
-		var session = get_url_attr(link, 's');
-		if (session) {
-			link = get_url_withoutattr(link,'s');
-			link += '&s=';
-		} else {
-			session = get_url_attr(link, 'sessionId');
-			if (session) {
-				link = get_url_withoutattr(link,'sessionId');
-				link += '&sessionId=';
-			}
-		}
-		this.link = link;
+		link = empty_url_attr(link, 's');
+		this.link = empty_url_attr(link, 'sessionId');
 	};
 }
 

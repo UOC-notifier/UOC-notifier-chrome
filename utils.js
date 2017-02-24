@@ -141,16 +141,23 @@ function compareDates(dateA, dateB) {
     return asplit[0] - bsplit[0];
 }
 
+function empty_url_attr(url, attr) {
+    // Strip hashes.
+    url = url.split('#')[0];
+    var value = get_url_attr(url, attr);
+    return value ? get_url_withoutattr(url, attr) + '&' + attr + '=' : url;
+}
+
 function get_url_attr(url, attr){
     if(url.indexOf(attr) == -1){
         return false;
     }
 
-    var regexp = attr+"=([^&]+)";
+    var regexp = attr + "=([^&]+)";
     regexp = new RegExp(regexp);
     var match = url.match(regexp);
-    if(match){
-        return match[1];
+    if (match) {
+        return decodeURIComponent(match[1]);
     }
     return false;
 }

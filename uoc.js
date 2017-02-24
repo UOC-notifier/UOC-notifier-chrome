@@ -658,9 +658,9 @@ function retrieve_resource(classroom, resource) {
 		try {
 			resource.type = data.resource.widgetType;
 
-	        if (resource.type == "messagelist") {
+	        if (resource.type == "messagelist" || resource.type == "grupsdetreball") {
 	        	resource.set_messages(data.resource.newItems, data.resource.totalItems);
-	        } else if (resource.type == "blog") {
+	        } else if (resource.type == "blog" || resource.type == "microblog") {
 				resource.news = !!data.resource.missatgesNousBlog;
 	        }
 		} catch(err) {
