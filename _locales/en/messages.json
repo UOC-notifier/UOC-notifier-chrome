@@ -189,6 +189,9 @@
     "__EQUIPMENT__" : {
         "message" : "Equipment"
     },
+    "__OTHER_EQUIPMENT__" : {
+        "message" : "Other equipment"
+    },
     "__LINK_TO_EQUIPMENT__" : {
       "message" : "Link to Equipment"
     },

@@ -189,6 +189,9 @@
     "__EQUIPMENT__" : {
         "message" : "Materiales"
     },
+    "__OTHER_EQUIPMENT__" : {
+        "message" : "Otros materiales"
+    },
     "__LINK_TO_EQUIPMENT__" : {
       "message" : "Enlace a los materiales"
     },

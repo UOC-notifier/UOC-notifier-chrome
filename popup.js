@@ -885,29 +885,51 @@ var UI = new function() {
 	}
 
     this.fill_materials = function(classroom, data) {
-        var text = "";
-        var lasttitle = false;
-        for (var x in data.dades) {
-            var material = data.dades[x];
-			if (material.defecte) {
-                if (lasttitle && lasttitle == material.titol) {
-                    for (var y in material.formats) {
-                        var format = material.formats[y];
-                        text += ' '+get_icon_link(format);
-                    }
-                } else {
-    				text += '<li code="'+material.codMaterial+'">' + material.titol + ' -';
-    				for (var y in material.formats) {
-    					var format = material.formats[y];
-    					text += ' '+get_icon_link(format);
-    				}
-                    lasttitle = material.titol;
+        var text = "",
+            textAltres = "",
+            lasttitle = false,
+            dades = data.dades.filter(function(a) {
+                    return a.defecte;
+                }),
+            materials = dades.filter(function(a) {
+                    return !!a.codMaterial;
+                }),
+            altres = dades.filter(function(a) {
+                return !a.codMaterial;
+            });
+
+        for (var x in materials) {
+            var material = materials[x];
+            if (lasttitle && lasttitle == material.titol) {
+                for (var y in material.formats) {
+                    var format = material.formats[y];
+                    text += ' '+get_icon_link(format);
                 }
-			}
+            } else {
+				text += '<li code="'+material.codMaterial+'">' + material.titol + ' -';
+				for (var y in material.formats) {
+					var format = material.formats[y];
+					text += ' '+get_icon_link(format);
+				}
+                lasttitle = material.titol;
+            }
         }
 
         if (text != "") {
-            text = '<ul>'+text+'</ul>';
+            text = '<h5>'+_('__EQUIPMENT__')+'</h5><ul>'+text+'</ul>';
+        }
+
+        for (var x in altres) {
+            var item = altres[x];
+            textAltres += '<li>' + item.titol + ' -';
+            for (var y in item.formats) {
+                var format = item.formats[y];
+                textAltres += ' '+get_icon_link(format);
+            }
+        }
+
+        if (textAltres != "") {
+            text += '<h5>'+_('__OTHER_EQUIPMENT__')+'</h5><ul>'+textAltres+'</ul>';
         }
 
         var url = '/webapps/aulaca/classroom/Materials.action?classroomId='+classroom.domain+'&subjectId='+classroom.domainassig+'&s=';
@@ -931,7 +953,7 @@ var UI = new function() {
 					icon = 'facetime-video';
 					break;
 				case 'WEB':
-					icon = 'link';
+					icon = 'globe';
 					break;
 				case 'EPUB':
 					icon = 'book';
@@ -945,6 +967,12 @@ var UI = new function() {
 				case 'PROGRAMARI_EN_LINIA':
 					icon = 'wrench';
 					break;
+                case 'RECURS':
+                    icon = 'link';
+                    break;
+                case 'AUDIOVISUAL':
+                    icon = 'facetime-video';
+                    break;
 			}
 
 			var description = format.tipus.nom;
