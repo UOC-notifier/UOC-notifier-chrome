@@ -350,7 +350,7 @@ var UI = new function() {
 			} else if (resource.has_news()) {
                 return '<li class="row resource" '+link+' resource="'+resource.code+'"> \
                             <div class="col-xs-8"><a href="#" class="linkResource">'+resource.title+'</a></div> \
-                            <div class="col-xs-4 text-center"><span class="glyphicon glyphicon-flag" style="color:#a94442;"  aria-hidden="true" title="'+_('__NEWS__')+'"></span></div> \
+                            <div class="col-xs-4 text-center"><span class="glyphicon glyphicon-flag" style="color:#f85361;"  aria-hidden="true" title="'+_('__NEWS__')+'"></span></div> \
                         </li>';
             } else {
 				return '<li class="resource" '+link+' resource="'+resource.code+'"><a href="#" class="linkResource">'+resource.title+'</a></li>';
@@ -519,6 +519,11 @@ var UI = new function() {
 		    text += get_general_link(url_gate+'.NOTAS_SMS&s=', _('__GRADES_SMS__'));
 		    text += get_general_link('/tren/trenacc/webapp/GEPAF.FULLPERSONAL/index.jsp?s=', _('__EXAM_SELECT__'));
 			text += get_general_link(url_gate + '.INFCONSULTA/inici&s=', _('__OLD_EXPEDIENT__'));
+
+            var any = Classes.get_max_any();
+            if (any) {
+                text += get_general_link('http://cv.uoc.edu/UOC/rac/listAulasEstudiant.html?anyAcademic='+any+'&s=', _('__GRADES__'));
+            }
 			//text += get_general_link(url_gate + '.NOTESAVAL/rac.rac&tipus=1&s=', _('REC antiguo (no funciona)'));
 		    text += '</div>';
 
@@ -531,16 +536,6 @@ var UI = new function() {
 			text += '<div class="row-fluid clearfix"><strong>'+_('__PERSONAL__')+'</strong></div>';
 			text += '<div class="row-fluid clearfix">';
 			text += get_general_link('/app/guaita/calendari?perfil=estudiant&s=', _('__NEW_AGENDA__'));
-			var domainId = "";
-			var classrooms = Classes.get_notified();
-			for(var i in classrooms){
-				if (classrooms[i].domain) {
-					domainId = "&domainId=" + classrooms[i].domain;
-					break;
-				}
-			}
-			var link = '/webapps/classroom/081_common/jsp/calendari_semestral.jsp?appId=UOC&idLang='+get_lang_code()+'&assignment=ESTUDIANT&domainPontCode=sem_pont'+domainId+'&s=';
-			text += get_general_link(link, _('__OLD_AGENDA__'));
 			text += get_general_link('/webapps/Agenda/NavigationServlet?s=', _('__PERSONAL_AGENDA__'));
 			text += get_general_link('http://cv.uoc.edu/webapps/filearea/servlet/iuoc.fileserver.servlets.FAGateway?opId=getMainFS&company=/UOC&idLang=/'+get_lang_code()+'&sessionId=', _('__FILES__'));
             text += get_general_link('/webapps/classroom/081_common/jsp/aules_estudiant.jsp?domainPontCode=ant&s=', _('__OLD_CLASSROOMS__'));
@@ -784,7 +779,7 @@ var UI = new function() {
                 } else if (ev.completed) {
                     title = colored_icon(_('__'+ev.type+'__') + ': ' + _('__COMPLETED__'), 'check', '');
                 } else if(ev.has_ended()){
-                    title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'a94442');
+                    title = colored_icon(_('__NOT_COMMITTED__'), 'remove', 'f85361');
                 } else {
                     title = colored_icon(_('__'+ev.type+'__'), 'certificate', '');
                 }
@@ -850,7 +845,7 @@ var UI = new function() {
 
 	function color(col){
 		if(col){
-			return 'style="border-color:#'+col+'; background-color: #'+col+';"';
+			return 'style="border-top-color:#'+col+';"';
 		}
 		return "";
 	}
@@ -1009,8 +1004,8 @@ var UI = new function() {
 				clas = 'warning';
 			}
 
-		  	var usertext = '<li><a class="linkMail text-'+clas+'" mail="'+user.email+' "aria-label="'+title+'" title="'+title+' - '+user.email+'">\
-		    	<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> '+ user.fullName+ '\
+		  	var usertext = '<li><a class="linkMail" mail="'+user.email+' "aria-label="'+title+'" title="'+title+' - '+user.email+'">\
+		    	<span class="text-'+clas+' glyphicon glyphicon-envelope" aria-hidden="true"></span> '+ user.fullName+ '\
 		  	</a> ';
 		  	if (user.connected) {
 		  		connected += usertext;

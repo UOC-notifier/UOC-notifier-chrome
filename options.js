@@ -35,7 +35,7 @@ function populate_classrooms(){
 
 function populate_classroom(classroom){
 	var checked = classroom.notify ? "checked" : "";
-	var color = classroom.color ? classroom.color : '555';
+	var color = classroom.color ? classroom.color : '73EDFF';
 	var title = classroom.subject_code ? classroom.subject_code+' '+classroom.title : classroom.title;
 	return '<div class="input-group not_classroom"><span class="input-group-addon" style="background-color:#'+color+';"> \
 			<input class="notify_classroom" type="checkbox" id="'+classroom.code+'" value="'+classroom.code+'" '+checked+'> \
