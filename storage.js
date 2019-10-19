@@ -247,6 +247,16 @@ function get_debug() {
 	return Storage.get_option_bool("debug", false);
 }
 
+//OPTIONS - THEME
+function get_theme(){
+	return Storage.get_option_bool("theme", false);
+}
+
+function save_theme(notify){
+	Storage.set_option("theme", notify);
+}
+
+
 // Storage manager
 var Storage = new function(){
 

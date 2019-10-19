@@ -19,6 +19,15 @@
    "manifest_version": 2,
    "name": "__MSG_TITLE__",
    "options_page": "options.html",
-   "permissions": [ "http://cv.uoc.edu/", "https://cv.uoc.edu/", "notifications", "alarms", "idle"],
-   "version": "2.0.1"
+   "permissions": [ "tabs", "*://*.uoc.edu/*", "notifications", "alarms", "idle"],
+   "version": "2.1.0",
+   "content_scripts": [
+    {
+      "all_frames": true,
+      "run_at": "document_end",
+      "matches": [ "*://*.uoc.edu/*" ],
+      "css": ["theme/styles.css"],
+      "js": ["theme/uoctheme.js" ]
+    }
+  ]
 }

@@ -464,5 +464,8 @@
     },
     "__CHECK_MAIL__" : {
         "message" : "Comprova si hi ha correu (desactiva'l si tens una redirecció)"
+    },
+    "__THEME__" : {
+        "message" : "Aplicar uoc-theme en el Campus"
     }
 }

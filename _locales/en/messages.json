@@ -464,5 +464,8 @@
     },
     "__CHECK_MAIL__" : {
         "message" : "Check for new mail (disable it if you have a redirection)"
+    },
+    "__THEME__" : {
+        "message" : "Use the uoc-theme into the Campus"
     }
 }
