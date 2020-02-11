@@ -48,3 +48,14 @@ if (chrome.runtime) {
 }
 
 chrome.alarms.onAlarm.addListener(onAlarm);
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.uoctheme )
+      console.log( "theme ");
+      console.log( "theme "+get_theme());
+      sendResponse({
+        active: get_theme()
+      });
+  });
+

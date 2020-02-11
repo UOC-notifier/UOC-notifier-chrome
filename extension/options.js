@@ -89,6 +89,16 @@ function populate_options(){
 		save_show_module_dates(ischecked);
 	});
 
+	option = get_theme();
+	if (option) {
+		$('#theme').attr('checked','checked');
+	}
+	$('#theme').on('click', function(){
+		var ischecked = $('#theme').is(':checked');
+		save_theme(ischecked);
+	});
+
+
 	option = get_today();
 	$('#today_tab').val(option)
 			.on('change', function(){
