@@ -20,7 +20,7 @@ task updateManifest(dependsOn:prepareRelease){
     doLast{
         def jsonSlurper = new JsonSlurper()
         def manifest = jsonSlurper.parse(file("build/extension/manifest-template.json"))
-        manifest.version = "$version"
+        manifest.version = project.findProperty("dev") ?: "$version"
         file("build/extension/manifest.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(manifest))
     }
 }
@@ -33,7 +33,7 @@ task zipExtension(type:Zip,dependsOn:updateManifest){
 
 task build(dependsOn:zipExtension){
     doLast{        
-        file('build/last.zip').renameTo "build/camaras-trafico-addon-v"+"$version"+".zip"
+        file('build/last.zip').renameTo "build/uocnotifier-addon-v"+(project.findProperty("dev") ?: "$version")+".zip"
     }
 }
 
