@@ -257,6 +257,16 @@ function save_theme(notify){
 }
 
 
+// CHANGELOGS
+function get_last_changelog() {
+	return Storage.get_option_int("last_changelog", 0);
+}
+
+function save_last_changelog(number){
+	Storage.set_option("last_changelog", number);
+}
+
+
 // Storage manager
 var Storage = new function(){
 
