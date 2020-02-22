@@ -29,6 +29,11 @@ var Start = new function() {
 	function startup() {
 		console.log('Startup');
 		started = true;
+		var version = chrome.runtime.getManifest().version;
+		if( !get_last_changelog(version) ){
+			open_new_tab("changelog.html");
+			save_last_changelog(version);
+		}
 		reset_session();
 		if (has_username_password()) {
 			check_messages(show_PAC_notifications);
