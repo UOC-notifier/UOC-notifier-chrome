@@ -867,8 +867,8 @@ var Session = new function() {
 			}
 		} else {
 			Debug.error('ERROR: Cannot fetch session');
-			if (typeof login_failed == 'function') {
-				login_failed();
+			if (typeof login_failure == 'function') {
+				login_failure();
 			}
 			not_working();
 		}

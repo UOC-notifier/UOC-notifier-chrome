@@ -136,7 +136,7 @@ function login_success() {
 	$(".login").removeClass('has-error');
 }
 
-function login_failed() {
+function login_failure() {
 	$("#status").html(_("__INCORRECT_USER__"));
 	$("#alertstatus").addClass('alert-danger');
 	$("#alertstatus").removeClass('alert-success');
