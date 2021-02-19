@@ -792,10 +792,10 @@ var Session = new function() {
 				retrieving = true;
 
 				var url = '/webapps/cas/login';
-				var s = this.get();
-				if (!s || s.length <= 0) {
-					url += '?renew=true';
-				}
+				// var s = this.get();
+				// if (!s || s.length <= 0) {
+				// 	url += '?renew=true';
+				// }
 
 				$.ajax({
 					type: 'GET',
