@@ -47,6 +47,9 @@ var Classes = new function() {
 		this.count_messages();
 		set_messages();
 		classes.sort(function(a, b) {
+			if (a.order < b.order) return -1;
+			if (a.order > b.order) return 1;
+
 			if (a.subject_code && !b.subject_code) {
 				return -1;
 			} else if(b.subject_code && !a.subject_code) {
@@ -199,6 +202,7 @@ var Classes = new function() {
 				classr.consultormail = classl.consultormail;
 				classr.consultorlastviewed = classl.consultorlastviewed;
 				classr.set_notify(classl.notify);
+				classr.set_order(classl.order);
 				if (classl.notify) {
 					classr.final_grades = classl.final_grades;
 					for (var j in classl.resources) {
@@ -311,6 +315,7 @@ function Classroom(title, code, domain, type) {
 	this.acronym = false;
 
 	this.notify = true;
+	this.order = 0;
 	this.messages = 0;
 	this.resources = [];
 	this.events = [];
@@ -336,6 +341,10 @@ function Classroom(title, code, domain, type) {
 
 	this.set_notify = function(notify) {
 		this.notify = notify;
+	};
+
+	this.set_order = function(order) {
+		this.order = order;
 	};
 
 	// Adds a final grade returning if it changed

@@ -30,6 +30,12 @@ function populate_classrooms(){
 		var notify = $(this).prop('checked');
 		save_notify_classroom(classroom_code, notify);
 	});
+	$("#tclassrooms").sortable({
+		stop: function() {
+			var classroom_ordered_codes = $("#tclassrooms").sortable("toArray", {attribute: 'data-code'});
+			save_order_classrooms(classroom_ordered_codes);
+        }
+	});
 	$("#alertstatus").hide();
 }
 
@@ -37,9 +43,10 @@ function populate_classroom(classroom){
 	var checked = classroom.notify ? "checked" : "";
 	var color = classroom.color ? classroom.color : '73EDFF';
 	var title = classroom.subject_code ? classroom.subject_code+' '+classroom.title : classroom.title;
-	return '<div class="input-group not_classroom"><span class="input-group-addon" style="background-color:#'+color+';"> \
+	return '<li data-code="'+classroom.code+'" class="input-group not_classroom"><span class="input-group-addon" style="background-color:#'+color+';"> \
 			<input class="notify_classroom" type="checkbox" id="'+classroom.code+'" value="'+classroom.code+'" '+checked+'> \
-			</span><label for="'+classroom.code+'" class="form-control">'+title+" - "+classroom.get_acronym() + '</label></div>';
+			</span><label for="'+classroom.code+'" class="form-control">'+title+" - "+classroom.get_acronym() + '</label> \
+			<span class="input-group-addon handle"><span class="glyphicon glyphicon-resize-vertical"></span></span></li>';
 }
 
 function populate_options(){
