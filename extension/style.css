@@ -316,7 +316,10 @@ a:hover {
 
 #tclassrooms {
   margin-bottom: 20px;
+  padding-left: 0;
+  list-style: none;
 }
+
 .not_classroom {
   margin-bottom: 5px;
 }

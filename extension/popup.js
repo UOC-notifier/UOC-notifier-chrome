@@ -7,6 +7,7 @@ var UI = new function() {
 		if (has_username_password()) {
 			if(!session){
 				$("#classrooms").html('<div class="container-fluid"><div class="alert alert-danger">'+_('__WAITING_TO_LOGIN__')+'</div></div>');
+				setBadge("!", "#dc3545");
 				check_messages(build);
 
 				$('#options').unbind( "click" ).click( function() {

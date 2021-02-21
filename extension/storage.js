@@ -131,6 +131,17 @@ function save_notify_classroom(code, notify){
 	}
 }
 
+// OPTIONS  - ORDER CLASSROOMS
+function save_order_classrooms(classroom_ordered_codes) {
+	for (var order = 0; order < classroom_ordered_codes.length; order++) {
+		var classroom = Classes.search_code(classroom_ordered_codes[order]);
+		if(classroom) {
+			classroom.set_order(order);
+		}
+	}
+	Classes.save();
+}
+
 // RUNNING OPTIONS - SORTING
 function get_sorting(){
 	return Storage.get_option("sorting", 'start');

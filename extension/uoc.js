@@ -792,10 +792,10 @@ var Session = new function() {
 				retrieving = true;
 
 				var url = '/webapps/cas/login';
-				var s = this.get();
-				if (!s || s.length <= 0) {
-					url += '?renew=true';
-				}
+				// var s = this.get();
+				// if (!s || s.length <= 0) {
+				// 	url += '?renew=true';
+				// }
 
 				$.ajax({
 					type: 'GET',
@@ -867,8 +867,8 @@ var Session = new function() {
 			}
 		} else {
 			Debug.error('ERROR: Cannot fetch session');
-			if (typeof login_failed == 'function') {
-				login_failed();
+			if (typeof login_failure == 'function') {
+				login_failure();
 			}
 			not_working();
 		}
