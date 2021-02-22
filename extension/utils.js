@@ -149,6 +149,10 @@ function empty_url_attr(url, attr) {
 }
 
 function get_url_attr(url, attr){
+    // closes #33
+    if( !url ){
+        return false;
+    }
     if(url.indexOf(attr) == -1){
         return false;
     }
