@@ -338,7 +338,9 @@ function parse_classroom(classr) {
 			var resourcel = classr.widget.eines[j];
 			if (resourcel.nom) {
 				var resource = new Resource(resourcel.nom, resourcel.resourceId);
-				resource.set_link(resourcel.viewItemsUrl);
+				if( resourcel.viewItemsUrl ){
+					resource.set_link(resourcel.viewItemsUrl);
+				}
 				resource.set_pos(j);
 				resource = classroom.add_resource(resource);
 				retrieve_resource(classroom, resource);

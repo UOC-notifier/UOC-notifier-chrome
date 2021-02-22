@@ -151,10 +151,10 @@ function empty_url_attr(url, attr) {
 function get_url_attr(url, attr){
     // closes #33
     if( !url ){
-        return false;
+        return '';
     }
     if(url.indexOf(attr) == -1){
-        return false;
+        return '';
     }
 
     var regexp = attr + "=([^&]+)";
@@ -163,7 +163,7 @@ function get_url_attr(url, attr){
     if (match) {
         return decodeURIComponent(match[1]);
     }
-    return false;
+    return '';
 }
 
 function addZero(i) {
