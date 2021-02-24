@@ -857,7 +857,7 @@ var Session = new function() {
 		Debug.log(resp);
 		var matchs = resp.match(/campusSessionId = ([^\n]*)/);
 		if (matchs) {
-			var session = matchs[1];
+			var session = matchs[1].trim();
 			if (!get_working()) {
 				notify(_('__UOC_WORKING__'));
 			}
