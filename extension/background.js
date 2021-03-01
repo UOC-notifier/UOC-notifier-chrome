@@ -34,7 +34,7 @@ var Start = new function() {
 			open_new_tab("changelog.html");
 			save_last_changelog(version);
 		}
-		// reset_session();
+		reset_session();
 		if (has_username_password()) {
 			check_messages(show_PAC_notifications);
 			return true;
