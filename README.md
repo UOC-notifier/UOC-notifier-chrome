@@ -17,4 +17,5 @@ Thirdparty Libraries
 =====================
 
 * Jquery 2.1.4
+* jQuery UI 1.12.1
 * Bootstrap 3.3.5
