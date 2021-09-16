@@ -5,3 +5,6 @@
 build
 .project
 .settings/org.eclipse.buildship.core.prefs
+
+# Ignore dev files
+extension/manifest.json
