@@ -1,3 +1,31 @@
 body {
 }
  
+.main-column .flexbox-layout {
+    flex-direction: column!important;
+}
+.flexbox-layout div[class*=col-]:not(.hidden) {
+    width: 100%!important;
+}
+
+.marcadors .unic {
+    margin-right: 5px!important;
+}
+
+.modul {
+    border: 1px solid #ccc!important;
+    margin-bottom: 15px!important;
+}
+
+/* Hide Professor not tutor */
+.modul .widget__header--aula:not(.widget__header--tutorship) {
+    display: none!important;
+}
+
+.modul .modul__content, .toggleMenu {
+    display: none!important;
+}
+
+.modul.show_content .modul__content {
+    display: block!important;
+}
