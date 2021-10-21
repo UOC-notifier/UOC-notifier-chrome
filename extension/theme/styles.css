@@ -1,3 +1,19 @@
-body {
+.dock-6 {
+    margin-top: 5px !important;
 }
- 
+
+.dock .dock__button{
+    padding: 0px !important;
+    height: 50px !important;
+    line-height: 40px !important;
+}
+
+.plin-header {
+    overflow: hidden !important;
+    height: 169px !important; 
+}
+
+app-frame-page .row{
+    height: auto;
+    margin-top: 20px !important;
+}
