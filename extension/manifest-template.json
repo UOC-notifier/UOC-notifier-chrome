@@ -19,7 +19,7 @@
    "manifest_version": 2,
    "name": "__MSG_TITLE__",
    "options_page": "options.html",
-   "permissions": [ "tabs", "*://*.uoc.edu/*", "notifications", "alarms", "idle", "cookies"],
+   "permissions": [ "*://*.uoc.edu/*", "alarms", "idle", "cookies"],
    "version": "2.1.0",
    "content_scripts": [
     {
