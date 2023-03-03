@@ -90,7 +90,7 @@ var UI = new function() {
 			        .attr('title', _('__MAIL__'));
 		}
 		$('#button_mail').unbind( "click" ).click(function() {
-			open_tab('/WebMail/attach.do', null, true);
+			open_tab('https://mail.google.com/a/uoc.edu');
 		});
 
 		$('#update').unbind( "click" ).click( function() {
